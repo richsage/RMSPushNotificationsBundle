@@ -28,15 +28,4 @@ class Notifications
     {
 
     }
-
-    /**
-     * Carries out a 'foo'
-     * on a supplied 'bar'
-     *
-     * @param $bar
-     * @return bool
-     */
-    public function foo($bar)
-    {
-    }
 }
