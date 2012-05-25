@@ -54,6 +54,9 @@ class iOSFeedback
             $data .= fread($fp, 4096);
         }
         fclose($fp);
+        if (!strlen($data)) {
+            return array();
+        }
 
         $feedbacks = array();
         $items = str_split($data, 40);
