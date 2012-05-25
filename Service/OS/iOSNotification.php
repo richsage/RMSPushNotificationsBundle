@@ -43,7 +43,7 @@ class iOSNotification implements OSNotificationServiceInterface
      */
     public function send($deviceToken, $message, $messageType = null)
     {
-        $apnURL = "ssl://gateway.sandbox.push.apple.com:2195";
+        $apnURL = "ssl://gateway.push.apple.com:2195";
         $ctx = $this->getStreamContext();
         $fp = stream_socket_client($apnURL, $err, $errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
         if (!$fp) {
