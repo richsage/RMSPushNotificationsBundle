@@ -30,6 +30,7 @@ class RMSPushNotificationsExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
         $this->setAndroidConfig($config);
+        $this->setiOSConfig($config);
     }
 
     /**
@@ -42,5 +43,16 @@ class RMSPushNotificationsExtension extends Extension
         $this->container->setParameter("rms_push_notifications.android.username", $config["android"]["username"]);
         $this->container->setParameter("rms_push_notifications.android.password", $config["android"]["password"]);
         $this->container->setParameter("rms_push_notifications.android.source", $config["android"]["source"]);
+    }
+
+    /**
+     * Sets iOS config into container
+     *
+     * @param array $config
+     */
+    protected function setiOSConfig(array $config)
+    {
+        $this->container->setParameter("rms_push_notifications.ios.pem", $config["ios"]["pem"]);
+        $this->container->setParameter("rms_push_notifications.ios.passphrase", $config["ios"]["passphrase"]);
     }
 }
