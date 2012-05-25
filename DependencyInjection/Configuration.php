@@ -23,6 +23,7 @@ class Configuration implements ConfigurationInterface
         $this->root = $treeBuilder->root("rms_push_notifications");
 
         $this->addAndroid();
+        $this->addiOS();
 
         return $treeBuilder;
     }
@@ -39,6 +40,22 @@ class Configuration implements ConfigurationInterface
                     scalarNode("username")->isRequired()->cannotBeEmpty()->end()->
                     scalarNode("password")->isRequired()->cannotBeEmpty()->end()->
                     scalarNode("source")->defaultValue("")->end()->
+                end()->
+            end()
+        ;
+    }
+
+    /**
+     * iOS configuration
+     */
+    protected function addiOS()
+    {
+        $this->root->
+            children()->
+                arrayNode("ios")->
+                children()->
+                    scalarNode("pem")->isRequired()->cannotBeEmpty()->end()->
+                    scalarNode("passphrase")->isRequired()->cannotBeEmpty()->end()->
                 end()->
             end()
         ;
