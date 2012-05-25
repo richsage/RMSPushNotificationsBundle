@@ -36,9 +36,9 @@ class Configuration implements ConfigurationInterface
             children()->
                 arrayNode("android")->
                 children()->
-                    scalarNode("username")->cannotBeEmpty()->end()->
-                    scalarNode("password")->cannotBeEmpty()->end()->
-                    scalarNode("source")->cannotBeEmpty()->end()->
+                    scalarNode("username")->isRequired()->cannotBeEmpty()->end()->
+                    scalarNode("password")->isRequired()->cannotBeEmpty()->end()->
+                    scalarNode("source")->defaultValue("")->end()->
                 end()->
             end()
         ;
