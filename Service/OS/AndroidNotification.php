@@ -4,11 +4,44 @@ namespace RMS\PushNotificationsBundle\Service\OS;
 
 class AndroidNotification implements OSNotificationServiceInterface
 {
+    const DEFAULT_COLLAPSE_KEY = 1;
+
+    /**
+     * Username for auth
+     *
+     * @var string
+     */
     protected $username;
+
+    /**
+     * Password for auth
+     *
+     * @var string
+     */
     protected $password;
+
+    /**
+     * The source of the notification
+     * eg com.example.myapp
+     *
+     * @var string
+     */
     protected $source;
+
+    /**
+     * Authentication token
+     *
+     * @var string
+     */
     protected $authToken;
 
+    /**
+     * Constructor
+     *
+     * @param $username
+     * @param $password
+     * @param $source
+     */
     public function __construct($username, $password, $source)
     {
         $this->username = $username;
@@ -23,13 +56,12 @@ class AndroidNotification implements OSNotificationServiceInterface
      *
      * @param $deviceToken
      * @param $message
-     * @param null $messageType
+     * @param $messageType
      * @return bool
      */
-    public function send($deviceToken, $message, $messageType = null)
+    public function send($deviceToken, $message, $messageType = self::DEFAULT_COLLAPSE_KEY)
     {
-        $this->getAuthToken();
-        if ($this->authToken) {
+        if ($this->getAuthToken()) {
             $headers[] = "Authorization: GoogleLogin auth=" . $this->authToken;
             $data = array(
                 "registration_id" => $deviceToken,
@@ -45,9 +77,10 @@ class AndroidNotification implements OSNotificationServiceInterface
             curl_setopt($curl, CURLOPT_POST, true);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-            curl_exec($curl);
+            $response = curl_exec($curl);
             curl_close($curl);
-            return true;
+
+            return preg_match("/^id=/", $response) > 0;
         }
 
         return false;
@@ -92,5 +125,6 @@ class AndroidNotification implements OSNotificationServiceInterface
 
         preg_match("/Auth=([a-z0-9_\-]+)/i", $response, $matches);
         $this->authToken = $matches[1];
+        return true;
     }
 }
