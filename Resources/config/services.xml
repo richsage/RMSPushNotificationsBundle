@@ -4,14 +4,22 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="rms.push_notifications.class">RMS\PushNotificationsBundle\Service\Notifications</parameter>
+        <parameter key="rms_push_notifications.class">RMS\PushNotificationsBundle\Service\Notifications</parameter>
+        <parameter key="rms_push_notifications.android.class">RMS\PushNotificationsBundle\Service\OS\AndroidNotification</parameter>
     </parameters>
 
     <services>
 
         <!-- main notification service -->
-        <service id="rms.push_notifications" class="%rms.push_notifications.class%">
+        <service id="rms_push_notifications" class="%rms_push_notifications.class%">
+        </service>
 
+        <!-- Android -->
+        <service id="rms_push_notifications.android" class="%rms_push_notifications.android.class%" public="false">
+            <argument>%rms_push_notifications.android.username%</argument>
+            <argument>%rms_push_notifications.android.password%</argument>
+            <argument>%rms_push_notifications.android.source%</argument>
+            <tag name="rms_push_notifications.handler" osType="rms_push_notifications.os.android" />
         </service>
 
     </services>
