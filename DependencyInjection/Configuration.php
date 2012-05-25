@@ -38,6 +38,7 @@ class Configuration implements ConfigurationInterface
                 children()->
                     scalarNode("username")->cannotBeEmpty()->end()->
                     scalarNode("password")->cannotBeEmpty()->end()->
+                    scalarNode("source")->cannotBeEmpty()->end()->
                 end()->
             end()
         ;

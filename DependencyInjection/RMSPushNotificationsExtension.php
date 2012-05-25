@@ -39,8 +39,8 @@ class RMSPushNotificationsExtension extends Extension
      */
     protected function setAndroidConfig(array $config)
     {
-        var_dump($config);
         $this->container->setParameter("rms_push_notifications.android.username", $config["android"]["username"]);
         $this->container->setParameter("rms_push_notifications.android.password", $config["android"]["password"]);
+        $this->container->setParameter("rms_push_notifications.android.source", $config["android"]["source"]);
     }
 }

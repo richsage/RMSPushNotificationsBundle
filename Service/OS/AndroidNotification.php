@@ -6,15 +6,26 @@ class AndroidNotification implements OSNotificationServiceInterface
 {
     protected $username;
     protected $password;
+    protected $source;
     protected $authToken;
 
-    public function __construct($username, $password)
+    public function __construct($username, $password, $source)
     {
         $this->username = $username;
         $this->password = $password;
+        $this->source = $source;
         $this->authToken = "";
     }
 
+    /**
+     * Sends a C2DM message
+     * This assumes that a valid auth token can be obtained
+     *
+     * @param $deviceToken
+     * @param $message
+     * @param null $messageType
+     * @return bool
+     */
     public function send($deviceToken, $message, $messageType = null)
     {
         $this->getAuthToken();
@@ -36,9 +47,18 @@ class AndroidNotification implements OSNotificationServiceInterface
             curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
             curl_exec($curl);
             curl_close($curl);
+            return true;
         }
+
+        return false;
     }
 
+
+    /**
+     * Gets a valid authentication token
+     *
+     * @return bool
+     */
     protected function getAuthToken()
     {
         $curl = curl_init();
@@ -53,7 +73,7 @@ class AndroidNotification implements OSNotificationServiceInterface
             "Email"         => $this->username,
             "Passwd"        => $this->password,
             "accountType"   => "HOSTED_OR_GOOGLE",
-            "source"        => "Company-AppName-Version",
+            "source"        => $this->source,
             "service"       => "ac2dm"
         );
 
@@ -63,9 +83,10 @@ class AndroidNotification implements OSNotificationServiceInterface
         curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
 
         $response = curl_exec($curl);
+        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         curl_close($curl);
 
-        if (strpos($response, "200 OK") === false) {
+        if ($httpCode !== 200) {
             return false;
         }
 
