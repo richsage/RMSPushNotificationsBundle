@@ -6,6 +6,7 @@
     <parameters>
         <parameter key="rms_push_notifications.class">RMS\PushNotificationsBundle\Service\Notifications</parameter>
         <parameter key="rms_push_notifications.android.class">RMS\PushNotificationsBundle\Service\OS\AndroidNotification</parameter>
+        <parameter key="rms_push_notifications.ios.feedback.class">RMS\PushNotificationsBundle\Service\OS\AndroidNotification</parameter>
     </parameters>
 
     <services>
@@ -20,6 +21,12 @@
             <argument>%rms_push_notifications.android.password%</argument>
             <argument>%rms_push_notifications.android.source%</argument>
             <tag name="rms_push_notifications.handler" osType="rms_push_notifications.os.android" />
+        </service>
+
+        <!-- iOS Feedback requests -->
+        <service id="rms_push_notifications.ios.feedback" class="%rms_push_notifications.ios.feedback.class">
+            <argument>%rms_push_notifications.ios.pem</argument>
+            <argument>%rms_push_notifications.ios.passphrase</argument>
         </service>
 
     </services>
