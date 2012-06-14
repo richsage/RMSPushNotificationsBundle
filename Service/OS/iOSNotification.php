@@ -90,7 +90,7 @@ class iOSNotification implements OSNotificationServiceInterface
             ),
         );
 
-        $jsonBody = json_encode($payloadBody);
+        $jsonBody = json_encode($payloadBody, JSON_FORCE_OBJECT);
         $payload = chr(0) . pack("n", 32) . pack("H*", $token) . pack("n", strlen($jsonBody)) . $jsonBody;
 
         return $payload;
