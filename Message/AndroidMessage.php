@@ -9,6 +9,13 @@ class AndroidMessage implements MessageInterface
     const DEFAULT_COLLAPSE_KEY = 1;
 
     /**
+     * String message
+     *
+     * @var string
+     */
+    protected $message = "";
+
+    /**
      * The data to send in the message
      *
      * @var array
@@ -30,9 +37,29 @@ class AndroidMessage implements MessageInterface
     protected $collapseKey = self::DEFAULT_COLLAPSE_KEY;
 
     /**
-     * Sets the data. For Android, this is the entire body of the message
+     * Sets the string message
      *
-     * @param array $data The data to send
+     * @param $message
+     */
+    public function setMessage($message)
+    {
+        $this->message = $message;
+    }
+
+    /**
+     * Returns the string message
+     *
+     * @return string
+     */
+    public function getMessage()
+    {
+        return $this->message;
+    }
+
+    /**
+     * Sets the data. For Android, this is any custom data to use
+     *
+     * @param array $data The custom data to send
      */
     public function setData($data)
     {
@@ -46,7 +73,15 @@ class AndroidMessage implements MessageInterface
      */
     public function getMessageBody()
     {
-        return $this->data;
+        $data = array(
+            "registration_id" => $this->identifier,
+            "collapse_key"    => $this->collapseKey,
+            "data.message"    => $this->message,
+        );
+        if (!empty($this->data)) {
+            $data = array_merge($data, $this->data);
+        }
+        return $data;
     }
 
     /**

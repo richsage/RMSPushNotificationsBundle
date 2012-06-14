@@ -69,11 +69,7 @@ class AndroidNotification implements OSNotificationServiceInterface
 
         if ($this->getAuthToken()) {
             $headers[] = "Authorization: GoogleLogin auth=" . $this->authToken;
-            $data = array(
-                "registration_id" => $message->getDeviceIdentifier(),
-                "collapse_key"    => $message->getCollapseKey(),
-                "data.message"    => $message->getMessageBody(),
-            );
+            $data = $message->getMessageBody();
 
             $buzz = new Browser();
             $buzz->getClient()->setVerifyPeer(false);

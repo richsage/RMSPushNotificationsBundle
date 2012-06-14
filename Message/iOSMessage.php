@@ -20,6 +20,11 @@ class iOSMessage implements MessageInterface
      */
     protected $identifier = null;
 
+    /**
+     * The APS core body
+     *
+     * @var array
+     */
     protected $apsBody = array();
 
     /**
@@ -31,6 +36,16 @@ class iOSMessage implements MessageInterface
             "aps" => array(
             ),
         );
+    }
+
+    /**
+     * Sets the message. For iOS, this is the APS alert message
+     *
+     * @param $message
+     */
+    public function setMessage($message)
+    {
+        $this->apsBody["aps"]["alert"] = $message;
     }
 
     /**
@@ -88,17 +103,6 @@ class iOSMessage implements MessageInterface
     public function getTargetOS()
     {
         return Types::OS_IOS;
-    }
-
-    /**
-     * iOS-specific
-     * Sets the APS alert message
-     *
-     * @param string $alert The alert message
-     */
-    public function setAPSAlert($alert)
-    {
-        $this->apsBody["aps"]["alert"] = $alert;
     }
 
     /**
