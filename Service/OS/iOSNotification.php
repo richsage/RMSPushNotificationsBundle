@@ -2,6 +2,9 @@
 
 namespace RMS\PushNotificationsBundle\Service\OS;
 
+use RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException,
+    RMS\PushNotificationsBundle\Message\iOSMessage,
+    RMS\PushNotificationsBundle\Message\MessageInterface;
 use Buzz\Browser;
 
 class iOSNotification implements OSNotificationServiceInterface
@@ -35,14 +38,17 @@ class iOSNotification implements OSNotificationServiceInterface
     /**
      * Send a notification message
      *
-     * @param $deviceToken
-     * @param $message
-     * @param string $messageType Unused for iOS push
-     * @return bool
+     * @param \RMS\PushNotificationsBundle\Message\MessageInterface|\RMS\PushNotificationsBundle\Service\OS\MessageInterface $message
      * @throws \RuntimeException
+     * @throws \RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException
+     * @return bool
      */
-    public function send($deviceToken, $message, $messageType = null)
+    public function send(MessageInterface $message)
     {
+        if (!$message instanceof iOSMessage) {
+            throw new InvalidMessageTypeException(sprintf("Message type '%s' not supported by APN", get_class($message)));
+        }
+
         $apnURL = "ssl://gateway.push.apple.com:2195";
         $ctx = $this->getStreamContext();
         $fp = stream_socket_client($apnURL, $err, $errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
@@ -50,7 +56,7 @@ class iOSNotification implements OSNotificationServiceInterface
             throw new \RuntimeException("Couldn't connect to APN server");
         }
 
-        $payload = $this->createPayload($deviceToken, $message);
+        $payload = $this->createPayload($message->getDeviceIdentifier(), $message->getMessageBody());
         $result = fwrite($fp, $payload, strlen($payload));
         fclose($fp);
         return $result;
@@ -83,14 +89,7 @@ class iOSNotification implements OSNotificationServiceInterface
      */
     protected function createPayload($token, $message)
     {
-        $payloadBody = array(
-            "aps" => array(
-                "alert" => $message,
-                "sound" => "default",
-            ),
-        );
-
-        $jsonBody = json_encode($payloadBody, JSON_FORCE_OBJECT);
+        $jsonBody = json_encode($message, JSON_FORCE_OBJECT);
         $payload = chr(0) . pack("n", 32) . pack("H*", $token) . pack("n", strlen($jsonBody)) . $jsonBody;
 
         return $payload;
