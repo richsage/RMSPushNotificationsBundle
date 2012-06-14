@@ -2,16 +2,15 @@
 
 namespace RMS\PushNotificationsBundle\Service\OS;
 
+use RMS\PushNotificationsBundle\Message\MessageInterface;
+
 interface OSNotificationServiceInterface
 {
     /**
      * Send a notification message
      *
-     * @abstract
-     * @param $deviceToken
-     * @param $message
-     * @param string $messageType
+     * @param \RMS\PushNotificationsBundle\Message\MessageInterface $message
      * @return mixed
      */
-    public function send($deviceToken, $message, $messageType = null);
+    public function send(MessageInterface $message);
 }

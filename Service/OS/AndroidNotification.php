@@ -2,12 +2,13 @@
 
 namespace RMS\PushNotificationsBundle\Service\OS;
 
+use RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException,
+    RMS\PushNotificationsBundle\Message\AndroidMessage,
+    RMS\PushNotificationsBundle\Message\MessageInterface;
 use Buzz\Browser;
 
 class AndroidNotification implements OSNotificationServiceInterface
 {
-    const DEFAULT_COLLAPSE_KEY = 1;
-
     /**
      * Username for auth
      *
@@ -56,19 +57,22 @@ class AndroidNotification implements OSNotificationServiceInterface
      * Sends a C2DM message
      * This assumes that a valid auth token can be obtained
      *
-     * @param $deviceToken
-     * @param $message
-     * @param $collapseKey
+     * @param \RMS\PushNotificationsBundle\Message\MessageInterface $message
+     * @throws \RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException
      * @return bool
      */
-    public function send($deviceToken, $message, $collapseKey = self::DEFAULT_COLLAPSE_KEY)
+    public function send(MessageInterface $message)
     {
+        if (!$message instanceof AndroidMessage) {
+            throw new InvalidMessageTypeException(sprintf("Message type '%s' not supported by C2DM", get_class($message)));
+        }
+
         if ($this->getAuthToken()) {
             $headers[] = "Authorization: GoogleLogin auth=" . $this->authToken;
             $data = array(
-                "registration_id" => $deviceToken,
-                "collapse_key"    => $collapseKey,
-                "data.message"    => $message,
+                "registration_id" => $message->getDeviceIdentifier(),
+                "collapse_key"    => $message->getCollapseKey(),
+                "data.message"    => $message->getMessageBody(),
             );
 
             $buzz = new Browser();
