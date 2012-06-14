@@ -26,13 +26,13 @@
 
         <!-- iOS-->
         <service id="rms_push_notifications.ios" class="%rms_push_notifications.ios.class%" public="false">
-            <argument>%rms_push_notifications.ios.pem</argument>
-            <argument>%rms_push_notifications.ios.passphrase</argument>
+            <argument>%rms_push_notifications.ios.pem%</argument>
+            <argument>%rms_push_notifications.ios.passphrase%</argument>
             <tag name="rms_push_notifications.handler" osType="rms_push_notifications.os.ios" />
         </service>
 
         <!-- iOS Feedback requests -->
-        <service id="rms_push_notifications.ios.feedback" class="%rms_push_notifications.ios.feedback.class">
+        <service id="rms_push_notifications.ios.feedback" class="%rms_push_notifications.ios.feedback.class%">
             <argument>%rms_push_notifications.ios.pem</argument>
             <argument>%rms_push_notifications.ios.passphrase</argument>
         </service>
