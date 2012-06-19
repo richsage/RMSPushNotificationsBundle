@@ -1,7 +1,8 @@
 {
-    "name": "richsage/pushnotificationsbundle",
+    "name": "richsage/rms-push-notifications-bundle",
     "type": "symfony-bundle",
     "description": "Push notifications/messages for mobile devices",
+    "keywords": ["push", "notification", "bundle"],
     "homepage": "https://github.com/richsage/RMSPushNotificationsBundle",
     "license": "MIT",
     "authors": [
