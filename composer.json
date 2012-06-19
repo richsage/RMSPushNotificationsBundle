@@ -1,0 +1,23 @@
+{
+    "name": "richsage/pushnotificationsbundle",
+    "type": "symfony-bundle",
+    "description": "Push notifications/messages for mobile devices",
+    "homepage": "https://github.com/richsage/RMSPushNotificationsBundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rich Sage",
+            "email": "rich.sage@gmail.com",
+            "homepage": "http://www.richsage.co.uk/"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "symfony/symfony": "2.0.*",
+        "kriswallsmith/buzz": "*"
+    },
+    "autoload": {
+        "psr-0": { "RMS\\PushNotificationsBundle": "" }
+    },
+    "target-dir": "RMS/PushNotificationsBundle"
+}
