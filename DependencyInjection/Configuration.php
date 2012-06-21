@@ -8,7 +8,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 class Configuration implements ConfigurationInterface
 {
     /**
-     * @var \Symfony\Component\Config\Definition\Builder\NodeDefinition
+     * @var \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition
      */
     protected $root;
 
@@ -36,10 +36,12 @@ class Configuration implements ConfigurationInterface
         $this->root->
             children()->
                 arrayNode("android")->
-                children()->
-                    scalarNode("username")->isRequired()->cannotBeEmpty()->end()->
-                    scalarNode("password")->isRequired()->cannotBeEmpty()->end()->
-                    scalarNode("source")->defaultValue("")->end()->
+                    canBeUnset()->
+                    children()->
+                        scalarNode("username")->isRequired()->end()->
+                        scalarNode("password")->isRequired()->end()->
+                        scalarNode("source")->defaultValue("")->end()->
+                    end()->
                 end()->
             end()
         ;
@@ -53,9 +55,10 @@ class Configuration implements ConfigurationInterface
         $this->root->
             children()->
                 arrayNode("ios")->
-                children()->
-                    scalarNode("pem")->isRequired()->cannotBeEmpty()->end()->
-                    scalarNode("passphrase")->isRequired()->defaultValue("")->end()->
+                    children()->
+                        scalarNode("pem")->isRequired()->cannotBeEmpty()->end()->
+                        scalarNode("passphrase")->isRequired()->defaultValue("")->end()->
+                    end()->
                 end()->
             end()
         ;

@@ -29,8 +29,25 @@ class RMSPushNotificationsExtension extends Extension
 
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
-        $this->setAndroidConfig($config);
-        $this->setiOSConfig($config);
+
+        $this->setInitialParams();
+        if (isset($config["android"])) {
+            $this->setAndroidConfig($config);
+            $loader->load('android.xml');
+        }
+        if (isset($config["ios"])) {
+            $this->setiOSConfig($config);
+            $loader->load('ios.xml');
+        }
+    }
+
+    /**
+     * Initial enabling
+     */
+    protected function setInitialParams()
+    {
+        $this->container->setParameter("rms_push_notifications.android.enabled", false);
+        $this->container->setParameter("rms_push_notifications.ios.enabled", false);
     }
 
     /**
@@ -40,6 +57,7 @@ class RMSPushNotificationsExtension extends Extension
      */
     protected function setAndroidConfig(array $config)
     {
+        $this->container->setParameter("rms_push_notifications.android.enabled", true);
         $this->container->setParameter("rms_push_notifications.android.username", $config["android"]["username"]);
         $this->container->setParameter("rms_push_notifications.android.password", $config["android"]["password"]);
         $this->container->setParameter("rms_push_notifications.android.source", $config["android"]["source"]);
@@ -52,6 +70,7 @@ class RMSPushNotificationsExtension extends Extension
      */
     protected function setiOSConfig(array $config)
     {
+        $this->container->setParameter("rms_push_notifications.ios.enabled", true);
         $this->container->setParameter("rms_push_notifications.ios.pem", $config["ios"]["pem"]);
         $this->container->setParameter("rms_push_notifications.ios.passphrase", $config["ios"]["passphrase"]);
     }
