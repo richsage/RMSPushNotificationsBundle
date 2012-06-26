@@ -10,6 +10,13 @@ use Buzz\Browser;
 class iOSNotification implements OSNotificationServiceInterface
 {
     /**
+     * Whether or not to use the sandbox APNS
+     *
+     * @var bool
+     */
+    protected $useSandbox = false;
+
+    /**
      * Path to PEM file
      *
      * @var string
@@ -26,11 +33,13 @@ class iOSNotification implements OSNotificationServiceInterface
     /**
      * Constructor
      *
+     * @param $sandbox
      * @param $pem
      * @param $passphrase
      */
-    public function __construct($pem, $passphrase)
+    public function __construct($sandbox, $pem, $passphrase)
     {
+        $this->useSandbox = $sandbox;
         $this->pem = $pem;
         $this->passphrase = $passphrase;
     }
@@ -50,6 +59,9 @@ class iOSNotification implements OSNotificationServiceInterface
         }
 
         $apnURL = "ssl://gateway.push.apple.com:2195";
+        if ($this->useSandbox) {
+            $apnURL = "ssl://gateway.sandbox.push.apple.com:2195";
+        }
         $ctx = $this->getStreamContext();
         $fp = stream_socket_client($apnURL, $err, $errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
         if (!$fp) {
