@@ -71,6 +71,7 @@ class RMSPushNotificationsExtension extends Extension
     protected function setiOSConfig(array $config)
     {
         $this->container->setParameter("rms_push_notifications.ios.enabled", true);
+        $this->container->setParameter("rms_push_notifications.ios.sandbox", $config["ios"]["sandbox"]);
         $this->container->setParameter("rms_push_notifications.ios.pem", $config["ios"]["pem"]);
         $this->container->setParameter("rms_push_notifications.ios.passphrase", $config["ios"]["passphrase"]);
     }

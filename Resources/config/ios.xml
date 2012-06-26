@@ -18,6 +18,7 @@
 
         <!-- iOS Feedback requests -->
         <service id="rms_push_notifications.ios.feedback" class="%rms_push_notifications.ios.feedback.class%">
+            <argument>%rms_push_notifications.ios.sandbox%</argument>
             <argument>%rms_push_notifications.ios.pem%</argument>
             <argument>%rms_push_notifications.ios.passphrase%</argument>
         </service>
