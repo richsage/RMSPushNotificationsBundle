@@ -92,11 +92,12 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     {
         $arr = array(
             array(
-                "ios" => array("pem" => "foo/bar.pem", "passphrase" => "foo")
+                "ios" => array("sandbox" => false, "pem" => "foo/bar.pem", "passphrase" => "foo")
             ),
         );
         $config = $this->process($arr);
         $this->assertArrayHasKey("ios", $config);
+        $this->assertEquals(false, $config["ios"]["sandbox"]);
         $this->assertEquals("foo/bar.pem", $config["ios"]["pem"]);
         $this->assertEquals("foo", $config["ios"]["passphrase"]);
     }

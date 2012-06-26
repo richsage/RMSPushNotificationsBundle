@@ -56,6 +56,7 @@ class Configuration implements ConfigurationInterface
             children()->
                 arrayNode("ios")->
                     children()->
+                        booleanNode("sandbox")->defaultFalse()->end()->
                         scalarNode("pem")->isRequired()->cannotBeEmpty()->end()->
                         scalarNode("passphrase")->isRequired()->defaultValue("")->end()->
                     end()->
