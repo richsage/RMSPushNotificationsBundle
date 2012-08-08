@@ -37,7 +37,7 @@ class iOSNotification implements OSNotificationServiceInterface
      * @param $pem
      * @param $passphrase
      */
-    public function __construct($sandbox, $pem, $passphrase)
+    public function __construct($sandbox, $pem, $passphrase = "")
     {
         $this->useSandbox = $sandbox;
         $this->pem = $pem;
