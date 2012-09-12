@@ -2,6 +2,8 @@
 
 namespace RMS\PushNotificationsBundle\Service;
 
+use RMS\PushNotificationsBundle\Message\MessageInterface;
+
 class Notifications
 {
     /**
@@ -10,11 +12,6 @@ class Notifications
      * @var array
      */
     protected $handlers = array();
-
-    const OS_ANDROID = "rms_push_notifications.os.android";
-    const OS_IOS = "rms_push_notifications.os.ios";
-    const OS_BLACKBERRY = "rms_push_notifications.os.blackberry";
-    const OS_WINDOWSMOBILE = "rms_push_notifications.os.windowsmobile";
 
     /**
      * Constructor
@@ -27,19 +24,17 @@ class Notifications
      * Sends a message to a device, identified by
      * the OS and the supplied device token
      *
-     * @param $osType
-     * @param $deviceToken
-     * @param $message
+     * @param \RMS\PushNotificationsBundle\Message\MessageInterface $message
      * @throws \RuntimeException
      * @return bool
      */
-    public function send($osType, $deviceToken, $message)
+    public function send(MessageInterface $message)
     {
-        if (!isset($this->handlers[$osType])) {
-            throw new \RuntimeException("OS type {$osType} not supported");
+        if (!isset($this->handlers[$message->getTargetOS()])) {
+            throw new \RuntimeException("OS type {$message->getTargetOS()} not supported");
         }
 
-        return $this->handlers[$osType]->send($deviceToken, $message);
+        return $this->handlers[$message->getTargetOS()]->send($message);
     }
 
     /**

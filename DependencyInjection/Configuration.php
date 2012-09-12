@@ -8,7 +8,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 class Configuration implements ConfigurationInterface
 {
     /**
-     * @var \Symfony\Component\Config\Definition\Builder\NodeDefinition
+     * @var \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition
      */
     protected $root;
 
@@ -23,6 +23,7 @@ class Configuration implements ConfigurationInterface
         $this->root = $treeBuilder->root("rms_push_notifications");
 
         $this->addAndroid();
+        $this->addiOS();
 
         return $treeBuilder;
     }
@@ -35,10 +36,28 @@ class Configuration implements ConfigurationInterface
         $this->root->
             children()->
                 arrayNode("android")->
-                children()->
-                    scalarNode("username")->isRequired()->cannotBeEmpty()->end()->
-                    scalarNode("password")->isRequired()->cannotBeEmpty()->end()->
-                    scalarNode("source")->defaultValue("")->end()->
+                    canBeUnset()->
+                    children()->
+                        scalarNode("api_key")->isRequired()->end()->
+                    end()->
+                end()->
+            end()
+        ;
+    }
+
+    /**
+     * iOS configuration
+     */
+    protected function addiOS()
+    {
+        $this->root->
+            children()->
+                arrayNode("ios")->
+                    children()->
+                        booleanNode("sandbox")->defaultFalse()->end()->
+                        scalarNode("pem")->isRequired()->cannotBeEmpty()->end()->
+                        scalarNode("passphrase")->defaultValue("")->end()->
+                    end()->
                 end()->
             end()
         ;
