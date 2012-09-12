@@ -2,7 +2,7 @@
     "name": "richsage/rms-push-notifications-bundle",
     "type": "symfony-bundle",
     "description": "Push notifications/messages for mobile devices",
-    "keywords": ["push", "notification", "bundle"],
+    "keywords": ["push", "notification", "bundle", "gcm", "ios"],
     "homepage": "https://github.com/richsage/RMSPushNotificationsBundle",
     "license": "MIT",
     "authors": [
@@ -10,15 +10,21 @@
             "name": "Rich Sage",
             "email": "rich.sage@gmail.com",
             "homepage": "http://www.richsage.co.uk/"
+        },
+        {
+            "name": "Maciej Rzepinski",
+            "email": "maciej.rzepinski@gmail.com",
+            "homepage": "http://mrzepinski.pl/"
         }
     ],
     "require": {
-        "php": ">=5.3.0",
+        "php": ">=5.3.8",
         "symfony/symfony": "2.0.*",
         "kriswallsmith/buzz": "*"
     },
     "autoload": {
         "psr-0": { "RMS\\PushNotificationsBundle": "" }
     },
-    "target-dir": "RMS/PushNotificationsBundle"
+    "target-dir": "RMS/PushNotificationsBundle",
+    "minimum-stability": "dev"
 }

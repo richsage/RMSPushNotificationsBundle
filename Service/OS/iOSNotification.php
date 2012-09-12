@@ -102,6 +102,7 @@ class iOSNotification implements OSNotificationServiceInterface
     protected function createPayload($token, $message)
     {
         $jsonBody = json_encode($message, JSON_FORCE_OBJECT);
+        $token = preg_replace("/^0-9A-Fa-f]/", "", $token);
         $payload = chr(0) . pack("n", 32) . pack("H*", $token) . pack("n", strlen($jsonBody)) . $jsonBody;
 
         return $payload;

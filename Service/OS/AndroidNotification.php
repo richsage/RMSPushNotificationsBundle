@@ -5,57 +5,52 @@ namespace RMS\PushNotificationsBundle\Service\OS;
 use RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException,
     RMS\PushNotificationsBundle\Message\AndroidMessage,
     RMS\PushNotificationsBundle\Message\MessageInterface;
-use Buzz\Browser;
+use Buzz\Browser,
+    Buzz\Client\MultiCurl;
 
 class AndroidNotification implements OSNotificationServiceInterface
 {
+    
     /**
-     * Username for auth
+     * @var string
+     */
+    protected $apiUrl = 'https://android.googleapis.com/gcm/send';
+    
+    /**
+     * Google GCM API key
      *
      * @var string
      */
-    protected $username;
-
+    protected $apiKey;
+    
     /**
-     * Password for auth
-     *
      * @var string
      */
-    protected $password;
+    protected $registrationIdMaxCount = 1000;
 
     /**
-     * The source of the notification
-     * eg com.example.myapp
-     *
-     * @var string
+     * @var \Buzz\Browser
      */
-    protected $source;
+    protected $browser;
 
     /**
-     * Authentication token
-     *
-     * @var string
+     * @var array
      */
-    protected $authToken;
+    protected $responses;
 
     /**
-     * Constructor
+     * Class constructor
      *
-     * @param $username
-     * @param $password
-     * @param $source
+     * @param string $apiKey
      */
-    public function __construct($username, $password, $source)
+    public function __construct($apiKey)
     {
-        $this->username = $username;
-        $this->password = $password;
-        $this->source = $source;
-        $this->authToken = "";
+        $this->apiKey = $apiKey;
+        $this->browser = new Browser(new MultiCurl());
     }
 
     /**
-     * Sends a C2DM message
-     * This assumes that a valid auth token can be obtained
+     * Sends the data to the given registration ID's via the GCM server
      *
      * @param \RMS\PushNotificationsBundle\Message\MessageInterface $message
      * @throws \RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException
@@ -64,47 +59,46 @@ class AndroidNotification implements OSNotificationServiceInterface
     public function send(MessageInterface $message)
     {
         if (!$message instanceof AndroidMessage) {
-            throw new InvalidMessageTypeException(sprintf("Message type '%s' not supported by C2DM", get_class($message)));
+            throw new InvalidMessageTypeException(sprintf("Message type '%s' not supported by GCM", get_class($message)));
         }
-
-        if ($this->getAuthToken()) {
-            $headers[] = "Authorization: GoogleLogin auth=" . $this->authToken;
-            $data = $message->getMessageBody();
-
-            $buzz = new Browser();
-            $buzz->getClient()->setVerifyPeer(false);
-            $response = $buzz->post("https://android.apis.google.com/c2dm/send", $headers, http_build_query($data));
-            return preg_match("/^id=/", $response->getContent()) > 0;
-        }
-
-        return false;
-    }
-
-
-    /**
-     * Gets a valid authentication token
-     *
-     * @return bool
-     */
-    protected function getAuthToken()
-    {
-        $data = array(
-            "Email"         => $this->username,
-            "Passwd"        => $this->password,
-            "accountType"   => "HOSTED_OR_GOOGLE",
-            "source"        => $this->source,
-            "service"       => "ac2dm"
+        
+        $headers = array(
+            'Authorization: key='.$this->apiKey,
+            'Content-Type: application/json'
         );
 
-        $buzz = new Browser();
-        $buzz->getClient()->setVerifyPeer(false);
-        $response = $buzz->post("https://www.google.com/accounts/ClientLogin", array(), http_build_query($data));
-        if ($response->getStatusCode() !== 200) {
-            return false;
+        $data = array_merge($message->getOptions(), array(
+            'data' => $message->getData(),
+        ));
+
+        // Chunk number of registration ID's according to the maximum allowed by GCM
+        $chunks = array_chunk($message->getDevicesRegistrationIds(), $this->registrationIdMaxCount);
+
+        // Perform the calls (in parallel)
+        $this->responses = array();
+        foreach ($chunks as $registrationIds) {
+            $data['registration_ids'] = $registrationIds;
+            $this->responses[] = $this->browser->post($this->apiUrl, $headers, json_encode($data));
+        }
+        $this->browser->getClient()->flush();
+
+        // Determine success
+        foreach ($this->responses as $response) {
+            $message = json_decode($response->getContent());
+            if ($message === null || $message->success == 0 || $message->failure > 0) {
+                return false;
+            }
         }
 
-        preg_match("/Auth=([a-z0-9_\-]+)/i", $response->getContent(), $matches);
-        $this->authToken = $matches[1];
         return true;
     }
+
+    /**
+     * @return array
+     */
+    public function getResponses()
+    {
+        return $this->responses;
+    }
+    
 }
