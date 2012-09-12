@@ -4,7 +4,7 @@ namespace RMS\PushNotificationsBundle\Message;
 
 use RMS\PushNotificationsBundle\Device\Types;
 
-class AndroidMessage
+class AndroidMessage implements MessageInterface
 {
 
     /**

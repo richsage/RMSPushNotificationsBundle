@@ -3,8 +3,8 @@
 namespace RMS\PushNotificationsBundle\Service\OS;
 
 use RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException,
-    RMS\PushNotificationsBundle\Message\AndroidMessage,
-    RMS\PushNotificationsBundle\Message\MessageInterface;
+    RMS\PushNotificationsBundle\Message\MessageInterface,
+    RMS\PushNotificationsBundle\Message\AndroidMessage;
 use Buzz\Browser,
     Buzz\Client\MultiCurl;
 
