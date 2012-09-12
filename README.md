@@ -33,7 +33,7 @@ $ curl -s http://getcomposer.org/installer | php
 $ php composer.phar update richsage/rms-push-notifications-bundle
 ```
 
-Composer will install the bundle to your project's `vendor/endroid` directory.
+Composer will install the bundle to your project's `vendor/bundles/RMS/PushNotificationBundle` directory.
 
 ### Using the vendors script
 
