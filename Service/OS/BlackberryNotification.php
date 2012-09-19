@@ -103,7 +103,7 @@ class BlackberryNotification implements OSNotificationServiceInterface
 
         $data .= "--" . $separator . "\r\n";
         $data .= "Content-Type: application/xml; charset=UTF-8\r\n\r\n";
-        $data .= $this->getXMLBody($messageID) . "\r\n";
+        $data .= $this->getXMLBody($message, $messageID) . "\r\n";
         $data .= "--" . $separator . "\r\n";
         $data .= "Content-Type: text/plain\r\n";
         $data .= "Push-Message-ID: {$messageID}\r\n\r\n";
@@ -146,7 +146,7 @@ class BlackberryNotification implements OSNotificationServiceInterface
      * @param $messageID
      * @return string
      */
-    private function getXMLBody($messageID)
+    private function getXMLBody(BlackberryMessage $message, $messageID)
     {
         $deliverBefore = gmdate('Y-m-d\TH:i:s\Z', strtotime('+5 minutes'));
         $impl = new \DOMImplementation();
@@ -166,7 +166,7 @@ class BlackberryNotification implements OSNotificationServiceInterface
         $qos = $doc->createElement("quality-of-service");
         $qos->setAttribute("delivery-method", "unconfirmed");
         $add = $doc->createElement("address");
-        $add->setAttribute("address-value", "push-all");
+        $add->setAttribute("address-value", $message->getDeviceIdentifier());
 
         $pm->appendChild($add);
         $pm->appendChild($qos);
