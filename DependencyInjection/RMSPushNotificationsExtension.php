@@ -39,6 +39,10 @@ class RMSPushNotificationsExtension extends Extension
             $this->setiOSConfig($config);
             $loader->load('ios.xml');
         }
+        if (isset($config["blackberry"])) {
+            $this->setBlackberryConfig($config);
+            $loader->load('blackberry.xml');
+        }
     }
 
     /**
@@ -74,5 +78,18 @@ class RMSPushNotificationsExtension extends Extension
         $this->container->setParameter("rms_push_notifications.ios.sandbox", $config["ios"]["sandbox"]);
         $this->container->setParameter("rms_push_notifications.ios.pem", $config["ios"]["pem"]);
         $this->container->setParameter("rms_push_notifications.ios.passphrase", $config["ios"]["passphrase"]);
+    }
+
+    /**
+     * Sets Blackberry config into container
+     *
+     * @param array $config
+     */
+    protected function setBlackberryConfig(array $config)
+    {
+        $this->container->setParameter("rms_push_notifications.blackberry.enabled", true);
+        $this->container->setParameter("rms_push_notifications.blackberry.evaluation", $config["blackberry"]["evaluation"]);
+        $this->container->setParameter("rms_push_notifications.blackberry.app_id", $config["blackberry"]["app_id"]);
+        $this->container->setParameter("rms_push_notifications.blackberry.password", $config["blackberry"]["password"]);
     }
 }

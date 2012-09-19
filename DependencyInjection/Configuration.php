@@ -24,6 +24,7 @@ class Configuration implements ConfigurationInterface
 
         $this->addAndroid();
         $this->addiOS();
+        $this->addBlackberry();
 
         return $treeBuilder;
     }
@@ -59,6 +60,24 @@ class Configuration implements ConfigurationInterface
                         booleanNode("sandbox")->defaultFalse()->end()->
                         scalarNode("pem")->isRequired()->cannotBeEmpty()->end()->
                         scalarNode("passphrase")->defaultValue("")->end()->
+                    end()->
+                end()->
+            end()
+        ;
+    }
+
+    /**
+     * Blackberry configuration
+     */
+    protected function addBlackberry()
+    {
+        $this->root->
+            children()->
+                arrayNode("blackberry")->
+                    children()->
+                        booleanNode("evaluation")->defaultFalse()->end()->
+                        scalarNode("app_id")->isRequired()->cannotBeEmpty()->end()->
+                        scalarNode("password")->isRequired()->cannotBeEmpty()->end()->
                     end()->
                 end()->
             end()
