@@ -103,6 +103,46 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testBlackberryRequiresAppID()
+    {
+        $arr = array(
+            array(
+                "blackberry" => array("password" => "foo")
+            ),
+        );
+        $config = $this->process($arr);
+    }
+
+    /**
+     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testBlackberryRequiresPassword()
+    {
+        $arr = array(
+            array(
+                "blackberry" => array("app_id" => "foo")
+            ),
+        );
+        $config = $this->process($arr);
+    }
+
+    public function testFullBlackberry()
+    {
+        $arr = array(
+            array(
+                "blackberry" => array("evaluation" => false, "app_id" => "foo", "password" => "bar")
+            ),
+        );
+        $config = $this->process($arr);
+        $this->assertArrayHasKey("blackberry", $config);
+        $this->assertFalse($config["blackberry"]["evaluation"]);
+        $this->assertEquals("foo", $config["blackberry"]["app_id"]);
+        $this->assertEquals("bar", $config["blackberry"]["password"]);
+    }
+
+    /**
      * Takes in an array of configuration values and returns the processed version
      *
      * @param array $config

@@ -9,9 +9,9 @@ class BlackberryMessage implements MessageInterface
     /**
      * The data to send in the message
      *
-     * @var array
+     * @var mixed
      */
-    protected $data = array();
+    protected $data = null;
 
     /**
      * Identifier of the target device
