@@ -6,7 +6,6 @@ use RMS\PushNotificationsBundle\Device\Types;
 
 class AndroidMessage implements MessageInterface
 {
-    const DEFAULT_COLLAPSE_KEY = 1;
 
     /**
      * String message
@@ -21,20 +20,20 @@ class AndroidMessage implements MessageInterface
      * @var array
      */
     protected $data = array();
-
+    
     /**
-     * Identifier of the target device
+     * Registration IDS
      *
-     * @var string
+     * @var array
      */
-    protected $identifier = "";
-
+    protected $registrationIds = array();
+    
     /**
-     * Collapse key for data
+     * Options to add along with message, such as collapse_key, time_to_live, delay_while_idle
      *
-     * @var int
+     * @var array
      */
-    protected $collapseKey = self::DEFAULT_COLLAPSE_KEY;
+    protected $options = array();
 
     /**
      * Sets the string message
@@ -55,6 +54,16 @@ class AndroidMessage implements MessageInterface
     {
         return $this->message;
     }
+    
+    /**
+     * Get the data
+     * 
+     * @return array
+     */
+    public function getData() 
+    {
+        return $this->data;
+    }
 
     /**
      * Sets the data. For Android, this is any custom data to use
@@ -65,33 +74,55 @@ class AndroidMessage implements MessageInterface
     {
         $this->data = (is_array($data) ? $data : array($data));
     }
-
+    
     /**
-     * Gets the message body to send
+     * Returns the target devices registration ids
      *
      * @return array
      */
-    public function getMessageBody()
+    public function getDevicesRegistrationIds()
     {
-        $data = array(
-            "registration_id" => $this->identifier,
-            "collapse_key"    => $this->collapseKey,
-            "data.message"    => $this->message,
-        );
-        if (!empty($this->data)) {
-            $data = array_merge($data, $this->data);
-        }
-        return $data;
+        return $this->registrationIds;
+    }
+    
+    /**
+     * Add target device registration id to array
+     * 
+     * @param string $registrationId
+     */
+    public function addDeviceRegistrationId($registrationId) 
+    {
+        $this->registrationIds[] = $registrationId;
     }
 
     /**
-     * Sets the identifier of the target device, eg UUID or similar
+     * Sets the target devices registration ids
      *
-     * @param $identifier
+     * @param array $registrationIds
      */
-    public function setDeviceIdentifier($identifier)
+    public function setDevicesRegistrationIds(array $registrationIds)
     {
-        $this->identifier = $identifier;
+        $this->registrationIds = $registrationIds;
+    }
+    
+    /**
+     * Get optional options to add along with message, such as collapse_key, time_to_live, delay_while_idle
+     * 
+     * @return array
+     */
+    public function getOptions() 
+    {
+        return $this->options;
+    }
+    
+    /**
+     * Set optional options to add along with message, such as collapse_key, time_to_live, delay_while_idle
+     * 
+     * @param array $options
+     */
+    public function setOptions(array $options) 
+    {
+        $this->options = $options;
     }
 
     /**
@@ -104,35 +135,4 @@ class AndroidMessage implements MessageInterface
         return Types::OS_ANDROID;
     }
 
-    /**
-     * Returns the target device identifier
-     *
-     * @return string
-     */
-    public function getDeviceIdentifier()
-    {
-        return $this->identifier;
-    }
-
-    /**
-     * Android-specific
-     * Returns the collapse key
-     *
-     * @return int
-     */
-    public function getCollapseKey()
-    {
-        return $this->collapseKey;
-    }
-
-    /**
-     * Android-specific
-     * Sets the collapse key
-     *
-     * @param $collapseKey
-     */
-    public function setCollapseKey($collapseKey)
-    {
-        $this->collapseKey = $collapseKey;
-    }
 }

@@ -39,9 +39,7 @@ class Configuration implements ConfigurationInterface
                 arrayNode("android")->
                     canBeUnset()->
                     children()->
-                        scalarNode("username")->isRequired()->end()->
-                        scalarNode("password")->isRequired()->end()->
-                        scalarNode("source")->defaultValue("")->end()->
+                        scalarNode("api_key")->isRequired()->end()->
                     end()->
                 end()->
             end()
