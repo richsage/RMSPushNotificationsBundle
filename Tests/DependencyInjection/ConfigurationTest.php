@@ -31,7 +31,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     {
         $arr = array(
             array(
-                "android" => array("password" => "foo")
+                "android" => array("c2dm" => array("password" => "foo"))
             ),
         );
         $config = $this->process($arr);
@@ -44,14 +44,15 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     {
         $arr = array(
             array(
-                "android" => array("username" => "foo")
+                "android" => array("c2dm" => array("username" => "foo"))
             ),
         );
         $config = $this->process($arr);
     }
 
-    public function testFullAndroid()
+    public function testOldFullAndroid()
     {
+        // NB - this is the deprecated version
         $arr = array(
             array(
                 "android" => array("username" => "foo", "password" => "bar", "source" => "123")
@@ -62,6 +63,58 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("foo", $config["android"]["username"]);
         $this->assertEquals("bar", $config["android"]["password"]);
         $this->assertEquals("123", $config["android"]["source"]);
+    }
+
+    public function testNewC2DMIsAllowedWithoutOldBits()
+    {
+        $arr = array(
+            array(
+                "android" => array(
+                    "c2dm" => array(
+                        "username" => "foo",
+                        "password" => "bar",
+                        "source" => "123"
+                    )
+                )
+            ),
+        );
+        $config = $this->process($arr);
+        $this->assertArrayHasKey("android", $config);
+        $this->assertArrayHasKey("c2dm", $config["android"]);
+        $this->assertEquals("foo", $config["android"]["c2dm"]["username"]);
+        $this->assertEquals("bar", $config["android"]["c2dm"]["password"]);
+        $this->assertEquals("123", $config["android"]["c2dm"]["source"]);
+    }
+
+    /**
+     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testGCMRequiresAPIKey()
+    {
+        $arr = array(
+            array(
+                "android" => array(
+                    "gcm" => array(
+                    )
+                )
+            ),
+        );
+        $config = $this->process($arr);
+    }
+
+    public function testGCMIsOK()
+    {
+        $arr = array(
+            array(
+                "android" => array(
+                    "gcm" => array(
+                        "api_key" => "foo"
+                    )
+                )
+            ),
+        );
+        $config = $this->process($arr);
+        $this->assertEquals("foo", $config["android"]["gcm"]["api_key"]);
     }
 
     /**
