@@ -4,17 +4,24 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="rms_push_notifications.android.class">RMS\PushNotificationsBundle\Service\OS\AndroidNotification</parameter>
+        <parameter key="rms_push_notifications.android.c2dm.class">RMS\PushNotificationsBundle\Service\OS\AndroidNotification</parameter>
+        <parameter key="rms_push_notifications.android.gcm.class">RMS\PushNotificationsBundle\Service\OS\AndroidGCMNotification</parameter>
     </parameters>
 
     <services>
 
-        <!-- Android -->
-        <service id="rms_push_notifications.android" class="%rms_push_notifications.android.class%" public="false">
-            <argument>%rms_push_notifications.android.username%</argument>
-            <argument>%rms_push_notifications.android.password%</argument>
-            <argument>%rms_push_notifications.android.source%</argument>
-            <tag name="rms_push_notifications.handler" osType="rms_push_notifications.os.android" />
+        <!-- Android (C2DM) -->
+        <service id="rms_push_notifications.android.c2dm" class="%rms_push_notifications.android.c2dm.class%" public="false">
+            <argument>%rms_push_notifications.android.c2dm.username%</argument>
+            <argument>%rms_push_notifications.android.c2dm.password%</argument>
+            <argument>%rms_push_notifications.android.c2dm.source%</argument>
+            <tag name="rms_push_notifications.handler" osType="rms_push_notifications.os.android.c2dm" />
+        </service>
+
+        <!-- Android (GCM) -->
+        <service id="rms_push_notifications.android.gcm" class="%rms_push_notifications.android.gcm.class%" public="false">
+            <argument>%rms_push_notifications.android.gcm.api_key%</argument>
+            <tag name="rms_push_notifications.handler" osType="rms_push_notifications.os.android.gcm" />
         </service>
 
     </services>
