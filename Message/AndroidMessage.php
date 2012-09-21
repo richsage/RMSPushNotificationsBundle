@@ -37,6 +37,28 @@ class AndroidMessage implements MessageInterface
     protected $collapseKey = self::DEFAULT_COLLAPSE_KEY;
 
     /**
+     * Whether this is a GCM message
+     *
+     * @var bool
+     */
+    protected $isGCM = false;
+
+    /**
+     * A collection of device identifiers that the message
+     * is intended for. GCM use only
+     *
+     * @var array
+     */
+    protected $allIdentifiers = array();
+
+    /**
+     * Options for GCM messages
+     *
+     * @var array
+     */
+    protected $gcmOptions = array();
+
+    /**
      * Sets the string message
      *
      * @param $message
@@ -67,7 +89,18 @@ class AndroidMessage implements MessageInterface
     }
 
     /**
+     * Returns any custom data
+     *
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
      * Gets the message body to send
+     * This is primarily used in C2DM
      *
      * @return array
      */
@@ -92,6 +125,7 @@ class AndroidMessage implements MessageInterface
     public function setDeviceIdentifier($identifier)
     {
         $this->identifier = $identifier;
+        $this->allIdentifiers = array($identifier);
     }
 
     /**
@@ -101,7 +135,7 @@ class AndroidMessage implements MessageInterface
      */
     public function getTargetOS()
     {
-        return Types::OS_ANDROID;
+        return ($this->isGCM ? Types::OS_ANDROID_GCM : Types::OS_ANDROID_C2DM);
     }
 
     /**
@@ -134,5 +168,66 @@ class AndroidMessage implements MessageInterface
     public function setCollapseKey($collapseKey)
     {
         $this->collapseKey = $collapseKey;
+    }
+
+    /**
+     * Set whether this is a GCM message
+     * (default false)
+     *
+     * @param $gcm
+     */
+    public function setGCM($gcm)
+    {
+        $this->isGCM = !!$gcm;
+    }
+
+    /**
+     * Returns whether this is a GCM message
+     *
+     * @return mixed
+     */
+    public function isGCM()
+    {
+        return $this->isGCM;
+    }
+
+    /**
+     * Returns an array of device identifiers
+     * Not used in C2DM
+     *
+     * @return mixed
+     */
+    public function getGCMIdentifiers()
+    {
+        return $this->allIdentifiers;
+    }
+
+    /**
+     * Adds a device identifier to the GCM list
+     */
+    public function addGCMIdentifier($identifier)
+    {
+        if (!in_array($identifier, $this->allIdentifiers)) {
+            $this->allIdentifiers[] = $identifier;
+        }
+    }
+
+    /**
+     * Sets GCM options
+     * @param array $options
+     */
+    public function setGCMOptions($options)
+    {
+        $this->gcmOptions = $options;
+    }
+
+    /**
+     * Returns GCM options
+     *
+     * @return array
+     */
+    public function getGCMOptions()
+    {
+        return $this->gcmOptions;
     }
 }
