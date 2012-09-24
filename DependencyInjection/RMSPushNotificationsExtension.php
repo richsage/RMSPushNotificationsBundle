@@ -62,9 +62,26 @@ class RMSPushNotificationsExtension extends Extension
     protected function setAndroidConfig(array $config)
     {
         $this->container->setParameter("rms_push_notifications.android.enabled", true);
-        $this->container->setParameter("rms_push_notifications.android.username", $config["android"]["username"]);
-        $this->container->setParameter("rms_push_notifications.android.password", $config["android"]["password"]);
-        $this->container->setParameter("rms_push_notifications.android.source", $config["android"]["source"]);
+        $this->container->setParameter("rms_push_notifications.android.c2dm.enabled", true);
+
+        // C2DM
+        $username = $config["android"]["username"];
+        $password = $config["android"]["password"];
+        $source = $config["android"]["source"];
+        if (isset($config["android"]["c2dm"])) {
+            $username = $config["android"]["c2dm"]["username"];
+            $password = $config["android"]["c2dm"]["password"];
+            $source = $config["android"]["c2dm"]["source"];
+        }
+        $this->container->setParameter("rms_push_notifications.android.c2dm.username", $username);
+        $this->container->setParameter("rms_push_notifications.android.c2dm.password", $password);
+        $this->container->setParameter("rms_push_notifications.android.c2dm.source", $source);
+
+        // GCM
+        $this->container->setParameter("rms_push_notifications.android.gcm.enabled", isset($config["android"]["gcm"]));
+        if (isset($config["android"]["gcm"])) {
+            $this->container->setParameter("rms_push_notifications.android.gcm.api_key", $config["android"]["gcm"]["api_key"]);
+        }
     }
 
     /**

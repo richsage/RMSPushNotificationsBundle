@@ -39,9 +39,29 @@ class Configuration implements ConfigurationInterface
                 arrayNode("android")->
                     canBeUnset()->
                     children()->
-                        scalarNode("username")->isRequired()->end()->
-                        scalarNode("password")->isRequired()->end()->
+
+                        // WARNING: These 3 fields as they are, outside of the c2dm array
+                        // are deprecrated in favour of using the c2dm array configuration
+                        // At present these will be overriden by anything supplied
+                        // in the c2dm array
+                        scalarNode("username")->defaultValue("")->end()->
+                        scalarNode("password")->defaultValue("")->end()->
                         scalarNode("source")->defaultValue("")->end()->
+
+                        arrayNode("c2dm")->
+                            canBeUnset()->
+                            children()->
+                                scalarNode("username")->isRequired()->end()->
+                                scalarNode("password")->isRequired()->end()->
+                                scalarNode("source")->defaultValue("")->end()->
+                            end()->
+                        end()->
+                        arrayNode("gcm")->
+                            canBeUnset()->
+                            children()->
+                                scalarNode("api_key")->isRequired()->cannotBeEmpty()->end()->
+                            end()->
+                        end()->
                     end()->
                 end()->
             end()
