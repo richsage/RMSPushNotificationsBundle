@@ -7,6 +7,13 @@ use RMS\PushNotificationsBundle\Device\iOS\Feedback;
 class iOSFeedback
 {
     /**
+     * Sandbox mode or not
+     *
+     * @var bool
+     */
+    protected $sandbox;
+
+    /**
      * Path to PEM file
      *
      * @var string
@@ -23,11 +30,13 @@ class iOSFeedback
     /**
      * Constructor
      *
+     * @param $sandbox
      * @param $pem
      * @param $passphrase
      */
-    public function __construct($pem, $passphrase)
+    public function __construct($sandbox, $pem, $passphrase)
     {
+        $this->sandbox = $sandbox;
         $this->pem = $pem;
         $this->passphrase = $passphrase;
     }
@@ -46,6 +55,9 @@ class iOSFeedback
         }
 
         $feedbackURL = "ssl://feedback.push.apple.com:2196";
+        if ($this->sandbox) {
+            $feedbackURL = "ssl://feedback.sandbox.push.apple.com:2196";
+        }
         $data = "";
 
         $ctx = $this->getStreamContext();
@@ -59,13 +71,10 @@ class iOSFeedback
         }
 
         $feedbacks = array();
-        $items = str_split($data, 40);
+        $items = str_split($data, 38);
         foreach ($items as $item) {
             $feedback = new Feedback();
-            $feedback->timestamp = substr($item, 0, 4);
-            $feedback->tokenLength = substr($item, 4, 2);
-            $feedback->uuid = substr($item, -32);
-            $feedbacks[] = $feedback;
+            $feedbacks[] = $feedback->unpack($item);
         }
         return $feedbacks;
     }
