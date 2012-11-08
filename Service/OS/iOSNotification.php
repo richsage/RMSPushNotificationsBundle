@@ -131,7 +131,7 @@ class iOSNotification implements OSNotificationServiceInterface
     {
         // Get the correct Apn stream and send data
         $fp = $this->getApnStream($apnURL);
-        $response = ($length === @fwrite($fp, $payload, strlen($payload)));
+        $response = (strlen($payload) === @fwrite($fp, $payload, strlen($payload)));
 
         // Check if there is responsedata to read
         $readStreams = array($fp);
