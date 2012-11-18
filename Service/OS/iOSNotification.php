@@ -31,6 +31,27 @@ class iOSNotification implements OSNotificationServiceInterface
     protected $passphrase;
 
     /**
+     * Array for streams to APN
+     *
+     * @var array
+     */
+    protected $apnStreams;
+
+    /**
+     * Array for messages to APN
+     *
+     * @var array
+     */
+    protected $messages;
+
+    /**
+     * Last used message ID
+     *
+     * @var int
+     */
+    protected $lastMessageId;
+
+    /**
      * Constructor
      *
      * @param $sandbox
@@ -42,6 +63,9 @@ class iOSNotification implements OSNotificationServiceInterface
         $this->useSandbox = $sandbox;
         $this->pem = $pem;
         $this->passphrase = $passphrase;
+        $this->apnStreams = array();
+        $this->messages = array();
+        $this->lastMessageId = -1;
     }
 
     /**
@@ -50,7 +74,7 @@ class iOSNotification implements OSNotificationServiceInterface
      * @param \RMS\PushNotificationsBundle\Message\MessageInterface|\RMS\PushNotificationsBundle\Service\OS\MessageInterface $message
      * @throws \RuntimeException
      * @throws \RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException
-     * @return bool
+     * @return int
      */
     public function send(MessageInterface $message)
     {
@@ -62,16 +86,105 @@ class iOSNotification implements OSNotificationServiceInterface
         if ($this->useSandbox) {
             $apnURL = "ssl://gateway.sandbox.push.apple.com:2195";
         }
-        $ctx = $this->getStreamContext();
-        $fp = stream_socket_client($apnURL, $err, $errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
-        if (!$fp) {
-            throw new \RuntimeException("Couldn't connect to APN server");
+
+        $messageId = ++$this->lastMessageId;
+        $this->messages[$messageId] = $this->createPayload($messageId, $message->getDeviceIdentifier(), $message->getMessageBody());
+        $this->sendMessages($messageId, $apnURL);
+
+        return $messageId;
+    }
+
+    /**
+     * Send all notification messages starting from the given ID
+     *
+     * @param int $firstMessageId
+     * @param string $apnURL
+     * @throws \RuntimeException
+     * @throws \RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException
+     * @return int
+     */
+    protected function sendMessages($firstMessageId, $apnURL)
+    {
+        // Loop through all messages starting from the given ID
+        for ($currentMessageId = $firstMessageId; $currentMessageId < count($this->messages); $currentMessageId++)
+        {
+            // Send the message
+            $result = $this->writeApnStream($apnURL, $this->messages[$currentMessageId]);
+
+            // Check if there is an error result
+            if (is_array($result)) {
+                // Resend all messages that where send after the failed message
+                $this->sendMessages($result['identifier']+1, $apnURL);
+            }
+        }
+    }
+
+    /**
+     * Write data to the apn stream that is associated with the given apn URL
+     *
+     * @param string $apnURL
+     * @param string $payload
+     * @throws \RuntimeException
+     * @return mixed
+     */
+    protected function writeApnStream($apnURL, $payload)
+    {
+        // Get the correct Apn stream and send data
+        $fp = $this->getApnStream($apnURL);
+        $response = (strlen($payload) === @fwrite($fp, $payload, strlen($payload)));
+
+        // Check if there is responsedata to read
+        $readStreams = array($fp);
+        $null = NULL;
+        $streamsReadyToRead = stream_select($readStreams, $null, $null, 1, 0);
+        if ($streamsReadyToRead > 0) {
+            // Unpack error response data and set as the result
+            $response = @unpack("Ccommand/Cstatus/Nidentifier", fread($fp, 6));
+            $this->closeApnStream($apnURL);
         }
 
-        $payload = $this->createPayload($message->getDeviceIdentifier(), $message->getMessageBody());
-        $result = fwrite($fp, $payload, strlen($payload));
-        fclose($fp);
-        return $result;
+        // Will contain true if writing succeeded and no error is returned yet
+        return $response;
+    }
+
+    /**
+     * Get an apn stream associated with the given apn URL, create one if necessary
+     *
+     * @param string $apnURL
+     * @throws \RuntimeException
+     * @return resource
+     */
+    protected function getApnStream($apnURL)
+    {
+        if (!isset($this->apnStreams[$apnURL])) {
+            // No stream found, setup a new stream
+            $ctx = $this->getStreamContext();
+            $this->apnStreams[$apnURL] = stream_socket_client($apnURL, $err, $errstr, 60, STREAM_CLIENT_CONNECT, $ctx);
+            if (!$this->apnStreams[$apnURL]) {
+                throw new \RuntimeException("Couldn't connect to APN server");
+            }
+
+            // Reduce buffering and blocking
+            stream_set_read_buffer($this->apnStreams[$apnURL], 6);
+            stream_set_write_buffer($this->apnStreams[$apnURL], 0);
+            stream_set_blocking($this->apnStreams[$apnURL], 0);
+        }
+
+        return $this->apnStreams[$apnURL];
+    }
+
+    /**
+     * Close the apn stream associated with the given apn URL
+     *
+     * @param string $apnURL
+     */
+    protected function closeApnStream($apnURL)
+    {
+        if (isset($this->apnStreams[$apnURL])) {
+            // Stream found, close the stream
+            fclose($this->apnStreams[$apnURL]);
+            unset($this->apnStreams[$apnURL]);
+        }
     }
 
     /**
@@ -95,15 +208,16 @@ class iOSNotification implements OSNotificationServiceInterface
     /**
      * Creates the full payload for the notification
      *
+     * @param $messageId
      * @param $token
      * @param $message
      * @return string
      */
-    protected function createPayload($token, $message)
+    protected function createPayload($messageId, $token, $message)
     {
         $jsonBody = json_encode($message, JSON_FORCE_OBJECT);
         $token = preg_replace("/[^0-9A-Fa-f]/", "", $token);
-        $payload = chr(0) . pack("n", 32) . pack("H*", $token) . pack("n", strlen($jsonBody)) . $jsonBody;
+        $payload = chr(1) . pack("N", $messageId) . pack("N", 0) . pack("n", 32) . pack("H*", $token) . pack("n", strlen($jsonBody)) . $jsonBody;
 
         return $payload;
     }
