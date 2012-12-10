@@ -31,21 +31,21 @@ Below you'll find all configuration options; just use what you need:
 
 A little example of how to push your first message to an iOS device, we'll assume that you've set up the configuration correctly:
 
-  use RMS\PushNotificationsBundle\Message\iOSMessage;
+    use RMS\PushNotificationsBundle\Message\iOSMessage;
 
-  class PushDemoController extends Controller
-  {
-      public function pushAction()
-      {
-          $message = new iOSMessage();
-          $message->setMessage('Oh my! A push notification!');
-          $message->setDeviceIdentifier('test012fasdf482asdfd63f6d7bc6d4293aedd5fb448fe505eb4asdfef8595a7');
+    class PushDemoController extends Controller
+    {
+        public function pushAction()
+        {
+            $message = new iOSMessage();
+            $message->setMessage('Oh my! A push notification!');
+            $message->setDeviceIdentifier('test012fasdf482asdfd63f6d7bc6d4293aedd5fb448fe505eb4asdfef8595a7');
 
-          $this->container->get('rms_push_notifications')->send($message);
+            $this->container->get('rms_push_notifications')->send($message);
 
-          return new Response('Push notification send!');
-      }
-  }
+            return new Response('Push notification send!');
+        }
+    }
 
 The send method will detect the type of message so if you'll pass it an `AndroidMessage` it will automatically send it through the C2DM/GCM servers, and likewise for Blackberry.
 
