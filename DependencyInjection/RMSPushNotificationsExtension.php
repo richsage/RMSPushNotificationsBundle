@@ -91,6 +91,11 @@ class RMSPushNotificationsExtension extends Extension
      */
     protected function setiOSConfig(array $config)
     {
+        // PEM file is required
+        if (!file_exists($config['ios']['pem'])) {
+            throw new \RuntimeException(sprintf('Pem file "%s" not found.', $config['ios']['pem']));
+        }
+        
         $this->container->setParameter("rms_push_notifications.ios.enabled", true);
         $this->container->setParameter("rms_push_notifications.ios.sandbox", $config["ios"]["sandbox"]);
         $this->container->setParameter("rms_push_notifications.ios.pem", $config["ios"]["pem"]);
