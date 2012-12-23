@@ -52,13 +52,20 @@ class iOSNotification implements OSNotificationServiceInterface
     protected $lastMessageId;
 
     /**
+     * JSON_UNESCAPED_UNICODE
+     *
+     * @var boolean
+     */
+    protected $jsonUnescapedUnicode = FALSE;
+
+    /**
      * Constructor
      *
      * @param $sandbox
      * @param $pem
      * @param $passphrase
      */
-    public function __construct($sandbox, $pem, $passphrase = "")
+    public function __construct($sandbox, $pem, $passphrase = "", $jsonUnescapedUnicode = FALSE)
     {
         $this->useSandbox = $sandbox;
         $this->pem = $pem;
@@ -66,6 +73,18 @@ class iOSNotification implements OSNotificationServiceInterface
         $this->apnStreams = array();
         $this->messages = array();
         $this->lastMessageId = -1;
+        $this->jsonUnescapedUnicode = $jsonUnescapedUnicode;
+    }
+
+    /**
+     * Set option JSON_UNESCAPED_UNICODE to json encoders
+     *
+     * @param boolean $jsonUnescapedUnicode
+     */
+    public function setJsonUnescapedUnicode($jsonUnescapedUnicode)
+    {
+        $this->jsonUnescapedUnicode = (bool) $jsonUnescapedUnicode;
+        return $this;
     }
 
     /**
@@ -215,7 +234,34 @@ class iOSNotification implements OSNotificationServiceInterface
      */
     protected function createPayload($messageId, $token, $message)
     {
-        $jsonBody = json_encode($message, JSON_FORCE_OBJECT);
+        if ($this->jsonUnescapedUnicode) {
+            // Validate PHP version
+            if (!version_compare(PHP_VERSION, '5.4.0', '>=')) {
+                throw new \LogicException(sprintf(
+                    'Can\'t use JSON_UNESCAPED_UNICODE option on PHP %s. Support PHP >= 5.4.0',
+                    PHP_VERSION
+                ));
+            }
+
+            // WARNING:
+            // Set otpion JSON_UNESCAPED_UNICODE is violation
+            // of RFC 4627
+            // Because required validate charsets (Must be UTF-8)
+
+            if (mb_detect_encoding($message['aps']['alert']) != 'UTF-8') {
+                throw new \InvalidArgumentException(sprintf(
+                    'Message must be UTF-8 encoding, "%s" given.',
+                    mb_detect_encoding($message)
+                ));
+            }
+
+
+            $jsonBody = json_encode($message, JSON_UNESCAPED_UNICODE ^ JSON_FORCE_OBJECT);
+        }
+        else {
+            $jsonBody = json_encode($message, JSON_FORCE_OBJECT);
+        }
+
         $token = preg_replace("/[^0-9A-Fa-f]/", "", $token);
         $payload = chr(1) . pack("N", $messageId) . pack("N", 0) . pack("n", 32) . pack("H*", $token) . pack("n", strlen($jsonBody)) . $jsonBody;
 
