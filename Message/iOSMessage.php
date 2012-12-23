@@ -37,7 +37,7 @@ class iOSMessage implements MessageInterface
             ),
         );
 
-        if (!$identifier !== NULL) {
+        if ($identifier !== NULL) {
             $this->identifier = $identifier;
         }
     }
