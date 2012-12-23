@@ -30,12 +30,16 @@ class iOSMessage implements MessageInterface
     /**
      * Class constructor
      */
-    public function __construct()
+    public function __construct($identifier = NULL)
     {
         $this->apsBody = array(
             "aps" => array(
             ),
         );
+
+        if (!$identifier !== NULL) {
+            $this->identifier = $identifier;
+        }
     }
 
     /**
@@ -51,14 +55,48 @@ class iOSMessage implements MessageInterface
     /**
      * Sets any custom data for the APS body
      *
-     * @param $data
+     * @param array $data
      */
     public function setData($data)
     {
+        if (!is_array($data)) {
+            throw new \InvalidArgumentException(sprintf('Messages custom data must be array, "%s" given.', gettype($data)));
+        }
+
         if (array_key_exists("aps", $data)) {
             unset($data["aps"]);
         }
-        $this->customData = $data;
+
+        foreach ($data as $key => $value) {
+            $this->addCustomData($key, $value);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add custom data
+     *
+     * @param string $key
+     * @param mixed $value
+     */
+    public function addCustomData($key, $value)
+    {
+        if ($key == 'aps') {
+            throw new \LogicException('Can\'t replace "aps" data. Please call to setMessage, if your want replace message text.');
+        }
+
+        if (is_object($value)) {
+            if (interface_exists('JsonSerializable') && !$value instanceof \stdClass && !$value instanceof \JsonSerializable) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Object %s::%s must be implements JsonSerializable interface for next serialize data.',
+                    get_class($value), spl_object_hash($value)
+                ));
+            }
+        }
+
+        $this->customData[$key] = $value;
+        return $this;
     }
 
     /**
