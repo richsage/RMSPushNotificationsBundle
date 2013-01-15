@@ -95,7 +95,7 @@ class AndroidMessage implements MessageInterface
      */
     public function getData()
     {
-        return $this->data;
+        return array_merge(array('message' => $this->getMessage()), $this->data);
     }
 
     /**
