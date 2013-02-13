@@ -248,10 +248,11 @@ class iOSNotification implements OSNotificationServiceInterface
             // of RFC 4627
             // Because required validate charsets (Must be UTF-8)
 
-            if (mb_detect_encoding($message['aps']['alert']) != 'UTF-8') {
+            $encoding = mb_detect_encoding($message['aps']['alert']);
+            if ($encoding != 'UTF-8' && $encoding != 'ASCII') {
                 throw new \InvalidArgumentException(sprintf(
                     'Message must be UTF-8 encoding, "%s" given.',
-                    mb_detect_encoding($message)
+                    mb_detect_encoding($message['aps']['alert'])
                 ));
             }
 
