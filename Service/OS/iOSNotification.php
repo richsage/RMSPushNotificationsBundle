@@ -184,7 +184,9 @@ class iOSNotification implements OSNotificationServiceInterface
             }
 
             // Reduce buffering and blocking
-            stream_set_read_buffer($this->apnStreams[$apnURL], 6);
+            if (function_exists("stream_set_read_buffer")) {
+                stream_set_read_buffer($this->apnStreams[$apnURL], 6);
+            }
             stream_set_write_buffer($this->apnStreams[$apnURL], 0);
             stream_set_blocking($this->apnStreams[$apnURL], 0);
         }
