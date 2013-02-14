@@ -4,7 +4,25 @@ A bundle to allow sending of push notifications to mobile devices.  Currently su
 
 ## Installation
 
-To use this bundle in your Symfony2 project add `richsage/rms-push-notifications-bundle` to the required packages in your `composer.json` and run `php composer.phar update` to install the bundle. Then add `new RMS\PushNotificationsBundle\RMSPushNotificationsBundle()` to your `$bundles`-array in the `AppKernel.php` and you're ready!
+To use this bundle in your Symfony2 project add `richsage/rms-push-notifications-bundle` to the required packages in your `composer.json`:
+
+    //composer.json
+    "require": {
+        ...
+        ...
+        "richsage/rms-push-notifications-bundle": "dev-master",
+    }
+
+and run `php composer.phar update` to install the bundle.
+
+Then add the bundle to your `$bundles`-array in the `AppKernel.php` and you're ready!
+
+    // app/AppKernel.php
+    $bundles = array(
+        ...
+        ...
+        new RMS\PushNotificationsBundle\RMSPushNotificationsBundle(),
+    );
 
 ## Configuration
 
@@ -20,7 +38,7 @@ Below you'll find all configuration options; just use what you need:
               api_key: <string_android_gcm_api_key>
       ios:
           sandbox: <bool_use_apns_sandbox>
-          pem: <path_apns_certificate>
+          pem: <path_apns_certificate> # absolute path to the file or relative path from app directory
           passphrase: <string_apns_certificate_passphrase>
       blackberry:
           evaluation: <bool_bb_evaluation_mode>
@@ -59,4 +77,3 @@ Since both C2DM and GCM are still available, the `AndroidMessage` class has a sm
     $message->setGCM(true);
     
 to send as a GCM message rather than C2DM.
-
