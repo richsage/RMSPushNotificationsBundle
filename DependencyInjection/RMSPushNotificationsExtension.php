@@ -91,9 +91,18 @@ class RMSPushNotificationsExtension extends Extension
      */
     protected function setiOSConfig(array $config)
     {
+		global $kernel;
+		// Check if pem_file has an absolute path,
+		// otherwise it is converted to absolute path
+		// relative to app directory
+		if( substr($config['ios']['pem'], 0, 1 ) == DIRECTORY_SEPARATOR ) {
+			$pemfile = $config['ios']['pem'];
+		} else {
+			$pemfile = $kernel->getRootDir().DIRECTORY_SEPARATOR.$config['ios']['pem'];
+		}
         // PEM file is required
-        if (!file_exists($config['ios']['pem'])) {
-            throw new \RuntimeException(sprintf('Pem file "%s" not found.', $config['ios']['pem']));
+        if (!file_exists($pemfile)) {
+            throw new \RuntimeException(sprintf('Pem file "%s" not found.', $pemfile));
         }
 
         if ($config['ios']['json_unescaped_unicode']) {
@@ -108,7 +117,7 @@ class RMSPushNotificationsExtension extends Extension
 
         $this->container->setParameter("rms_push_notifications.ios.enabled", true);
         $this->container->setParameter("rms_push_notifications.ios.sandbox", $config["ios"]["sandbox"]);
-        $this->container->setParameter("rms_push_notifications.ios.pem", $config["ios"]["pem"]);
+        $this->container->setParameter("rms_push_notifications.ios.pem", $pemfile);
         $this->container->setParameter("rms_push_notifications.ios.passphrase", $config["ios"]["passphrase"]);
         $this->container->setParameter("rms_push_notifications.ios.json_unescaped_unicode", (bool) $config['ios']['json_unescaped_unicode']);
     }
