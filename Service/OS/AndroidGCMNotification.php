@@ -49,11 +49,12 @@ class AndroidGCMNotification implements OSNotificationServiceInterface
      * Constructor
      *
      * @param $apiKey
+     * @param MultiCurl $client (optional)
      */
-    public function __construct($apiKey)
+    public function __construct($apiKey, MultiCurl $client = null)
     {
         $this->apiKey = $apiKey;
-        $this->browser = new Browser(new MultiCurl());
+        $this->browser = new Browser($client ?: new MultiCurl());
     }
 
     /**
