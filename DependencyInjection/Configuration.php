@@ -80,7 +80,7 @@ class Configuration implements ConfigurationInterface
                         booleanNode("sandbox")->defaultFalse()->end()->
                         scalarNode("pem")->isRequired()->cannotBeEmpty()->end()->
                         scalarNode("passphrase")->defaultValue("")->end()->
-                        scalarNode('json_unescaped_unicode')->defaultFalse()->info('PHP >= 5.4.0 and each messaged must be UTF-8 encoding')->end()->
+                        scalarNode('json_unescaped_unicode')->defaultFalse()->end()->
                     end()->
                 end()->
             end()
