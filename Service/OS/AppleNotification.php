@@ -132,7 +132,7 @@ class AppleNotification implements OSNotificationServiceInterface
 
             // Check if there is an error result
             if (is_array($result)) {
-                // Resend all messages that where send after the failed message
+                // Resend all messages that were sent after the failed message
                 $this->sendMessages($result['identifier']+1, $apnURL);
             }
         }
