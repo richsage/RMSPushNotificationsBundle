@@ -73,14 +73,18 @@ class Configuration implements ConfigurationInterface
      */
     protected function addiOS()
     {
-        $this->root->
+        $config = $this->root->
             children()->
                 arrayNode("ios")->
                     children()->
                         booleanNode("sandbox")->defaultFalse()->end()->
                         scalarNode("pem")->isRequired()->cannotBeEmpty()->end()->
                         scalarNode("passphrase")->defaultValue("")->end()->
-                        scalarNode('json_unescaped_unicode')->defaultFalse()->end()->
+                        scalarNode('json_unescaped_unicode')->defaultFalse();
+                        if (method_exists($config,'info')) {
+                            $config = $config->info('PHP >= 5.4.0 and each messaged must be UTF-8 encoding');
+                        }
+                        $config->end()->
                     end()->
                 end()->
             end()
