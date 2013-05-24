@@ -38,7 +38,7 @@ A little example of how to push your first message to an iOS device, we'll assum
         public function pushAction()
         {
             $message = new iOSMessage();
-            $message->setMessage('Oh my! A push notification!');
+            $message->setMessage('A simple iOS message');
             $message->setDeviceIdentifier('test012fasdf482asdfd63f6d7bc6d4293aedd5fb448fe505eb4asdfef8595a7');
 
             $this->container->get('rms_push_notifications')->send($message);
@@ -46,6 +46,28 @@ A little example of how to push your first message to an iOS device, we'll assum
             return new Response('Push notification send!');
         }
     }
+
+### iOS Advanced Localisation Example
+
+An example of how to supply a localised message with parameter substitution. Read the APNS docs for more information.
+
+    use RMS\PushNotificationsBundle\Message\iOSMessage;
+
+    class PushDemoController extends Controller
+    {
+        public function pushAction()
+        {
+            $message = new iOSMessage();
+            $message->setMessage(array('loc-key' => 'LOC_GREET @%, @%', 'loc-args' => array('Some','Person')'));
+            $message->setDeviceIdentifier('test012fasdf482asdfd63f6d7bc6d4293aedd5fb448fe505eb4asdfef8595a7');
+
+            $this->container->get('rms_push_notifications')->send($message);
+
+            return new Response('Push notification send!');
+        }
+    }
+
+
 
 The send method will detect the type of message so if you'll pass it an `AndroidMessage` it will automatically send it through the C2DM/GCM servers, and likewise for Blackberry.
 
