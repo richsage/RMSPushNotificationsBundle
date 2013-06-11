@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="rms_push_notifications.mac.class">RMS\PushNotificationsBundle\Service\OS\AppleNotification</parameter>
+    </parameters>
+
+    <services>
+
+        <!-- Mac-->
+        <service id="rms_push_notifications.mac" class="%rms_push_notifications.mac.class%" public="false">
+            <argument>%rms_push_notifications.mac.sandbox%</argument>
+            <argument>%rms_push_notifications.mac.pem%</argument>
+            <argument>%rms_push_notifications.mac.passphrase%</argument>
+            <argument>%rms_push_notifications.mac.json_unescaped_unicode%</argument>
+            <tag name="rms_push_notifications.handler" osType="rms_push_notifications.os.mac" />
+        </service>
+    </services>
+
+</container>

@@ -24,6 +24,7 @@ class Configuration implements ConfigurationInterface
 
         $this->addAndroid();
         $this->addiOS();
+        $this->addMac();
         $this->addBlackberry();
 
         return $treeBuilder;
@@ -73,9 +74,25 @@ class Configuration implements ConfigurationInterface
      */
     protected function addiOS()
     {
+        $this->addApple("ios");
+    }
+
+    /**
+     * Mac configuration
+     */
+    protected function addMac()
+    {
+        $this->addApple("mac");
+    }
+
+    /**
+     * Generic Apple Configuration
+     */
+    private function addApple($os)
+    {
         $this->root->
             children()->
-                arrayNode("ios")->
+                arrayNode($os)->
                     children()->
                         booleanNode("sandbox")->defaultFalse()->end()->
                         scalarNode("pem")->isRequired()->cannotBeEmpty()->end()->

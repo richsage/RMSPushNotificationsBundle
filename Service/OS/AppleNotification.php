@@ -3,11 +3,11 @@
 namespace RMS\PushNotificationsBundle\Service\OS;
 
 use RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException,
-    RMS\PushNotificationsBundle\Message\iOSMessage,
+    RMS\PushNotificationsBundle\Message\AppleMessage,
     RMS\PushNotificationsBundle\Message\MessageInterface;
 use Buzz\Browser;
 
-class iOSNotification implements OSNotificationServiceInterface
+class AppleNotification implements OSNotificationServiceInterface
 {
     /**
      * Whether or not to use the sandbox APNS
@@ -97,7 +97,7 @@ class iOSNotification implements OSNotificationServiceInterface
      */
     public function send(MessageInterface $message)
     {
-        if (!$message instanceof iOSMessage) {
+        if (!$message instanceof AppleMessage) {
             throw new InvalidMessageTypeException(sprintf("Message type '%s' not supported by APN", get_class($message)));
         }
 

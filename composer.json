@@ -10,6 +10,11 @@
             "name": "Rich Sage",
             "email": "rich.sage@gmail.com",
             "homepage": "http://www.richsage.co.uk/"
+        },
+        {
+            "name": "Jerome Miglino",
+            "email": "jerome.miglino@gmail.com",
+            "homepage": "http://www.miglino.com/"
         }
     ],
     "require": {

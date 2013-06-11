@@ -39,6 +39,10 @@ class RMSPushNotificationsExtension extends Extension
             $this->setiOSConfig($config);
             $loader->load('ios.xml');
         }
+        if (isset($config["mac"])) {
+            $this->setMacConfig($config);
+            $loader->load('mac.xml');
+        }
         if (isset($config["blackberry"])) {
             $this->setBlackberryConfig($config);
             $loader->load('blackberry.xml');
@@ -52,6 +56,7 @@ class RMSPushNotificationsExtension extends Extension
     {
         $this->container->setParameter("rms_push_notifications.android.enabled", false);
         $this->container->setParameter("rms_push_notifications.ios.enabled", false);
+        $this->container->setParameter("rms_push_notifications.mac.enabled", false);
     }
 
     /**
@@ -91,12 +96,38 @@ class RMSPushNotificationsExtension extends Extension
      */
     protected function setiOSConfig(array $config)
     {
-        // PEM file is required
-        if (!file_exists($config['ios']['pem'])) {
-            throw new \RuntimeException(sprintf('Pem file "%s" not found.', $config['ios']['pem']));
+        $this->setAppleConfig($config, "ios");
+    }
+
+    /**
+     * Sets Mac config into container
+     *
+     * @param array $config
+     */
+    protected function setMacConfig(array $config)
+    {
+        $this->setAppleConfig($config, "mac");
+    }
+
+    /**
+     * Sets Apple config into container
+     *
+     * @param array $config
+     */
+    protected function setAppleConfig(array $config, $os)
+    {
+        $supportedAppleOS = array("mac", "ios");
+        //Check if the OS is supported
+        if (!in_array($os, $supportedAppleOS, true)) {
+            throw new \RuntimeException(sprintf('This Apple OS "%s" is not supported', $os));
         }
 
-        if ($config['ios']['json_unescaped_unicode']) {
+        // PEM file is required
+        if (!file_exists($config[$os]['pem'])) {
+            throw new \RuntimeException(sprintf('Pem file "%s" not found.', $config[$os]['pem']));
+        }
+
+        if ($config[$os]['json_unescaped_unicode']) {
             // Not support JSON_UNESCAPED_UNICODE option
             if (!version_compare(PHP_VERSION, '5.4.0', '>=')) {
                 throw new \LogicException(sprintf(
@@ -106,11 +137,11 @@ class RMSPushNotificationsExtension extends Extension
             }
         }
 
-        $this->container->setParameter("rms_push_notifications.ios.enabled", true);
-        $this->container->setParameter("rms_push_notifications.ios.sandbox", $config["ios"]["sandbox"]);
-        $this->container->setParameter("rms_push_notifications.ios.pem", $config["ios"]["pem"]);
-        $this->container->setParameter("rms_push_notifications.ios.passphrase", $config["ios"]["passphrase"]);
-        $this->container->setParameter("rms_push_notifications.ios.json_unescaped_unicode", (bool) $config['ios']['json_unescaped_unicode']);
+        $this->container->setParameter(sprintf('rms_push_notifications.%s.enabled', $os), true);
+        $this->container->setParameter(sprintf('rms_push_notifications.%s.sandbox', $os), $config[$os]["sandbox"]);
+        $this->container->setParameter(sprintf('rms_push_notifications.%s.pem', $os), $config[$os]["pem"]);
+        $this->container->setParameter(sprintf('rms_push_notifications.%s.passphrase', $os), $config[$os]["passphrase"]);
+        $this->container->setParameter(sprintf('rms_push_notifications.%s.json_unescaped_unicode', $os), (bool) $config[$os]['json_unescaped_unicode']);
     }
 
     /**
