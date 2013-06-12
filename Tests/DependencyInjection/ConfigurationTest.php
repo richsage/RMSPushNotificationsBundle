@@ -158,6 +158,44 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
      */
+    public function testAddingMacKeyRequiresValues()
+    {
+        $arr = array(
+            array("mac" => "~"),
+        );
+        $config = $this->process($arr);
+    }
+
+    /**
+     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testMacRequiresPEM()
+    {
+        $arr = array(
+            array(
+                "mac" => array("pem" => "")
+            ),
+        );
+        $config = $this->process($arr);
+    }
+
+    public function testFullMac()
+    {
+        $arr = array(
+            array(
+                "mac" => array("sandbox" => false, "pem" => "foo/bar.pem", "passphrase" => "foo")
+            ),
+        );
+        $config = $this->process($arr);
+        $this->assertArrayHasKey("mac", $config);
+        $this->assertEquals(false, $config["mac"]["sandbox"]);
+        $this->assertEquals("foo/bar.pem", $config["mac"]["pem"]);
+        $this->assertEquals("foo", $config["mac"]["passphrase"]);
+    }
+
+    /**
+     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
     public function testBlackberryRequiresAppID()
     {
         $arr = array(

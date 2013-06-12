@@ -22,6 +22,10 @@ Below you'll find all configuration options; just use what you need:
           sandbox: <bool_use_apns_sandbox>
           pem: <path_apns_certificate>
           passphrase: <string_apns_certificate_passphrase>
+      mac:
+          sandbox: <bool_use_apns_sandbox>
+          pem: <path_apns_certificate>
+          passphrase: <string_apns_certificate_passphrase>
       blackberry:
           evaluation: <bool_bb_evaluation_mode>
           app_id: <string_bb_app_id>
@@ -47,7 +51,7 @@ A little example of how to push your first message to an iOS device, we'll assum
         }
     }
 
-The send method will detect the type of message so if you'll pass it an `AndroidMessage` it will automatically send it through the C2DM/GCM servers, and likewise for Blackberry.
+The send method will detect the type of message so if you'll pass it an `AndroidMessage` it will automatically send it through the C2DM/GCM servers, and likewise for Mac and Blackberry.
 
 ## Android messages
 
@@ -57,6 +61,6 @@ Since both C2DM and GCM are still available, the `AndroidMessage` class has a sm
 
     $message = new AndroidMessage();
     $message->setGCM(true);
-    
+
 to send as a GCM message rather than C2DM.
 
