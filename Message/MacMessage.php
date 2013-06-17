@@ -5,7 +5,7 @@ namespace RMS\PushNotificationsBundle\Message;
 use RMS\PushNotificationsBundle\Message\AppleMessage;
 use RMS\PushNotificationsBundle\Device\Types;
 
-class iOSMessage extends AppleMessage
+class MacMessage extends AppleMessage
 {
     /**
      * Returns the target OS for this message
@@ -14,6 +14,6 @@ class iOSMessage extends AppleMessage
      */
     public function getTargetOS()
     {
-        return Types::OS_IOS;
+        return Types::OS_MAC;
     }
 }

@@ -6,8 +6,9 @@
     <parameters>
         <parameter key="rms_push_notifications.class">RMS\PushNotificationsBundle\Service\Notifications</parameter>
         <parameter key="rms_push_notifications.android.class">RMS\PushNotificationsBundle\Service\OS\AndroidNotification</parameter>
-        <parameter key="rms_push_notifications.ios.class">RMS\PushNotificationsBundle\Service\OS\iOSNotification</parameter>
+        <parameter key="rms_push_notifications.ios.class">RMS\PushNotificationsBundle\Service\OS\AppleNotification</parameter>
         <parameter key="rms_push_notifications.ios.feedback.class">RMS\PushNotificationsBundle\Service\iOSFeedback</parameter>
+        <parameter key="rms_push_notifications.mac.class">RMS\PushNotificationsBundle\Service\OS\AppleNotification</parameter>
     </parameters>
 
     <services>
