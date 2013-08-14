@@ -101,14 +101,9 @@ class AppleNotification implements OSNotificationServiceInterface
             throw new InvalidMessageTypeException(sprintf("Message type '%s' not supported by APN", get_class($message)));
         }
 
-        $apnURL = "ssl://gateway.push.apple.com:2195";
-        if ($this->useSandbox) {
-            $apnURL = "ssl://gateway.sandbox.push.apple.com:2195";
-        }
-
         $messageId = ++$this->lastMessageId;
         $this->messages[$messageId] = $this->createPayload($messageId, $message->getDeviceIdentifier(), $message->getMessageBody());
-        $errors = $this->sendMessages($messageId, $apnURL);
+        $errors = $this->sendMessages($messageId);
 
         return !$errors;
     }
@@ -122,9 +117,15 @@ class AppleNotification implements OSNotificationServiceInterface
      * @throws \RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException
      * @return int
      */
-    protected function sendMessages($firstMessageId, $apnURL)
+    protected function sendMessages($firstMessageId)
     {
         $errors = array();
+
+        $apnURL = "ssl://gateway.push.apple.com:2195";
+        if ($this->useSandbox) {
+            $apnURL = "ssl://gateway.sandbox.push.apple.com:2195";
+        }
+
         // Loop through all messages starting from the given ID
         for ($currentMessageId = $firstMessageId; $currentMessageId < count($this->messages); $currentMessageId++)
         {
