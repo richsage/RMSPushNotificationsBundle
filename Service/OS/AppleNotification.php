@@ -52,6 +52,13 @@ class AppleNotification implements OSNotificationServiceInterface
     protected $lastMessageId;
 
     /**
+     * Log of errors thrown to us from Apple
+     *
+     * @var type array
+     */
+    protected $errors = array();
+
+    /**
      * JSON_UNESCAPED_UNICODE
      *
      * @var boolean
@@ -88,14 +95,14 @@ class AppleNotification implements OSNotificationServiceInterface
     }
 
     /**
-     * Send a notification message
+     * Queue a notification message for later sending
      *
-     * @param \RMS\PushNotificationsBundle\Message\MessageInterface|\RMS\PushNotificationsBundle\Service\OS\MessageInterface $message
+     * @param  AppleMessage                $message
      * @throws \RuntimeException
-     * @throws \RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException
-     * @return bool
+     * @throws InvalidMessageTypeException
+     * @return int                         Id of the message
      */
-    public function send(MessageInterface $message)
+    public function queue(MessageInterface $message)
     {
         if (!$message instanceof AppleMessage) {
             throw new InvalidMessageTypeException(sprintf("Message type '%s' not supported by APN", get_class($message)));
@@ -103,6 +110,21 @@ class AppleNotification implements OSNotificationServiceInterface
 
         $messageId = ++$this->lastMessageId;
         $this->messages[$messageId] = $this->createPayload($messageId, $message->getDeviceIdentifier(), $message->getMessageBody());
+
+        return $messageId;
+    }
+
+    /**
+     * Send a single notification message
+     *
+     * @param  AppleMessage                $message
+     * @throws \RuntimeException
+     * @throws InvalidMessageTypeException
+     * @return bool                        True if messages sent successfully
+     */
+    public function send(MessageInterface $message)
+    {
+        $messageId = $this->queue($message);
         $errors = $this->sendMessages($messageId);
 
         return !$errors;
@@ -111,37 +133,34 @@ class AppleNotification implements OSNotificationServiceInterface
     /**
      * Send all notification messages starting from the given ID
      *
-     * @param int $firstMessageId
-     * @param string $apnURL
+     * @param  int                         $firstMessageId
+     * @param  string                      $apnURL
      * @throws \RuntimeException
-     * @throws \RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException
-     * @return int
+     * @throws InvalidMessageTypeException
+     * @return array                       Array of errors returned
      */
-    protected function sendMessages($firstMessageId)
+    protected function sendMessages($firstMessageId = 0)
     {
-        $errors = array();
-
         $apnURL = "ssl://gateway.push.apple.com:2195";
         if ($this->useSandbox) {
             $apnURL = "ssl://gateway.sandbox.push.apple.com:2195";
         }
 
         // Loop through all messages starting from the given ID
-        for ($currentMessageId = $firstMessageId; $currentMessageId < count($this->messages); $currentMessageId++)
-        {
+        for ($currentMessageId = $firstMessageId; $currentMessageId < count($this->messages); $currentMessageId++) {
             // Send the message
             $result = $this->writeApnStream($apnURL, $this->messages[$currentMessageId]);
 
-            $errors = array();
-
             // Check if there is an error result
             if (is_array($result)) {
+                // Save the error
+                $this->errors[] = $result;
                 // Resend all messages that were sent after the failed message
                 $this->sendMessages($result['identifier']+1, $apnURL);
-                $errors[] = $result;
             }
         }
-        return $errors;
+
+        return $this->$errors;
     }
 
     /**
