@@ -125,7 +125,7 @@ class AppleNotification implements OSNotificationServiceInterface
     public function send(MessageInterface $message)
     {
         $messageId = $this->queue($message);
-        $errors = $this->sendMessages($messageId);
+        $errors = $this->flush($messageId);
 
         return !$errors;
     }
@@ -139,7 +139,7 @@ class AppleNotification implements OSNotificationServiceInterface
      * @throws InvalidMessageTypeException
      * @return array                       Array of errors returned
      */
-    protected function sendMessages($firstMessageId = 0)
+    protected function flush($firstMessageId = 0)
     {
         $apnURL = "ssl://gateway.push.apple.com:2195";
         if ($this->useSandbox) {
@@ -156,7 +156,7 @@ class AppleNotification implements OSNotificationServiceInterface
                 // Save the error
                 $this->errors[] = $result;
                 // Resend all messages that were sent after the failed message
-                $this->sendMessages($result['identifier']+1, $apnURL);
+                $this->flush($result['identifier']+1, $apnURL);
             }
         }
 
