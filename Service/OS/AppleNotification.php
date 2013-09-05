@@ -93,7 +93,7 @@ class AppleNotification implements OSNotificationServiceInterface
      * @param \RMS\PushNotificationsBundle\Message\MessageInterface|\RMS\PushNotificationsBundle\Service\OS\MessageInterface $message
      * @throws \RuntimeException
      * @throws \RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException
-     * @return int
+     * @return bool
      */
     public function send(MessageInterface $message)
     {
@@ -108,9 +108,9 @@ class AppleNotification implements OSNotificationServiceInterface
 
         $messageId = ++$this->lastMessageId;
         $this->messages[$messageId] = $this->createPayload($messageId, $message->getDeviceIdentifier(), $message->getMessageBody());
-        $this->sendMessages($messageId, $apnURL);
+        $errors = $this->sendMessages($messageId, $apnURL);
 
-        return $messageId;
+        return !$errors;
     }
 
     /**
@@ -124,18 +124,23 @@ class AppleNotification implements OSNotificationServiceInterface
      */
     protected function sendMessages($firstMessageId, $apnURL)
     {
+        $errors = array();
         // Loop through all messages starting from the given ID
         for ($currentMessageId = $firstMessageId; $currentMessageId < count($this->messages); $currentMessageId++)
         {
             // Send the message
             $result = $this->writeApnStream($apnURL, $this->messages[$currentMessageId]);
 
+            $errors = array();
+
             // Check if there is an error result
             if (is_array($result)) {
-                // Resend all messages that where send after the failed message
+                // Resend all messages that were sent after the failed message
                 $this->sendMessages($result['identifier']+1, $apnURL);
+                $errors[] = $result;
             }
         }
+        return $errors;
     }
 
     /**
