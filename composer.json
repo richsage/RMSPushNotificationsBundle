@@ -17,6 +17,9 @@
         "symfony/symfony": "2.*",
         "kriswallsmith/buzz": "*"
     },
+    "require-dev": {
+        "psr/log": "~1.0"
+    },
     "autoload": {
         "psr-0": { "RMS\\PushNotificationsBundle": "" }
     },

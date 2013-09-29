@@ -2,6 +2,7 @@
 
 namespace RMS\PushNotificationsBundle\Service;
 
+use Psr\Log\LoggerInterface;
 use RMS\PushNotificationsBundle\Device\iOS\Feedback;
 
 class iOSFeedback
@@ -28,17 +29,24 @@ class iOSFeedback
     protected $passphrase;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * Constructor
      *
      * @param $sandbox
      * @param $pem
      * @param $passphrase
+     * @param LoggerInterface $logger
      */
-    public function __construct($sandbox, $pem, $passphrase)
+    public function __construct($sandbox, $pem, $passphrase, LoggerInterface $logger = null)
     {
         $this->sandbox = $sandbox;
         $this->pem = $pem;
         $this->passphrase = $passphrase;
+        $this->logger = $logger;
     }
 
     /**

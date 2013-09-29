@@ -2,6 +2,7 @@
 
 namespace RMS\PushNotificationsBundle\Service\OS;
 
+use Psr\Log\LoggerInterface;
 use RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException,
     RMS\PushNotificationsBundle\Message\AndroidMessage,
     RMS\PushNotificationsBundle\Message\MessageInterface;
@@ -39,6 +40,11 @@ class AndroidNotification implements OSNotificationServiceInterface
     protected $authToken;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * Constructor
      *
      * @param $username
@@ -51,6 +57,17 @@ class AndroidNotification implements OSNotificationServiceInterface
         $this->password = $password;
         $this->source = $source;
         $this->authToken = "";
+    }
+
+    /**
+     * Set the logger to use
+     *
+     * @param LoggerInterface $logger
+     * @return mixed|void
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 
     /**

@@ -15,6 +15,9 @@
             <argument>%rms_push_notifications.ios.pem%</argument>
             <argument>%rms_push_notifications.ios.passphrase%</argument>
             <argument>%rms_push_notifications.ios.json_unescaped_unicode%</argument>
+            <call method="setLogger">
+                <argument type="service" id="logger" />
+            </call>
             <tag name="rms_push_notifications.handler" osType="rms_push_notifications.os.ios" />
         </service>
 
@@ -23,6 +26,7 @@
             <argument>%rms_push_notifications.ios.sandbox%</argument>
             <argument>%rms_push_notifications.ios.pem%</argument>
             <argument>%rms_push_notifications.ios.passphrase%</argument>
+            <argument type="service" id="logger" />
         </service>
 
 

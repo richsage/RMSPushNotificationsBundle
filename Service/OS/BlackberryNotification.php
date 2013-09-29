@@ -2,6 +2,7 @@
 
 namespace RMS\PushNotificationsBundle\Service\OS;
 
+use Psr\Log\LoggerInterface;
 use RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException,
     RMS\PushNotificationsBundle\Message\BlackberryMessage,
     RMS\PushNotificationsBundle\Message\MessageInterface;
@@ -33,6 +34,11 @@ class BlackberryNotification implements OSNotificationServiceInterface
     protected $password;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * Constructor
      *
      * @param $evaluation
@@ -44,6 +50,17 @@ class BlackberryNotification implements OSNotificationServiceInterface
         $this->evaluation = $evaluation;
         $this->appID = $appID;
         $this->password = $password;
+    }
+
+    /**
+     * Set the logger to use
+     *
+     * @param LoggerInterface $logger
+     * @return mixed|void
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 
     /**

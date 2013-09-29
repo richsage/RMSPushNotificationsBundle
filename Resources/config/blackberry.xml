@@ -14,6 +14,9 @@
             <argument>%rms_push_notifications.blackberry.evaluation%</argument>
             <argument>%rms_push_notifications.blackberry.app_id%</argument>
             <argument>%rms_push_notifications.blackberry.password%</argument>
+            <call method="setLogger">
+                <argument type="service" id="logger" />
+            </call>
             <tag name="rms_push_notifications.handler" osType="rms_push_notifications.os.blackberry" />
         </service>
 

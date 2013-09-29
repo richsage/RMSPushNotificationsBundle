@@ -2,6 +2,7 @@
 
 namespace RMS\PushNotificationsBundle\Service\OS;
 
+use Psr\Log\LoggerInterface;
 use RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException,
     RMS\PushNotificationsBundle\Message\AppleMessage,
     RMS\PushNotificationsBundle\Message\MessageInterface;
@@ -59,6 +60,11 @@ class AppleNotification implements OSNotificationServiceInterface
     protected $jsonUnescapedUnicode = FALSE;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * Constructor
      *
      * @param $sandbox
@@ -74,6 +80,17 @@ class AppleNotification implements OSNotificationServiceInterface
         $this->messages = array();
         $this->lastMessageId = -1;
         $this->jsonUnescapedUnicode = $jsonUnescapedUnicode;
+    }
+
+    /**
+     * Set the logger to use
+     *
+     * @param LoggerInterface $logger
+     * @return mixed|void
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 
     /**
