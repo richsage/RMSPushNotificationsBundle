@@ -104,21 +104,25 @@ class AndroidGCMNotification implements OSNotificationServiceInterface
 
         // Perform the calls (in parallel)
         $this->responses = array();
-        foreach ($chunks as $registrationIDs) {
+        $failures = false;
+        foreach ($chunks as $chunkID => $registrationIDs) {
             $data["registration_ids"] = $registrationIDs;
-            $this->responses[] = $this->browser->post($this->apiURL, $headers, json_encode($data));
+            $response = $this->browser->post($this->apiURL, $headers, json_encode($data));
+            $this->responses[] = $response;
+
+            $statusCode = $response->getStatusCode();
+            if ($statusCode != 200) {
+                $this->logger->error("GCM status code: {statusCode}", array("statusCode" => $statusCode));
+            }
+            $message = json_decode($response->getContent());
+            if ($message === null || $message->success == 0 || $message->failure > 0) {
+                $this->logger->error("GCM error received: {error}, for chunk ID {chunkID}", array("error" => $message->results[0]->error, "chunkID" => $chunkID, "registrationIDs" => $registrationIDs));
+                $failures = true;
+            }
         }
         $this->browser->getClient()->flush();
 
-        // Determine success
-        foreach ($this->responses as $response) {
-            $message = json_decode($response->getContent());
-            if ($message === null || $message->success == 0 || $message->failure > 0) {
-                return false;
-            }
-        }
-
-        return true;
+        return !$failures;
     }
 
     /**
