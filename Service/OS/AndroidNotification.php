@@ -91,7 +91,12 @@ class AndroidNotification implements OSNotificationServiceInterface
             $buzz = new Browser();
             $buzz->getClient()->setVerifyPeer(false);
             $response = $buzz->post("https://android.apis.google.com/c2dm/send", $headers, http_build_query($data));
-            return preg_match("/^id=/", $response->getContent()) > 0;
+            $success = preg_match("/^id=/", $response->getContent()) > 0;
+            if (!$success) {
+                list($errorKey, $errorMessage) = explode("=", $response->getContent());
+                $this->logger->error("C2DM error received: {error}", array("error" => $errorMessage));
+            }
+            return $success;
         }
 
         return false;
@@ -117,6 +122,7 @@ class AndroidNotification implements OSNotificationServiceInterface
         $buzz->getClient()->setVerifyPeer(false);
         $response = $buzz->post("https://www.google.com/accounts/ClientLogin", array(), http_build_query($data));
         if ($response->getStatusCode() !== 200) {
+            $this->logger->error("C2DM authentication status code: {statusCode}", array("statusCode" => $response->getStatusCode()));
             return false;
         }
 
