@@ -49,4 +49,24 @@ class Notifications
             $this->handlers[$osType] = $service;
         }
     }
+
+    /**
+     * Get responses from handler
+     *
+     * @param string $osType
+     * @return array
+     * @throws \RuntimeException
+     */
+    public function getResponses($osType)
+    {
+        if (!isset($this->handlers[$osType])) {
+            throw new \RuntimeException("OS type {$osType} not supported");
+        }
+
+        if (!method_exists($this->handlers[$osType], 'getResponses')) {
+            throw new \RuntimeException("Handler for OS type {$osType} not supported getResponses() method");
+        }
+
+        return $this->handlers[$osType]->getResponses();
+    }
 }
