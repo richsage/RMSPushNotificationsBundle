@@ -4,11 +4,33 @@ A bundle to allow sending of push notifications to mobile devices.  Currently su
 
 ## Installation
 
-To use this bundle in your Symfony2 project add `richsage/rms-push-notifications-bundle` to the required packages in your `composer.json` and run `php composer.phar update` to install the bundle. Then add `new RMS\PushNotificationsBundle\RMSPushNotificationsBundle()` to your `$bundles`-array in the `AppKernel.php` and you're ready!
+To use this bundle in your Symfony2 project add the following to your `composer.json`:
+
+    {
+        "require": {
+            // ...
+            "richsage/rms-push-notifications-bundle": "dev-master"
+        }
+    }
+
+and enable it in your kernel:
+
+    <?php
+    // app/AppKernel.php
+
+    public function registerBundles()
+    {
+        $bundles = array(
+            // ...
+            new RMS\PushNotificationsBundle\RMSPushNotificationsBundle(),
+        );
+    }
+
 
 ## Configuration
 
-Below you'll find all configuration options; just use what you need:
+Configuration options available are as follows. Note that the specific services will
+only be available if you provide configuration respectively for them.
 
     rms_push_notifications:
       android:
