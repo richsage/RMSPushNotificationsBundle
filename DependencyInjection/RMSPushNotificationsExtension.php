@@ -15,6 +15,11 @@ class RMSPushNotificationsExtension extends Extension
     protected $container;
 
     /**
+     * @var string
+     */
+    protected $kernelRootDir;
+
+    /**
      * Loads any resources/services we need
      *
      * @param array $configs
@@ -24,6 +29,8 @@ class RMSPushNotificationsExtension extends Extension
     public function load(array $configs, ContainerBuilder $container)
     {
         $this->container = $container;
+        $this->kernelRootDir = $container->getParameterBag()->get("kernel.root_dir");
+
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
 
@@ -113,6 +120,9 @@ class RMSPushNotificationsExtension extends Extension
      * Sets Apple config into container
      *
      * @param array $config
+     * @param $os
+     * @throws \RuntimeException
+     * @throws \LogicException
      */
     protected function setAppleConfig(array $config, $os)
     {
@@ -123,8 +133,15 @@ class RMSPushNotificationsExtension extends Extension
         }
 
         // PEM file is required
-        if (!file_exists($config[$os]['pem'])) {
-            throw new \RuntimeException(sprintf('Pem file "%s" not found.', $config[$os]['pem']));
+        if (realpath($config["ios"]["pem"])) {
+            // Absolute path
+            $pemFile = $config["ios"]["pem"];
+        } else if (realpath($this->kernelRootDir.DIRECTORY_SEPARATOR.$config["ios"]["pem"]) ) {
+            // Relative path
+            $pemFile = $this->kernelRootDir.DIRECTORY_SEPARATOR.$config["ios"]["pem"];
+        } else {
+            // path isn't valid
+            throw new \RuntimeException(sprintf('Pem file "%s" not found.', $config["ios"]["pem"]));
         }
 
         if ($config[$os]['json_unescaped_unicode']) {
@@ -139,7 +156,7 @@ class RMSPushNotificationsExtension extends Extension
 
         $this->container->setParameter(sprintf('rms_push_notifications.%s.enabled', $os), true);
         $this->container->setParameter(sprintf('rms_push_notifications.%s.sandbox', $os), $config[$os]["sandbox"]);
-        $this->container->setParameter(sprintf('rms_push_notifications.%s.pem', $os), $config[$os]["pem"]);
+        $this->container->setParameter(sprintf('rms_push_notifications.%s.pem', $os), $pemFile);
         $this->container->setParameter(sprintf('rms_push_notifications.%s.passphrase', $os), $config[$os]["passphrase"]);
         $this->container->setParameter(sprintf('rms_push_notifications.%s.json_unescaped_unicode', $os), (bool) $config[$os]['json_unescaped_unicode']);
     }

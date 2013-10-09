@@ -20,7 +20,7 @@ Below you'll find all configuration options; just use what you need:
               api_key: <string_android_gcm_api_key>
       ios:
           sandbox: <bool_use_apns_sandbox>
-          pem: <path_apns_certificate>
+          pem: <path_apns_certificate> # can be absolute or relative path (from app directory)
           passphrase: <string_apns_certificate_passphrase>
       mac:
           sandbox: <bool_use_apns_sandbox>
