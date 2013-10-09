@@ -133,15 +133,15 @@ class RMSPushNotificationsExtension extends Extension
         }
 
         // PEM file is required
-        if (realpath($config["ios"]["pem"])) {
+        if (realpath($config[$os]["pem"])) {
             // Absolute path
-            $pemFile = $config["ios"]["pem"];
-        } else if (realpath($this->kernelRootDir.DIRECTORY_SEPARATOR.$config["ios"]["pem"]) ) {
+            $pemFile = $config[$os]["pem"];
+        } else if (realpath($this->kernelRootDir.DIRECTORY_SEPARATOR.$config[$os]["pem"]) ) {
             // Relative path
-            $pemFile = $this->kernelRootDir.DIRECTORY_SEPARATOR.$config["ios"]["pem"];
+            $pemFile = $this->kernelRootDir.DIRECTORY_SEPARATOR.$config[$os]["pem"];
         } else {
             // path isn't valid
-            throw new \RuntimeException(sprintf('Pem file "%s" not found.', $config["ios"]["pem"]));
+            throw new \RuntimeException(sprintf('Pem file "%s" not found.', $config[$os]["pem"]));
         }
 
         if ($config[$os]['json_unescaped_unicode']) {
