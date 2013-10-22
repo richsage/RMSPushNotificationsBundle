@@ -114,7 +114,7 @@ class AppleNotification implements OSNotificationServiceInterface
         }
 
         $messageId = ++$this->lastMessageId;
-        $this->messages[$messageId] = $this->createPayload($messageId, $message->getDeviceIdentifier(), $message->getMessageBody());
+        $this->messages[$messageId] = $this->createPayload($messageId, $message->getExpiry(), $message->getDeviceIdentifier(), $message->getMessageBody());
         $errors = $this->sendMessages($messageId, $apnURL);
 
         return !$errors;
@@ -244,12 +244,17 @@ class AppleNotification implements OSNotificationServiceInterface
     /**
      * Creates the full payload for the notification
      *
-     * @param $messageId
-     * @param $token
-     * @param $message
+     * @param int    $messageId
+     * @param string $expiry
+     * @param string $token
+     * @param array  $message
+     *
      * @return string
+     *
+     * @throws \LogicException
+     * @throws \InvalidArgumentException
      */
-    protected function createPayload($messageId, $token, $message)
+    protected function createPayload($messageId, $expiry, $token, $message)
     {
         if ($this->jsonUnescapedUnicode) {
             // Validate PHP version
@@ -281,7 +286,7 @@ class AppleNotification implements OSNotificationServiceInterface
         }
 
         $token = preg_replace("/[^0-9A-Fa-f]/", "", $token);
-        $payload = chr(1) . pack("N", $messageId) . pack("N", 0) . pack("n", 32) . pack("H*", $token) . pack("n", strlen($jsonBody)) . $jsonBody;
+        $payload = chr(1) . pack("N", $messageId) . pack("N", $expiry) . pack("n", 32) . pack("H*", $token) . pack("n", strlen($jsonBody)) . $jsonBody;
 
         return $payload;
     }
