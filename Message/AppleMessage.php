@@ -26,6 +26,17 @@ class AppleMessage implements MessageInterface
     protected $apsBody = array();
 
     /**
+     * Expiration date (UTC)
+     *
+     * A fixed UNIX epoch date expressed in seconds (UTC) that identifies when the notification is no longer valid and can be discarded.
+     * If the expiry value is non-zero, APNs tries to deliver the notification at least once.
+     * Specify zero to request that APNs not store the notification at all.
+     *
+     * @var int
+     */
+    protected $expiry = 0;
+
+    /**
      * Class constructor
      */
     public function __construct($identifier = NULL)
@@ -162,5 +173,25 @@ class AppleMessage implements MessageInterface
     public function setAPSBadge($badge)
     {
         $this->apsBody["aps"]["badge"] = $badge;
+    }
+
+    /**
+     * Set expiry of message
+     *
+     * @param int $expiry
+     */
+    public function setExpiry($expiry)
+    {
+        $this->expiry = $expiry;
+    }
+
+    /**
+     * Get expiry of message
+     *
+     * @return int
+     */
+    public function getExpiry()
+    {
+        return $this->expiry;
     }
 }
