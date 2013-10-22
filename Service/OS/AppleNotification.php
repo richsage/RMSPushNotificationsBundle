@@ -59,6 +59,13 @@ class AppleNotification implements OSNotificationServiceInterface
     protected $jsonUnescapedUnicode = FALSE;
 
     /**
+     * Collection of the responses from the APN
+     *
+     * @var array
+     */
+    protected $responses = array();
+
+    /**
      * Constructor
      *
      * @param $sandbox
@@ -135,9 +142,12 @@ class AppleNotification implements OSNotificationServiceInterface
 
             // Check if there is an error result
             if (is_array($result)) {
+                $this->responses[] = $result;
                 // Resend all messages that were sent after the failed message
                 $this->sendMessages($result['identifier']+1, $apnURL);
                 $errors[] = $result;
+            } else {
+                $this->responses[] = true;
             }
         }
         return $errors;
@@ -274,5 +284,15 @@ class AppleNotification implements OSNotificationServiceInterface
         $payload = chr(1) . pack("N", $messageId) . pack("N", 0) . pack("n", 32) . pack("H*", $token) . pack("n", strlen($jsonBody)) . $jsonBody;
 
         return $payload;
+    }
+
+    /**
+     * Returns responses
+     *
+     * @return array
+     */
+    public function getResponses()
+    {
+        return $this->responses;
     }
 }
