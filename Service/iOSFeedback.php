@@ -62,6 +62,9 @@ class iOSFeedback
 
         $ctx = $this->getStreamContext();
         $fp = stream_socket_client($feedbackURL, $err, $errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
+        if (!$fp) {
+            throw new \RuntimeException("Couldn't connect to APNS Feedback service. Error no $err: $errstr");
+        }
         while (!feof($fp)) {
             $data .= fread($fp, 4096);
         }
