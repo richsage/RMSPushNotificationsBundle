@@ -40,6 +40,7 @@ only be available if you provide configuration respectively for them.
               source: <string_android_c2dm_source>
           gcm:
               api_key: <string_android_gcm_api_key>
+              use_multi_curl: <boolean_android_gcm_use_multi_curl> # default is true
       ios:
           sandbox: <bool_use_apns_sandbox>
           pem: <path_apns_certificate> # can be absolute or relative path (from app directory)
@@ -52,6 +53,8 @@ only be available if you provide configuration respectively for them.
           evaluation: <bool_bb_evaluation_mode>
           app_id: <string_bb_app_id>
           password: <string_bb_password>
+
+NOTE: If you are using Windows, you may need to set the Android GCM `use_multi_curl` flag to false for GCM messages to be sent correctly.
 
 ## Usage
 
