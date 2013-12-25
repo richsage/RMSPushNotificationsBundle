@@ -95,6 +95,6 @@ This service is available within the bundle.  The following code demonstrates ho
     $feedbackService = $container->get("rms_push_notifications.ios.feedback");
     $uuids = $feedbackService->getDeviceUUIDs();
 
-Here, `$uuids` contains an array of Feedback objects, with timestamp, token length and the device UUID all populated.
+Here, `$uuids` contains an array of [Feedback](https://github.com/richsage/RMSPushNotificationsBundle/blob/master/Device/iOS/Feedback.php) objects, with timestamp, token length and the device UUID all populated.
 
 Apple recommend you poll this service daily.
