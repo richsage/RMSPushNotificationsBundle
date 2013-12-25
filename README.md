@@ -86,3 +86,15 @@ Since both C2DM and GCM are still available, the `AndroidMessage` class has a sm
 
 to send as a GCM message rather than C2DM.
 
+## iOS Feedback service
+
+The Apple Push Notification service also exposes a Feedback service where you can get information about failed push notifications - see [here](https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101-SW3) for further details.
+
+This service is available within the bundle.  The following code demonstrates how you can retrieve data from the service:
+
+    $feedbackService = $container->get("rms_push_notifications.ios.feedback");
+    $uuids = $feedbackService->getDeviceUUIDs();
+
+Here, `$uuids` contains an array of Feedback objects, with timestamp, token length and the device UUID all populated.
+
+Apple recommend you poll this service daily.
