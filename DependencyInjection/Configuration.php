@@ -61,6 +61,7 @@ class Configuration implements ConfigurationInterface
                             canBeUnset()->
                             children()->
                                 scalarNode("api_key")->isRequired()->cannotBeEmpty()->end()->
+                                booleanNode("use_multi_curl")->defaultValue(true)->end()->
                             end()->
                         end()->
                     end()->
