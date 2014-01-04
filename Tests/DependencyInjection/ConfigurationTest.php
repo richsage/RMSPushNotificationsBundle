@@ -108,7 +108,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             array(
                 "android" => array(
                     "gcm" => array(
-                        "api_key" => "foo"
+                        "api_key" => "foo",
+                        "use_multi_curl" => true,
                     )
                 )
             ),

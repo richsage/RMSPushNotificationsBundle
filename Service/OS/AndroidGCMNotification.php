@@ -6,6 +6,8 @@ use RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException,
     RMS\PushNotificationsBundle\Message\AndroidMessage,
     RMS\PushNotificationsBundle\Message\MessageInterface;
 use Buzz\Browser,
+    Buzz\Client\AbstractCurl,
+    Buzz\Client\Curl,
     Buzz\Client\MultiCurl;
 
 class AndroidGCMNotification implements OSNotificationServiceInterface
@@ -49,12 +51,16 @@ class AndroidGCMNotification implements OSNotificationServiceInterface
      * Constructor
      *
      * @param $apiKey
-     * @param MultiCurl $client (optional)
+     * @param bool $useMultiCurl
+     * @param AbstractCurl $client (optional)
      */
-    public function __construct($apiKey, MultiCurl $client = null)
+    public function __construct($apiKey, $useMultiCurl, AbstractCurl $client = null)
     {
         $this->apiKey = $apiKey;
-        $this->browser = new Browser($client ?: new MultiCurl());
+        if (!$client) {
+            $client = ($useMultiCurl ? new MultiCurl() : new Curl());
+        }
+        $this->browser = new Browser($client);
     }
 
     /**
@@ -91,7 +97,12 @@ class AndroidGCMNotification implements OSNotificationServiceInterface
             $data["registration_ids"] = $registrationIDs;
             $this->responses[] = $this->browser->post($this->apiURL, $headers, json_encode($data));
         }
-        $this->browser->getClient()->flush();
+
+        // If we're using multiple concurrent connections via MultiCurl
+        // then we should flush all requests
+        if ($this->browser->getClient() instanceof MultiCurl) {
+            $this->browser->getClient()->flush();
+        }
 
         // Determine success
         foreach ($this->responses as $response) {
