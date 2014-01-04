@@ -174,6 +174,18 @@ class AppleMessage implements MessageInterface
     {
         $this->apsBody["aps"]["badge"] = $badge;
     }
+    
+    /**
+     * iOS-specific
+     * Sets the APS content available flag, used to transform the notification into remote-notification
+     * and trigger the "didReceiveRemoteNotification: fetchCompletionHandler:" method on iOS apps
+     *
+     * @param string $contentAvailable The flag to set the content-available option, for example set it to 1.
+     */
+    public function setAPSContentAvailable($contentAvailable)
+    {
+        $this->apsBody["aps"]["content-available"] = $contentAvailable;
+    }
 
     /**
      * Set expiry of message
