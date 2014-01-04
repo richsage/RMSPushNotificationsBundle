@@ -170,7 +170,7 @@ class AppleNotification implements OSNotificationServiceInterface
         // Check if there is responsedata to read
         $readStreams = array($fp);
         $null = NULL;
-        $streamsReadyToRead = stream_select($readStreams, $null, $null, 1, 0);
+        $streamsReadyToRead = @stream_select($readStreams, $null, $null, 1, 0);
         if ($streamsReadyToRead > 0) {
             // Unpack error response data and set as the result
             $response = @unpack("Ccommand/Cstatus/Nidentifier", fread($fp, 6));
