@@ -95,6 +95,7 @@ class AndroidGCMNotification implements OSNotificationServiceInterface
         $this->responses = array();
         foreach ($chunks as $registrationIDs) {
             $data["registration_ids"] = $registrationIDs;
+            $this->browser->getClient()->setVerifyPeer(false);
             $this->responses[] = $this->browser->post($this->apiURL, $headers, json_encode($data));
         }
 
