@@ -2,7 +2,6 @@
 
 namespace RMS\PushNotificationsBundle\Message;
 
-use RMS\PushNotificationsBundle\Message\AppleMessage;
 use RMS\PushNotificationsBundle\Device\Types;
 
 class MacMessage extends AppleMessage

@@ -9,7 +9,7 @@ interface OSNotificationServiceInterface
     /**
      * Send a notification message
      *
-     * @param \RMS\PushNotificationsBundle\Message\MessageInterface $message
+     * @param  \RMS\PushNotificationsBundle\Message\MessageInterface $message
      * @return mixed
      */
     public function send(MessageInterface $message);

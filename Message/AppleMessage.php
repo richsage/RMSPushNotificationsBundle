@@ -87,7 +87,7 @@ class AppleMessage implements MessageInterface
      * Add custom data
      *
      * @param string $key
-     * @param mixed $value
+     * @param mixed  $value
      */
     public function addCustomData($key, $value)
     {
@@ -105,6 +105,7 @@ class AppleMessage implements MessageInterface
         }
 
         $this->customData[$key] = $value;
+
         return $this;
     }
 
@@ -129,6 +130,7 @@ class AppleMessage implements MessageInterface
         if (!empty($this->customData)) {
             $payloadBody = array_merge($payloadBody, $this->customData);
         }
+
         return $payloadBody;
     }
 
@@ -174,7 +176,7 @@ class AppleMessage implements MessageInterface
     {
         $this->apsBody["aps"]["badge"] = $badge;
     }
-    
+
     /**
      * iOS-specific
      * Sets the APS content available flag, used to transform the notification into remote-notification

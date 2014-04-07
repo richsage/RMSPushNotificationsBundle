@@ -237,12 +237,13 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     /**
      * Takes in an array of configuration values and returns the processed version
      *
-     * @param array $config
+     * @param  array $config
      * @return array
      */
     protected function process($config)
     {
         $processor = new Processor();
+
         return $processor->processConfiguration(new Configuration(), $config);
     }
 }

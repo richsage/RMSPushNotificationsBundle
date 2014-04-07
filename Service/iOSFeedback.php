@@ -79,6 +79,7 @@ class iOSFeedback
             $feedback = new Feedback();
             $feedbacks[] = $feedback->unpack($item);
         }
+
         return $feedbacks;
     }
 

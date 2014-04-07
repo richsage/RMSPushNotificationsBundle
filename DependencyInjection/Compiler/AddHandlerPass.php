@@ -14,7 +14,7 @@ class AddHandlerPass implements CompilerPassInterface
     /**
      * Processes any handlers tagged accordingly
      *
-     * @param ContainerBuilder $container
+     * @param  ContainerBuilder $container
      * @return void
      */
     public function process(ContainerBuilder $container)
@@ -38,15 +38,13 @@ class AddHandlerPass implements CompilerPassInterface
                 }
 
                 $refClass = new \ReflectionClass($class);
-            }
-            catch (\ReflectionClass $ref){
+            } catch (\ReflectionClass $ref) {
                 // Class not found or other reflection error
                 throw new \RuntimeException(sprintf(
                     'Can\'t compile notification handler by service id "%s".',
                     $id
                 ), 0, $ref);
-            }
-            catch (ParameterNotFoundException $paramNotFound) {
+            } catch (ParameterNotFoundException $paramNotFound) {
                 // Parameter not found in service container
                 throw new \RuntimeException(sprintf(
                     'Can\'t compile notification handler by service id "%s".',
