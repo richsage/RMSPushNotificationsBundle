@@ -22,8 +22,8 @@ class RMSPushNotificationsExtension extends Extension
     /**
      * Loads any resources/services we need
      *
-     * @param array $configs
-     * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
+     * @param  array                                                   $configs
+     * @param  \Symfony\Component\DependencyInjection\ContainerBuilder $container
      * @return void
      */
     public function load(array $configs, ContainerBuilder $container)
@@ -120,7 +120,7 @@ class RMSPushNotificationsExtension extends Extension
     /**
      * Sets Apple config into container
      *
-     * @param array $config
+     * @param  array             $config
      * @param $os
      * @throws \RuntimeException
      * @throws \LogicException
@@ -137,7 +137,7 @@ class RMSPushNotificationsExtension extends Extension
         if (realpath($config[$os]["pem"])) {
             // Absolute path
             $pemFile = $config[$os]["pem"];
-        } else if (realpath($this->kernelRootDir.DIRECTORY_SEPARATOR.$config[$os]["pem"]) ) {
+        } elseif (realpath($this->kernelRootDir.DIRECTORY_SEPARATOR.$config[$os]["pem"]) ) {
             // Relative path
             $pemFile = $this->kernelRootDir.DIRECTORY_SEPARATOR.$config[$os]["pem"];
         } else {

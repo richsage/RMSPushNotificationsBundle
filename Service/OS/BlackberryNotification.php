@@ -49,7 +49,7 @@ class BlackberryNotification implements OSNotificationServiceInterface
     /**
      * Sends a Blackberry Push message
      *
-     * @param \RMS\PushNotificationsBundle\Message\MessageInterface $message
+     * @param  \RMS\PushNotificationsBundle\Message\MessageInterface              $message
      * @throws \RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException
      * @return bool
      */
@@ -65,7 +65,7 @@ class BlackberryNotification implements OSNotificationServiceInterface
     /**
      * Does the actual sending
      *
-     * @param \RMS\PushNotificationsBundle\Message\BlackberryMessage $message
+     * @param  \RMS\PushNotificationsBundle\Message\BlackberryMessage $message
      * @return bool
      */
     protected function doSend(BlackberryMessage $message)
@@ -86,13 +86,14 @@ class BlackberryNotification implements OSNotificationServiceInterface
         $headers[] = "Connection: Keep-Alive";
 
         $response = $browser->post($url, $headers, $body);
+
         return $this->parseResponse($response);
     }
 
     /**
      * Builds the actual body of the message
      *
-     * @param \RMS\PushNotificationsBundle\Message\BlackberryMessage $message
+     * @param  \RMS\PushNotificationsBundle\Message\BlackberryMessage $message
      * @param $separator
      * @return string
      */
@@ -109,12 +110,12 @@ class BlackberryNotification implements OSNotificationServiceInterface
         $data .= "Push-Message-ID: {$messageID}\r\n\r\n";
         if (is_array($message->getMessageBody())) {
             $data .= json_encode($message->getMessageBody());
-        }
-        else {
+        } else {
             $data .= $message->getMessageBody();
         }
         $data .= "\r\n";
         $data .= "--" . $separator . "--\r\n";
+
         return $data;
     }
 
@@ -122,7 +123,7 @@ class BlackberryNotification implements OSNotificationServiceInterface
      * Handles and parses the response
      * Returns a value indicating success/fail
      *
-     * @param \Buzz\Message\Response $response
+     * @param  \Buzz\Message\Response $response
      * @return bool
      */
     protected function parseResponse(\Buzz\Message\Response $response)
@@ -137,6 +138,7 @@ class BlackberryNotification implements OSNotificationServiceInterface
             return false;
         }
         $responseElement = $elems->item(0);
+
         return ($responseElement->getAttribute("code") == "1001");
     }
 
@@ -173,6 +175,7 @@ class BlackberryNotification implements OSNotificationServiceInterface
         $pap = $doc->createElement("pap");
         $pap->appendChild($pm);
         $doc->appendChild($pap);
+
         return $doc->saveXML();
     }
 }

@@ -57,7 +57,7 @@ class AndroidNotification implements OSNotificationServiceInterface
      * Sends a C2DM message
      * This assumes that a valid auth token can be obtained
      *
-     * @param \RMS\PushNotificationsBundle\Message\MessageInterface $message
+     * @param  \RMS\PushNotificationsBundle\Message\MessageInterface              $message
      * @throws \RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException
      * @return bool
      */
@@ -74,12 +74,12 @@ class AndroidNotification implements OSNotificationServiceInterface
             $buzz = new Browser();
             $buzz->getClient()->setVerifyPeer(false);
             $response = $buzz->post("https://android.apis.google.com/c2dm/send", $headers, http_build_query($data));
+
             return preg_match("/^id=/", $response->getContent()) > 0;
         }
 
         return false;
     }
-
 
     /**
      * Gets a valid authentication token
@@ -105,6 +105,7 @@ class AndroidNotification implements OSNotificationServiceInterface
 
         preg_match("/Auth=([a-z0-9_\-]+)/i", $response->getContent(), $matches);
         $this->authToken = $matches[1];
+
         return true;
     }
 }

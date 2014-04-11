@@ -5,7 +5,6 @@ namespace RMS\PushNotificationsBundle\Service\OS;
 use RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException,
     RMS\PushNotificationsBundle\Message\AppleMessage,
     RMS\PushNotificationsBundle\Message\MessageInterface;
-use Buzz\Browser;
 
 class AppleNotification implements OSNotificationServiceInterface
 {
@@ -91,13 +90,14 @@ class AppleNotification implements OSNotificationServiceInterface
     public function setJsonUnescapedUnicode($jsonUnescapedUnicode)
     {
         $this->jsonUnescapedUnicode = (bool) $jsonUnescapedUnicode;
+
         return $this;
     }
 
     /**
      * Send a notification message
      *
-     * @param \RMS\PushNotificationsBundle\Message\MessageInterface|\RMS\PushNotificationsBundle\Service\OS\MessageInterface $message
+     * @param  \RMS\PushNotificationsBundle\Message\MessageInterface|\RMS\PushNotificationsBundle\Service\OS\MessageInterface $message
      * @throws \RuntimeException
      * @throws \RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException
      * @return bool
@@ -123,8 +123,8 @@ class AppleNotification implements OSNotificationServiceInterface
     /**
      * Send all notification messages starting from the given ID
      *
-     * @param int $firstMessageId
-     * @param string $apnURL
+     * @param  int                                                                $firstMessageId
+     * @param  string                                                             $apnURL
      * @throws \RuntimeException
      * @throws \RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException
      * @return int
@@ -133,8 +133,7 @@ class AppleNotification implements OSNotificationServiceInterface
     {
         $errors = array();
         // Loop through all messages starting from the given ID
-        for ($currentMessageId = $firstMessageId; $currentMessageId < count($this->messages); $currentMessageId++)
-        {
+        for ($currentMessageId = $firstMessageId; $currentMessageId < count($this->messages); $currentMessageId++) {
             // Send the message
             $result = $this->writeApnStream($apnURL, $this->messages[$currentMessageId]);
 
@@ -150,14 +149,15 @@ class AppleNotification implements OSNotificationServiceInterface
                 $this->responses[] = true;
             }
         }
+
         return $errors;
     }
 
     /**
      * Write data to the apn stream that is associated with the given apn URL
      *
-     * @param string $apnURL
-     * @param string $payload
+     * @param  string            $apnURL
+     * @param  string            $payload
      * @throws \RuntimeException
      * @return mixed
      */
@@ -184,7 +184,7 @@ class AppleNotification implements OSNotificationServiceInterface
     /**
      * Get an apn stream associated with the given apn URL, create one if necessary
      *
-     * @param string $apnURL
+     * @param  string            $apnURL
      * @throws \RuntimeException
      * @return resource
      */
@@ -278,10 +278,8 @@ class AppleNotification implements OSNotificationServiceInterface
                 ));
             }
 
-
             $jsonBody = json_encode($message, JSON_UNESCAPED_UNICODE ^ JSON_FORCE_OBJECT);
-        }
-        else {
+        } else {
             $jsonBody = json_encode($message, JSON_FORCE_OBJECT);
         }
 

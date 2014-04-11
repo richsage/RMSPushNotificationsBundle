@@ -114,6 +114,7 @@ class AndroidMessage implements MessageInterface
         if (!empty($this->data)) {
             $data = array_merge($data, $this->data);
         }
+
         return $data;
     }
 

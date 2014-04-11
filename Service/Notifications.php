@@ -24,7 +24,7 @@ class Notifications
      * Sends a message to a device, identified by
      * the OS and the supplied device token
      *
-     * @param \RMS\PushNotificationsBundle\Message\MessageInterface $message
+     * @param  \RMS\PushNotificationsBundle\Message\MessageInterface $message
      * @throws \RuntimeException
      * @return bool
      */
@@ -53,7 +53,7 @@ class Notifications
     /**
      * Get responses from handler
      *
-     * @param string $osType
+     * @param  string            $osType
      * @return array
      * @throws \RuntimeException
      */
