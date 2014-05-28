@@ -30,7 +30,7 @@ class TestPushCommand extends ContainerAwareCommand
             ->setDescription("Sends a push command to a supplied push token'd device")
             ->addOption("badge", "b", InputOption::VALUE_OPTIONAL, "Badge number (for iOS devices)", 0)
             ->addOption("text", "t", InputOption::VALUE_OPTIONAL, "Text message")
-            ->addArgument("service", InputArgument::REQUIRED, "One of 'ios', 'c2dm' or 'gcm'")
+            ->addArgument("service", InputArgument::REQUIRED, "One of 'ios', 'c2dm', 'gcm', 'mac' or 'blackberry'")
             ->addArgument("token", InputArgument::REQUIRED, "Authentication token for the service")
             ->addArgument("payload", InputArgument::OPTIONAL, "The payload data to send (JSON)", '{"data": "test"}')
         ;
@@ -72,6 +72,10 @@ class TestPushCommand extends ContainerAwareCommand
             // Set badge on iOS
             $msg->setAPSBadge((int) $input->getOption("badge"));
         }
+        if (method_exists($msg, "setAPSSound")) {
+            // Set sound on iOS
+            $msg->setAPSSound("default");
+        }
 
         $msg->setDeviceIdentifier($token);
         $msg->setData($payload);
@@ -101,10 +105,7 @@ class TestPushCommand extends ContainerAwareCommand
     {
         switch ($service) {
             case "ios":
-                $message = new PushMessage\iOSMessage();
-                $message->setAPSSound("default");
-
-                return $message;
+                return new PushMessage\iOSMessage();
             case "c2dm":
                 return new PushMessage\AndroidMessage();
             case "gcm":
@@ -112,6 +113,10 @@ class TestPushCommand extends ContainerAwareCommand
                 $message->setGCM(true);
 
                 return $message;
+            case "blackberry":
+                return new PushMessage\BlackberryMessage();
+            case "mac":
+                return new PushMessage\MacMessage();
             default:
                 throw new \InvalidArgumentException("Service '{$service}' not supported presently");
         }
