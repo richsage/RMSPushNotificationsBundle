@@ -170,11 +170,11 @@ class AppleMessage implements MessageInterface
      * iOS-specific
      * Sets the APS badge count
      *
-     * @param string $badge The badge count to display
+     * @param integer $badge The badge count to display
      */
     public function setAPSBadge($badge)
     {
-        $this->apsBody["aps"]["badge"] = $badge;
+        $this->apsBody["aps"]["badge"] = (int) $badge;
     }
 
     /**
