@@ -68,8 +68,8 @@ class TestPushCommand extends ContainerAwareCommand
 
         $msg = $this->getMessageClass($service);
 
-
-        if ($service == "ios") {
+        if (method_exists($msg, "setAPSBadge")) {
+            // Set badge on iOS
             $msg->setAPSBadge((int) $input->getOption("badge"));
         }
 
