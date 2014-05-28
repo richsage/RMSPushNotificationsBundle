@@ -50,6 +50,18 @@ class TestPushCommand extends ContainerAwareCommand
         $json_payload = $input->getArgument("payload");
         $payload = json_decode($json_payload, true);
 
+        $tokenLengths = array(
+            "ios" => 64,
+            "c2dm" => 162,
+            "gcm" => 183,
+        );
+
+        if (isset($tokenLengths[$service]) && strlen($token) != $tokenLengths[$service]) {
+            $output->writeln("<error>Token should be " . $tokenLengths[$service] . "chars long, not " . strlen($token) . "</error>");
+
+            return;
+        }
+
         if ($payload == null) {
             throw new \InvalidArgumentException("Invalid JSON payload " . $json_payload);
         }
