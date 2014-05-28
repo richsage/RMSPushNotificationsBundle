@@ -8,7 +8,8 @@ use Symfony\Component\Console\Input\InputArgument,
     Symfony\Component\Console\Input\InputInterface,
     Symfony\Component\Console\Input\InputOption,
     Symfony\Component\Console\Output\OutputInterface;
-use RMS\PushNotificationsBundle\Message as PushMessage;
+use RMS\PushNotificationsBundle\Message as PushMessage,
+    RMS\PushNotificationsBundle\Message\MessageInterface;
 
 class TestPushCommand extends ContainerAwareCommand
 {
@@ -24,23 +25,22 @@ class TestPushCommand extends ContainerAwareCommand
      */
     protected function configure()
     {
-        $this->
-            setName("rms:test-push")->
-            setDescription("Sends a push command to a supplied push token'd device")->
-            addOption("badge", "b", InputOption::VALUE_OPTIONAL, "Badge number (for iOS devices)", 0)->
-            addOption("text", "t", InputOption::VALUE_OPTIONAL, "Text message")->
-            addArgument("service", InputArgument::REQUIRED, "One of 'ios', 'c2dm' or 'gcm'")->
-            addArgument("token", InputArgument::REQUIRED, "Authentication token for the service")->
-            addArgument("payload", InputArgument::OPTIONAL, "The payload data to send (JSON)", '{"data": "test"}')
+        $this
+            ->setName("rms:test-push")
+            ->setDescription("Sends a push command to a supplied push token'd device")
+            ->addOption("badge", "b", InputOption::VALUE_OPTIONAL, "Badge number (for iOS devices)", 0)
+            ->addOption("text", "t", InputOption::VALUE_OPTIONAL, "Text message")
+            ->addArgument("service", InputArgument::REQUIRED, "One of 'ios', 'c2dm' or 'gcm'")
+            ->addArgument("token", InputArgument::REQUIRED, "Authentication token for the service")
+            ->addArgument("payload", InputArgument::OPTIONAL, "The payload data to send (JSON)", '{"data": "test"}')
         ;
     }
 
     /**
      * Main command execution.
      *
-     *
-     * @param  \Symfony\Component\Console\Input\InputInterface   $input
-     * @param  \Symfony\Component\Console\Output\OutputInterface $output
+     * @param  InputInterface  $input  An InputInterface instance
+     * @param  OutputInterface $output An OutputInterface instance
      * @return void
      */
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -81,9 +81,9 @@ class TestPushCommand extends ContainerAwareCommand
     /**
      * Returns a message class based on the supplied os
      *
-     * @param $service
+     * @param  string                    $service The name of the service to return a message for
      * @throws \InvalidArgumentException
-     * @return \RMS\PushNotificationsBundle\Message\MessageInterface
+     * @return MessageInterface
      */
     protected function getMessageClass($service)
     {
