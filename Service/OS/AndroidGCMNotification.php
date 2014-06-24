@@ -69,7 +69,7 @@ class AndroidGCMNotification implements OSNotificationServiceInterface
      *
      * @param  \RMS\PushNotificationsBundle\Message\MessageInterface              $message
      * @throws \RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException
-     * @return bool
+     * @return array
      */
     public function send(MessageInterface $message)
     {
@@ -105,15 +105,7 @@ class AndroidGCMNotification implements OSNotificationServiceInterface
             $this->browser->getClient()->flush();
         }
 
-        // Determine success
-        foreach ($this->responses as $response) {
-            $message = json_decode($response->getContent());
-            if ($message === null || $message->success == 0 || $message->failure > 0) {
-                return false;
-            }
-        }
-
-        return true;
+        return $this->responses;
     }
 
     /**
