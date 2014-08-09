@@ -54,6 +54,10 @@ class RMSPushNotificationsExtension extends Extension
             $this->setBlackberryConfig($config);
             $loader->load('blackberry.xml');
         }
+        if (isset($config['windowsphone'])) {
+            $this->setWindowsphoneConfig($config);
+            $loader->load('windowsphone.xml');
+        }
     }
 
     /**
@@ -173,5 +177,10 @@ class RMSPushNotificationsExtension extends Extension
         $this->container->setParameter("rms_push_notifications.blackberry.evaluation", $config["blackberry"]["evaluation"]);
         $this->container->setParameter("rms_push_notifications.blackberry.app_id", $config["blackberry"]["app_id"]);
         $this->container->setParameter("rms_push_notifications.blackberry.password", $config["blackberry"]["password"]);
+    }
+
+    protected function setWindowsphoneConfig(array $config)
+    {
+        $this->container->setParameter("rms_push_notifications.windowsphone.enabled", true);
     }
 }

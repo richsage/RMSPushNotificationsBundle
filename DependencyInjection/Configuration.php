@@ -26,6 +26,7 @@ class Configuration implements ConfigurationInterface
         $this->addiOS();
         $this->addMac();
         $this->addBlackberry();
+        $this->addWindowsphone();
 
         return $treeBuilder;
     }
@@ -123,6 +124,15 @@ class Configuration implements ConfigurationInterface
                         scalarNode("password")->isRequired()->cannotBeEmpty()->end()->
                     end()->
                 end()->
+            end()
+        ;
+    }
+
+    protected function addWindowsphone()
+    {
+        $this->root->
+            children()->
+                booleanNode('windowsphone')->defaultFalse()->end()->
             end()
         ;
     }

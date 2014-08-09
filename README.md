@@ -53,6 +53,7 @@ only be available if you provide configuration respectively for them.
           evaluation: <bool_bb_evaluation_mode>
           app_id: <string_bb_app_id>
           password: <string_bb_password>
+      windowsphone: true
 
 NOTE: If you are using Windows, you may need to set the Android GCM `use_multi_curl` flag to false for GCM messages to be sent correctly.
 
