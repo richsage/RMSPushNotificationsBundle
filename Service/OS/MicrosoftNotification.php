@@ -31,7 +31,8 @@ class MicrosoftNotification implements OSNotificationServiceInterface
 
         $headers = array(
             'Content-Type: text/xml',
-            'X-WindowsPhone-Target: ' . $message->getTarget()
+            'X-WindowsPhone-Target: ' . $message->getTarget(),
+            'X-NotificationClass: ' . $message->getNotificationClass()
         );
 
         $xml = new \SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><wp:Notification xmlns:wp="WPNotification" />');

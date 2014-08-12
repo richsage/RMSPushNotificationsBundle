@@ -8,6 +8,10 @@ class WindowsphoneMessage implements MessageInterface
 {
     const TYPE_TOAST = 'toast';
 
+    protected static $notificationClass = array(
+        self::TYPE_TOAST => 2
+    );
+
     protected $identifier;
 
     protected $text1 = '';
@@ -57,5 +61,10 @@ class WindowsphoneMessage implements MessageInterface
     public function getTarget()
     {
         return $this->target;
+    }
+
+    public function getNotificationClass()
+    {
+        return static::$notificationClass[$this->getTarget()];
     }
 }
