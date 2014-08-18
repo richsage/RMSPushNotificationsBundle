@@ -10,7 +10,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     public function testDefaults()
     {
         $config = $this->process(array());
-        $this->assertEmpty($config);
+        $this->assertArrayHasKey("windowsphone", $config);
     }
 
     /**

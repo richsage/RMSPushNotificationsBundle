@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="rms_push_notifications.windowsphone.class">RMS\PushNotificationsBundle\Service\OS\MicrosoftNotification</parameter>
+    </parameters>
+
+    <services>
+
+        <!-- Windows Phone -->
+        <service id="rms_push_notifications.windowsphone" class="%rms_push_notifications.windowsphone.class%" public="false">
+            <tag name="rms_push_notifications.handler" osType="rms_push_notifications.os.windowsphone" />
+        </service>
+
+    </services>
+
+</container>
