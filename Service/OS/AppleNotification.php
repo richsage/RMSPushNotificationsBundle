@@ -278,9 +278,9 @@ class AppleNotification implements OSNotificationServiceInterface
                 ));
             }
 
-            $jsonBody = json_encode($message, JSON_UNESCAPED_UNICODE ^ JSON_FORCE_OBJECT);
+            $jsonBody = json_encode($message, JSON_UNESCAPED_UNICODE);
         } else {
-            $jsonBody = json_encode($message, JSON_FORCE_OBJECT);
+            $jsonBody = json_encode($message);
         }
 
         $token = preg_replace("/[^0-9A-Fa-f]/", "", $token);
