@@ -37,6 +37,11 @@ class AppleMessage implements MessageInterface
     protected $expiry = 0;
 
     /**
+     * @var string
+     */
+    protected $app;
+
+    /**
      * Class constructor
      */
     public function __construct($identifier = NULL)

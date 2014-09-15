@@ -102,7 +102,7 @@ class AppleNotification implements OSNotificationServiceInterface
      * @throws \RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException
      * @return bool
      */
-    public function send(MessageInterface $message)
+    public function send(MessageInterface $message, $app = 'default')
     {
         if (!$message instanceof AppleMessage) {
             throw new InvalidMessageTypeException(sprintf("Message type '%s' not supported by APN", get_class($message)));
