@@ -30,7 +30,7 @@ class Notifications
      */
     public function send(MessageInterface $message)
     {
-        if (!isset($this->handlers[$message->getTargetOS()])) {
+        if (!$this->supports($message->getTargetOS())) {
             throw new \RuntimeException("OS type {$message->getTargetOS()} not supported");
         }
 
@@ -68,5 +68,17 @@ class Notifications
         }
 
         return $this->handlers[$osType]->getResponses();
+    }
+
+    /**
+     * Check if target OS is supported
+     *
+     * @param $targetOS
+     *
+     * @return bool
+     */
+    public function supports($targetOS)
+    {
+        return isset($this->handlers[$targetOS]);
     }
 }
