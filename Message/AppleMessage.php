@@ -213,4 +213,14 @@ class AppleMessage implements MessageInterface
     {
         return $this->expiry;
     }
+
+    public function setConfName($conf = 'default')
+    {
+        $this->conf = $conf;
+    }
+
+    public function getConfName()
+    {
+        return $this->conf;
+    }
 }

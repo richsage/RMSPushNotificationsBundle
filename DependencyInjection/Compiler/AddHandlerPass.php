@@ -31,7 +31,7 @@ class AddHandlerPass implements CompilerPassInterface
             // Get reflection class for validate handler
             try {
                 $class = $definition->getClass();
-
+//var_dump($class);die();
                 // Class is parameter
                 if (strpos($class, '%') === 0) {
                     $class = $container->getParameter(trim($class, '%'));

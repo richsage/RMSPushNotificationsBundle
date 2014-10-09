@@ -65,21 +65,41 @@ class AppleNotification implements OSNotificationServiceInterface
     protected $responses = array();
 
     /**
+     * Configuration
+     *
+     * @var array
+     */
+    protected $conf = array();
+
+
+    /**
      * Constructor
      *
      * @param $sandbox
      * @param $pem
      * @param $passphrase
      */
-    public function __construct($sandbox, $pem, $passphrase = "", $jsonUnescapedUnicode = FALSE)
+//    public function __construct($sandbox, $pem, $passphrase = "", $jsonUnescapedUnicode = FALSE)
+//    {
+//        $this->useSandbox = $sandbox;
+//        $this->pem = $pem;
+//        $this->passphrase = $passphrase;
+//        $this->apnStreams = array();
+//        $this->messages = array();
+//
+//        $this->jsonUnescapedUnicode = $jsonUnescapedUnicode;
+//    }
+
+
+    /**
+     * @param array $conf
+     */
+    public function __construct($conf)
     {
-        $this->useSandbox = $sandbox;
-        $this->pem = $pem;
-        $this->passphrase = $passphrase;
         $this->apnStreams = array();
         $this->messages = array();
         $this->lastMessageId = -1;
-        $this->jsonUnescapedUnicode = $jsonUnescapedUnicode;
+        $this->conf = $conf;
     }
 
     /**
@@ -108,6 +128,7 @@ class AppleNotification implements OSNotificationServiceInterface
             throw new InvalidMessageTypeException(sprintf("Message type '%s' not supported by APN", get_class($message)));
         }
 
+        $this->setConf($message);
         $apnURL = "ssl://gateway.push.apple.com:2195";
         if ($this->useSandbox) {
             $apnURL = "ssl://gateway.sandbox.push.apple.com:2195";
@@ -118,6 +139,15 @@ class AppleNotification implements OSNotificationServiceInterface
         $errors = $this->sendMessages($messageId, $apnURL);
 
         return !$errors;
+    }
+
+    protected function setConf($message)
+    {
+        $currentConf = $this->conf[$message->getConfName()];
+        $this->useSandbox = $currentConf['sandbox'];
+        $this->pem =  $currentConf['pem'];
+        $this->passphrase =  $currentConf['passphrase'];
+        $this->jsonUnescapedUnicode = isset($currentConf['json_unescaped_unicode']) ? $currentConf['json_unescaped_unicode'] : null;
     }
 
     /**

@@ -43,15 +43,11 @@ class RMSPushNotificationsExtension extends Extension
             $loader->load('android.xml');
         }
         if (!empty($config["ios"])) {
-            foreach($config["ios"] as $app => $ios) {
-                $this->setiOSConfig($config, $app);
-            }
+            $this->setiOSConfig($config);
             $loader->load('ios.xml');
         }
         if (!empty($config["mac"])) {
-            foreach($config["mac"] as $app => $mac) {
-                $this->setMacConfig($config, $app);
-            }
+            $this->setMacConfig($config);
             $loader->load('mac.xml');
         }
         if (!empty($config["blackberry"])) {
@@ -110,9 +106,9 @@ class RMSPushNotificationsExtension extends Extension
      *
      * @param array $config
      */
-    protected function setiOSConfig(array $config, $app)
+    protected function setiOSConfig(array $config)
     {
-        $this->setAppleConfig($config, "ios", $app);
+        $this->setAppleConfig($config, "ios");
     }
 
     /**
@@ -120,9 +116,9 @@ class RMSPushNotificationsExtension extends Extension
      *
      * @param array $config
      */
-    protected function setMacConfig(array $config, $app)
+    protected function setMacConfig(array $config)
     {
-        $this->setAppleConfig($config, "mac", $app);
+        $this->setAppleConfig($config, "mac");
     }
 
     /**
@@ -133,41 +129,40 @@ class RMSPushNotificationsExtension extends Extension
      * @throws \RuntimeException
      * @throws \LogicException
      */
-    protected function setAppleConfig(array $config, $os, $app)
+    protected function setAppleConfig(array $config, $os)
     {
         $supportedAppleOS = array("mac", "ios");
         //Check if the OS is supported
         if (!in_array($os, $supportedAppleOS, true)) {
             throw new \RuntimeException(sprintf('This Apple OS "%s" is not supported', $os));
         }
-        $pemPath = $config[$os][$app]["pem"];
-        // PEM file is required
-        if (realpath($pemPath)) {
-            // Absolute path
-            $pemFile = $pemPath;
-        } elseif (realpath($this->kernelRootDir.DIRECTORY_SEPARATOR.$pemPath) ) {
-            // Relative path
-            $pemFile = $this->kernelRootDir.DIRECTORY_SEPARATOR.$pemPath;
-        } else {
-            // path isn't valid
-            throw new \RuntimeException(sprintf('Pem file "%s" not found.', $pemPath));
-        }
 
-        if ($config[$os]['restoin']['json_unescaped_unicode']) {
-            // Not support JSON_UNESCAPED_UNICODE option
-            if (!version_compare(PHP_VERSION, '5.4.0', '>=')) {
-                throw new \LogicException(sprintf(
-                    'Can\'t use JSON_UNESCAPED_UNICODE option. This option can use only PHP Version >= 5.4.0. Your version: %s',
-                    PHP_VERSION
-                ));
+        foreach($config[$os] as $conf) {
+            $pemPath = $conf["pem"];
+
+            // PEM file is required
+            if (realpath($pemPath)) {
+                // Absolute path
+                $conf["pem"] = $pemPath;
+            } elseif (realpath($this->kernelRootDir.DIRECTORY_SEPARATOR.$pemPath) ) {
+                // Relative path
+                $conf["pem"] = $this->kernelRootDir.DIRECTORY_SEPARATOR.$pemPath;
+            } else {
+                // path isn't valid
+                throw new \RuntimeException(sprintf('Pem file "%s" not found.', $pemPath));
+            }
+            if ($conf['json_unescaped_unicode']) {
+                // Not support JSON_UNESCAPED_UNICODE option
+                if (!version_compare(PHP_VERSION, '5.4.0', '>=')) {
+                    throw new \LogicException(sprintf(
+                        'Can\'t use JSON_UNESCAPED_UNICODE option. This option can use only PHP Version >= 5.4.0. Your version: %s',
+                        PHP_VERSION
+                    ));
+                }
             }
         }
 
-        $this->container->setParameter(sprintf('rms_push_notifications.%s.enabled', $os), true);
-        $this->container->setParameter(sprintf('rms_push_notifications.%s.sandbox', $os), $config[$os]['restoin']["sandbox"]);
-        $this->container->setParameter(sprintf('rms_push_notifications.%s.pem', $os), $pemFile);
-        $this->container->setParameter(sprintf('rms_push_notifications.%s.passphrase', $os), $config[$os]['restoin']["passphrase"]);
-        $this->container->setParameter(sprintf('rms_push_notifications.%s.json_unescaped_unicode', $os), (bool) $config[$os]['restoin']['json_unescaped_unicode']);
+        $this->container->setParameter(sprintf('rms_push_notifications.%s', $os), $config[$os]);
     }
 
     /**
