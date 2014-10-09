@@ -75,23 +75,6 @@ class AppleNotification implements OSNotificationServiceInterface
     /**
      * Constructor
      *
-     * @param $sandbox
-     * @param $pem
-     * @param $passphrase
-     */
-//    public function __construct($sandbox, $pem, $passphrase = "", $jsonUnescapedUnicode = FALSE)
-//    {
-//        $this->useSandbox = $sandbox;
-//        $this->pem = $pem;
-//        $this->passphrase = $passphrase;
-//        $this->apnStreams = array();
-//        $this->messages = array();
-//
-//        $this->jsonUnescapedUnicode = $jsonUnescapedUnicode;
-//    }
-
-
-    /**
      * @param array $conf
      */
     public function __construct($conf)
