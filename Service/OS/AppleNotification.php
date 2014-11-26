@@ -124,8 +124,9 @@ class AppleNotification implements OSNotificationServiceInterface
         return !$errors;
     }
 
-    protected function setConf($message)
+    protected function setConf($app)
     {
+        $currentConf = $this->conf[$app];
         $this->useSandbox = $currentConf['sandbox'];
         $this->pem =  $currentConf['pem'];
         $this->passphrase =  $currentConf['passphrase'];
