@@ -111,7 +111,7 @@ class AppleNotification implements OSNotificationServiceInterface
             throw new InvalidMessageTypeException(sprintf("Message type '%s' not supported by APN", get_class($message)));
         }
 
-        $this->setConf($message);
+        $this->setConf($app);
         $apnURL = "ssl://gateway.push.apple.com:2195";
         if ($this->useSandbox) {
             $apnURL = "ssl://gateway.sandbox.push.apple.com:2195";
@@ -126,7 +126,6 @@ class AppleNotification implements OSNotificationServiceInterface
 
     protected function setConf($message)
     {
-        $currentConf = $this->conf[$message->getConfName()];
         $this->useSandbox = $currentConf['sandbox'];
         $this->pem =  $currentConf['pem'];
         $this->passphrase =  $currentConf['passphrase'];

@@ -39,7 +39,7 @@ class AppleMessage implements MessageInterface
     /**
      * @var string
      */
-    protected $app;
+    protected $conf;
 
     /**
      * Class constructor
