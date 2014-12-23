@@ -26,6 +26,7 @@ and enable it in your kernel:
         );
     }
 
+NOTE: If you are still using Symfony 2.0, please use the `symfony2.0` branch.
 
 ## Configuration
 
