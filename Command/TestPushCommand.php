@@ -53,7 +53,6 @@ class TestPushCommand extends ContainerAwareCommand
         $tokenLengths = array(
             "ios" => 64,
             "c2dm" => 162,
-            "gcm" => 183,
         );
 
         if (isset($tokenLengths[$service]) && strlen($token) != $tokenLengths[$service]) {
