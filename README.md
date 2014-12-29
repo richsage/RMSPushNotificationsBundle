@@ -40,7 +40,7 @@ only be available if you provide configuration respectively for them.
               password: <string_android_c2dm_password>
               source: <string_android_c2dm_source>
           gcm:
-              api_key: <string_android_gcm_api_key>
+              api_key: <string_android_gcm_api_key> # This is titled "Server Key" when creating it
               use_multi_curl: <boolean_android_gcm_use_multi_curl> # default is true
       ios:
           sandbox: <bool_use_apns_sandbox>
