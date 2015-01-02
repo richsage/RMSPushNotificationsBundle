@@ -103,3 +103,11 @@ This service is available within the bundle.  The following code demonstrates ho
 Here, `$uuids` contains an array of [Feedback](https://github.com/richsage/RMSPushNotificationsBundle/blob/master/Device/iOS/Feedback.php) objects, with timestamp, token length and the device UUID all populated.
 
 Apple recommend you poll this service daily.
+
+# Thanks
+
+Firstly, thanks to all contributors to this bundle!
+
+![](https://www.jetbrains.com/phpstorm/documentation/docs/logo_phpstorm.png)
+
+Secondly, thanks to [JetBrains](http://www.jetbrains.com) for their sponsorship of an open-source [PhpStorm](https://www.jetbrains.com/phpstorm/) licence for this project.
