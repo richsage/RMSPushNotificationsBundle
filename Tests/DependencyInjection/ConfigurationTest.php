@@ -10,7 +10,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     public function testDefaults()
     {
         $config = $this->process(array());
-        $this->assertArrayHasKey("windowsphone", $config);
     }
 
     /**
@@ -232,6 +231,31 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($config["blackberry"]["evaluation"]);
         $this->assertEquals("foo", $config["blackberry"]["app_id"]);
         $this->assertEquals("bar", $config["blackberry"]["password"]);
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testAddingWindowsKeyRequiresValues()
+    {
+        $arr = array(
+            array(
+                "windowsphone" => "~"
+            ),
+        );
+        $config = $this->process($arr);
+    }
+
+    public function testFullWindows()
+    {
+        $arr = array(
+            array(
+                "windowsphone" => array("timeout" => 5)
+            ),
+        );
+        $config = $this->process($arr);
+        $this->assertArrayHasKey("windowsphone", $config);
+        $this->assertEquals(5, $config["windowsphone"]["timeout"]);
     }
 
     /**

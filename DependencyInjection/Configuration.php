@@ -132,6 +132,9 @@ class Configuration implements ConfigurationInterface
         ;
     }
 
+    /**
+     * Windows Phone configuration
+     */
     protected function addWindowsphone()
     {
         $this->root->
