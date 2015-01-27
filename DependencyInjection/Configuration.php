@@ -135,7 +135,11 @@ class Configuration implements ConfigurationInterface
     {
         $this->root->
             children()->
-                booleanNode('windowsphone')->defaultFalse()->end()->
+                arrayNode('windowsphone')->
+                    children()->
+                        scalarNode("timeout")->defaultValue(5)->end()->
+                    end()->
+                end()->
             end()
         ;
     }
