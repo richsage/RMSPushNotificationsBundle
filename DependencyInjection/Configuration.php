@@ -42,6 +42,8 @@ class Configuration implements ConfigurationInterface
                     canBeUnset()->
                     children()->
 
+                        scalarNode("timeout")->defaultValue(5)->end()->
+
                         // WARNING: These 3 fields as they are, outside of the c2dm array
                         // are deprecrated in favour of using the c2dm array configuration
                         // At present these will be overriden by anything supplied
