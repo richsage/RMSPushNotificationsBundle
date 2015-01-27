@@ -121,6 +121,7 @@ class Configuration implements ConfigurationInterface
             children()->
                 arrayNode("blackberry")->
                     children()->
+                        scalarNode("timeout")->defaultValue(5)->end()->
                         booleanNode("evaluation")->defaultFalse()->end()->
                         scalarNode("app_id")->isRequired()->cannotBeEmpty()->end()->
                         scalarNode("password")->isRequired()->cannotBeEmpty()->end()->
