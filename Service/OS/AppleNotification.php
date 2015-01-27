@@ -58,6 +58,13 @@ class AppleNotification implements OSNotificationServiceInterface
     protected $jsonUnescapedUnicode = FALSE;
 
     /**
+     * Connection timeout
+     *
+     * @var int
+     */
+    protected $timeout;
+
+    /**
      * Collection of the responses from the APN
      *
      * @var array
@@ -71,7 +78,7 @@ class AppleNotification implements OSNotificationServiceInterface
      * @param $pem
      * @param $passphrase
      */
-    public function __construct($sandbox, $pem, $passphrase = "", $jsonUnescapedUnicode = FALSE)
+    public function __construct($sandbox, $pem, $passphrase = "", $jsonUnescapedUnicode = FALSE, $timeout = 60)
     {
         $this->useSandbox = $sandbox;
         $this->pem = $pem;
@@ -80,6 +87,7 @@ class AppleNotification implements OSNotificationServiceInterface
         $this->messages = array();
         $this->lastMessageId = -1;
         $this->jsonUnescapedUnicode = $jsonUnescapedUnicode;
+        $this->timeout = $timeout;
     }
 
     /**
@@ -193,7 +201,7 @@ class AppleNotification implements OSNotificationServiceInterface
         if (!isset($this->apnStreams[$apnURL])) {
             // No stream found, setup a new stream
             $ctx = $this->getStreamContext();
-            $this->apnStreams[$apnURL] = stream_socket_client($apnURL, $err, $errstr, 60, STREAM_CLIENT_CONNECT, $ctx);
+            $this->apnStreams[$apnURL] = stream_socket_client($apnURL, $err, $errstr, $this->timeout, STREAM_CLIENT_CONNECT, $ctx);
             if (!$this->apnStreams[$apnURL]) {
                 throw new \RuntimeException("Couldn't connect to APN server. Error no $err: $errstr");
             }

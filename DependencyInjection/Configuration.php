@@ -98,6 +98,7 @@ class Configuration implements ConfigurationInterface
             children()->
                 arrayNode($os)->
                     children()->
+                        scalarNode("timeout")->defaultValue(60)->end()->
                         booleanNode("sandbox")->defaultFalse()->end()->
                         scalarNode("pem")->isRequired()->cannotBeEmpty()->end()->
                         scalarNode("passphrase")->defaultValue("")->end()->
