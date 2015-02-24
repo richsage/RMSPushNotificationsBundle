@@ -95,6 +95,7 @@ class Configuration implements ConfigurationInterface
         $config = $this->root->
             children()->
                 arrayNode($os)->
+                    prototype('array')->
                     children()->
                         booleanNode("sandbox")->defaultFalse()->end()->
                         scalarNode("pem")->isRequired()->cannotBeEmpty()->end()->

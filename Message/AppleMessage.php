@@ -37,6 +37,11 @@ class AppleMessage implements MessageInterface
     protected $expiry = 0;
 
     /**
+     * @var string
+     */
+    protected $conf;
+
+    /**
      * Class constructor
      */
     public function __construct($identifier = NULL)
@@ -207,5 +212,15 @@ class AppleMessage implements MessageInterface
     public function getExpiry()
     {
         return $this->expiry;
+    }
+
+    public function setConfName($conf = 'default')
+    {
+        $this->conf = $conf;
+    }
+
+    public function getConfName()
+    {
+        return $this->conf;
     }
 }
