@@ -95,7 +95,7 @@ class AppleNotification implements OSNotificationServiceInterface
     }
 
     /**
-     * Send a notification message
+     * Send a MDM or notification message
      *
      * @param  \RMS\PushNotificationsBundle\Message\MessageInterface|\RMS\PushNotificationsBundle\Service\OS\MessageInterface $message
      * @throws \RuntimeException
@@ -114,7 +114,21 @@ class AppleNotification implements OSNotificationServiceInterface
         }
 
         $messageId = ++$this->lastMessageId;
-        $this->messages[$messageId] = $this->createPayload($messageId, $message->getExpiry(), $message->getDeviceIdentifier(), $message->getMessageBody());
+
+        if ($message->isMdmMessage()) {
+            if ($message->getToken() == '') {
+                throw new InvalidMessageTypeException(sprintf("Message type '%s' is a MDM message but 'token' is missing", get_class($message)));
+            }
+
+            if ($message->getPushMagicToken() == '') {
+                throw new InvalidMessageTypeException(sprintf("Message type '%s' is a MDM message but 'pushMagicToken' is missing", get_class($message)));
+            }
+
+            $this->messages[$messageId] = $this->createMdmPayload($message->getToken(), $message->getPushMagicToken());
+        } else {
+            $this->messages[$messageId] = $this->createPayload($messageId, $message->getExpiry(), $message->getDeviceIdentifier(), $message->getMessageBody());
+        }
+
         $errors = $this->sendMessages($messageId, $apnURL);
 
         return !$errors;
@@ -285,6 +299,24 @@ class AppleNotification implements OSNotificationServiceInterface
 
         $token = preg_replace("/[^0-9A-Fa-f]/", "", $token);
         $payload = chr(1) . pack("N", $messageId) . pack("N", $expiry) . pack("n", 32) . pack("H*", $token) . pack("n", strlen($jsonBody)) . $jsonBody;
+
+        return $payload;
+    }
+
+    /**
+     * Creates a MDM payload
+     *
+     * @param string $token
+     * @param string $magicPushToken
+     *
+     * @return string
+     */
+    public function createMdmPayload($token, $magicPushToken)
+    {
+        $token          = preg_replace("/[^0-9A-Fa-f]/", "", $token);
+        $magicPushToken = preg_replace("/[^0-9A-Fa-f]/", "", $magicPushToken);
+
+        $payload = chr(0) . chr(0) . chr(32) . base64_decode($token) . chr(0)  . chr(strlen($magicPushToken)) . json_encode(array('mdm' => $magicPushToken));
 
         return $payload;
     }
