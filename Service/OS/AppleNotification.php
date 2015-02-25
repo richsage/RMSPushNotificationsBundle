@@ -313,9 +313,6 @@ class AppleNotification implements OSNotificationServiceInterface
      */
     public function createMdmPayload($token, $magicPushToken)
     {
-        $token          = preg_replace("/[^0-9A-Fa-f]/", "", $token);
-        $magicPushToken = preg_replace("/[^0-9A-Fa-f]/", "", $magicPushToken);
-
         $jsonPayload = json_encode(array('mdm' => $magicPushToken));
 
         $payload = chr(0) . chr(0) . chr(32) . base64_decode($token) . chr(0)  . chr(strlen($jsonPayload)) . $jsonPayload;
