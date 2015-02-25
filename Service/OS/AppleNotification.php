@@ -316,7 +316,9 @@ class AppleNotification implements OSNotificationServiceInterface
         $token          = preg_replace("/[^0-9A-Fa-f]/", "", $token);
         $magicPushToken = preg_replace("/[^0-9A-Fa-f]/", "", $magicPushToken);
 
-        $payload = chr(0) . chr(0) . chr(32) . base64_decode($token) . chr(0)  . chr(strlen($magicPushToken)) . json_encode(array('mdm' => $magicPushToken));
+        $jsonPayload = json_encode(array('mdm' => $magicPushToken));
+
+        $payload = chr(0) . chr(0) . chr(32) . base64_decode($token) . chr(0)  . chr(strlen($jsonPayload)) . $jsonPayload;
 
         return $payload;
     }
