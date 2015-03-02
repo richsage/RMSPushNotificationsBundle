@@ -28,17 +28,26 @@ class iOSFeedback
     protected $passphrase;
 
     /**
+     * Connection timeout
+     *
+     * @var int
+     */
+    protected $timeout;
+
+    /**
      * Constructor
      *
      * @param $sandbox
      * @param $pem
      * @param $passphrase
+     * @param $timeout
      */
-    public function __construct($sandbox, $pem, $passphrase)
+    public function __construct($sandbox, $pem, $passphrase, $timeout)
     {
         $this->sandbox = $sandbox;
         $this->pem = $pem;
         $this->passphrase = $passphrase;
+        $this->timeout = $timeout;
     }
 
     /**
@@ -61,7 +70,7 @@ class iOSFeedback
         $data = "";
 
         $ctx = $this->getStreamContext();
-        $fp = stream_socket_client($feedbackURL, $err, $errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
+        $fp = stream_socket_client($feedbackURL, $err, $errstr, $this->timeout, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
         if (!$fp) {
             throw new \RuntimeException("Couldn't connect to APNS Feedback service. Error no $err: $errstr");
         }

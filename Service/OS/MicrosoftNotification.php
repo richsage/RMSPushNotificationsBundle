@@ -17,10 +17,14 @@ class MicrosoftNotification implements OSNotificationServiceInterface
      */
     protected $browser;
 
-    public function __construct()
+    /**
+     * @param $timeout
+     */
+    public function __construct($timeout)
     {
         $this->browser = new Browser(new Curl());
         $this->browser->getClient()->setVerifyPeer(false);
+        $this->browser->getClient()->setTimeout($timeout);
     }
 
     public function send(MessageInterface $message)

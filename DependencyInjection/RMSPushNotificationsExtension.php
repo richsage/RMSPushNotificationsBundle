@@ -84,11 +84,13 @@ class RMSPushNotificationsExtension extends Extension
         $username = $config["android"]["username"];
         $password = $config["android"]["password"];
         $source = $config["android"]["source"];
+        $timeout = $config["android"]["timeout"];
         if (isset($config["android"]["c2dm"])) {
             $username = $config["android"]["c2dm"]["username"];
             $password = $config["android"]["c2dm"]["password"];
             $source = $config["android"]["c2dm"]["source"];
         }
+        $this->container->setParameter("rms_push_notifications.android.timeout", $timeout);
         $this->container->setParameter("rms_push_notifications.android.c2dm.username", $username);
         $this->container->setParameter("rms_push_notifications.android.c2dm.password", $password);
         $this->container->setParameter("rms_push_notifications.android.c2dm.source", $source);
@@ -160,6 +162,7 @@ class RMSPushNotificationsExtension extends Extension
         }
 
         $this->container->setParameter(sprintf('rms_push_notifications.%s.enabled', $os), true);
+        $this->container->setParameter(sprintf('rms_push_notifications.%s.timeout', $os), $config[$os]["timeout"]);
         $this->container->setParameter(sprintf('rms_push_notifications.%s.sandbox', $os), $config[$os]["sandbox"]);
         $this->container->setParameter(sprintf('rms_push_notifications.%s.pem', $os), $pemFile);
         $this->container->setParameter(sprintf('rms_push_notifications.%s.passphrase', $os), $config[$os]["passphrase"]);
@@ -174,6 +177,7 @@ class RMSPushNotificationsExtension extends Extension
     protected function setBlackberryConfig(array $config)
     {
         $this->container->setParameter("rms_push_notifications.blackberry.enabled", true);
+        $this->container->setParameter("rms_push_notifications.blackberry.timeout", $config["blackberry"]["timeout"]);
         $this->container->setParameter("rms_push_notifications.blackberry.evaluation", $config["blackberry"]["evaluation"]);
         $this->container->setParameter("rms_push_notifications.blackberry.app_id", $config["blackberry"]["app_id"]);
         $this->container->setParameter("rms_push_notifications.blackberry.password", $config["blackberry"]["password"]);
@@ -182,5 +186,6 @@ class RMSPushNotificationsExtension extends Extension
     protected function setWindowsphoneConfig(array $config)
     {
         $this->container->setParameter("rms_push_notifications.windowsphone.enabled", true);
+        $this->container->setParameter("rms_push_notifications.windowsphone.timeout", $config["windowsphone"]["timeout"]);
     }
 }

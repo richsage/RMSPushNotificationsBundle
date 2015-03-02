@@ -42,6 +42,8 @@ class Configuration implements ConfigurationInterface
                     canBeUnset()->
                     children()->
 
+                        scalarNode("timeout")->defaultValue(5)->end()->
+
                         // WARNING: These 3 fields as they are, outside of the c2dm array
                         // are deprecrated in favour of using the c2dm array configuration
                         // At present these will be overriden by anything supplied
@@ -96,6 +98,7 @@ class Configuration implements ConfigurationInterface
             children()->
                 arrayNode($os)->
                     children()->
+                        scalarNode("timeout")->defaultValue(60)->end()->
                         booleanNode("sandbox")->defaultFalse()->end()->
                         scalarNode("pem")->isRequired()->cannotBeEmpty()->end()->
                         scalarNode("passphrase")->defaultValue("")->end()->
@@ -119,6 +122,7 @@ class Configuration implements ConfigurationInterface
             children()->
                 arrayNode("blackberry")->
                     children()->
+                        scalarNode("timeout")->defaultValue(5)->end()->
                         booleanNode("evaluation")->defaultFalse()->end()->
                         scalarNode("app_id")->isRequired()->cannotBeEmpty()->end()->
                         scalarNode("password")->isRequired()->cannotBeEmpty()->end()->
@@ -128,11 +132,18 @@ class Configuration implements ConfigurationInterface
         ;
     }
 
+    /**
+     * Windows Phone configuration
+     */
     protected function addWindowsphone()
     {
         $this->root->
             children()->
-                booleanNode('windowsphone')->defaultFalse()->end()->
+                arrayNode('windowsphone')->
+                    children()->
+                        scalarNode("timeout")->defaultValue(5)->end()->
+                    end()->
+                end()->
             end()
         ;
     }
