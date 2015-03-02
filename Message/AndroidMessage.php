@@ -214,6 +214,13 @@ class AndroidMessage implements MessageInterface
     }
 
     /**
+     * Sets the GCM list
+     */
+    public function setAllIdentifiers($allIdentifiers) {
+        $this->allIdentifiers = $allIdentifiers;
+    }
+
+    /**
      * Sets GCM options
      * @param array $options
      */
