@@ -410,5 +410,11 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
         if ($fs->exists(dirname($filename))) {
             $fs->remove(dirname($filename));
         }
+
+        // Close streams
+        foreach ($this->apnStreams as $stream) {
+            fclose($stream);
+        }
+
     }
 }
