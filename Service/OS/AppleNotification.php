@@ -112,7 +112,7 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
      * @param string $cachedir
      * @param EventListener $eventListener
      */
-    public function __construct($sandbox, $pem, $passphrase = "", $jsonUnescapedUnicode = FALSE, $timeout = 60, $cachedir = "", EventListener $eventListener)
+    public function __construct($sandbox, $pem, $passphrase = "", $jsonUnescapedUnicode = FALSE, $timeout = 60, $cachedir = "", EventListener $eventListener = null)
     {
         $this->useSandbox = $sandbox;
         $this->pemPath = $pem;
@@ -124,7 +124,8 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
         $this->timeout = $timeout;
         $this->cachedir = $cachedir;
 
-        $eventListener->addListener($this);
+        if ($eventListener != null)
+            $eventListener->addListener($this);
     }
 
     /**
