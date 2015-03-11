@@ -293,7 +293,7 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
         $pem = $this->pemPath;
         $passphrase = $this->passphrase;
 
-        // Create cache pem file
+        // Create cache pem file if needed
         if (!empty($this->pemContent)) {
             $filename = $this->cachedir . self::APNS_CERTIFICATE_FILE;
 
@@ -301,7 +301,7 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
             $fs->mkdir(dirname($filename));
             file_put_contents($filename, $this->pemContent);
 
-            // We now use this file as certificate
+            // Now we use this file as pem
             $pem = $filename;
             $passphrase = $this->pemContentPassphrase;
         }
@@ -391,16 +391,16 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
     }
 
     /**
-     * @param $certificate
+     * @param $pemContent
      * @param $passphrase
      */
-    public function setCertificateAsString($certificate, $passphrase) {
-        $this->pemContent = $certificate;
+    public function setPemAsString($pemContent, $passphrase) {
+        $this->pemContent = $pemContent;
         $this->pemContentPassphrase = $passphrase;
     }
 
     /**
-     * Call on kernel terminate
+     * Called on kernel terminate
      */
     public function onKernelTerminate() {
 

@@ -86,17 +86,17 @@ class Notifications
 
 
     /**
-     * Set Apple Push Notification Service certificate.
-     * Service won't use pem file passed by config.
+     * Set Apple Push Notification Service pem as string.
+     * Service won't use pem file passed by config anymore.
      *
-     * @param $certificate string
+     * @param $pemContent string
      * @param $passphrase
      */
-    public function setAPNSCertificateAsString($certificate, $passphrase) {
+    public function setAPNSPemAsString($pemContent, $passphrase) {
         if (isset($this->handlers[Types::OS_IOS]) && $this->handlers[Types::OS_IOS] instanceof AppleNotification) {
-            /** @var AppleNotification $APNS */
-            $APNS = $this->handlers[Types::OS_IOS];
-            $APNS->setCertificateAsString($certificate, $passphrase);
+            /** @var AppleNotification $appleNotification */
+            $appleNotification = $this->handlers[Types::OS_IOS];
+            $appleNotification->setPemAsString($pemContent, $passphrase);
         }
     }
 }
