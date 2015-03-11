@@ -2,7 +2,9 @@
 
 namespace RMS\PushNotificationsBundle\Service;
 
+use RMS\PushNotificationsBundle\Device\Types;
 use RMS\PushNotificationsBundle\Message\MessageInterface;
+use RMS\PushNotificationsBundle\Service\OS\AppleNotification;
 
 class Notifications
 {
@@ -80,5 +82,21 @@ class Notifications
     public function supports($targetOS)
     {
         return isset($this->handlers[$targetOS]);
+    }
+
+
+    /**
+     * Set Apple Push Notification Service certificate.
+     * Service won't use pem file passed by config.
+     *
+     * @param $certificate string
+     * @param $passphrase
+     */
+    public function setAPNSCertificateAsString($certificate, $passphrase) {
+        if (isset($this->handlers[Types::OS_IOS]) && $this->handlers[Types::OS_IOS] instanceof AppleNotification) {
+            /** @var AppleNotification $APNS */
+            $APNS = $this->handlers[Types::OS_IOS];
+            $APNS->setCertificateAsString($certificate, $passphrase);
+        }
     }
 }

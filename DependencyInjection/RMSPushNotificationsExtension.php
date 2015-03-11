@@ -139,16 +139,19 @@ class RMSPushNotificationsExtension extends Extension
             throw new \RuntimeException(sprintf('This Apple OS "%s" is not supported', $os));
         }
 
-        // PEM file is required
-        if (realpath($config[$os]["pem"])) {
-            // Absolute path
-            $pemFile = $config[$os]["pem"];
-        } elseif (realpath($this->kernelRootDir.DIRECTORY_SEPARATOR.$config[$os]["pem"]) ) {
-            // Relative path
-            $pemFile = $this->kernelRootDir.DIRECTORY_SEPARATOR.$config[$os]["pem"];
-        } else {
-            // path isn't valid
-            throw new \RuntimeException(sprintf('Pem file "%s" not found.', $config[$os]["pem"]));
+        $pemFile = null;
+        if (isset($config[$os]["pem"])) {
+            // If PEM is set, it must be a real file
+            if (realpath($config[$os]["pem"])) {
+                // Absolute path
+                $pemFile = $config[$os]["pem"];
+            } elseif (realpath($this->kernelRootDir.DIRECTORY_SEPARATOR.$config[$os]["pem"]) ) {
+                // Relative path
+                $pemFile = $this->kernelRootDir.DIRECTORY_SEPARATOR.$config[$os]["pem"];
+            } else {
+                // path isn't valid
+                throw new \RuntimeException(sprintf('Pem file "%s" not found.', $config[$os]["pem"]));
+            }
         }
 
         if ($config[$os]['json_unescaped_unicode']) {
