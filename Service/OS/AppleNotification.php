@@ -4,10 +4,14 @@ namespace RMS\PushNotificationsBundle\Service\OS;
 
 use RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException,
     RMS\PushNotificationsBundle\Message\AppleMessage,
-    RMS\PushNotificationsBundle\Message\MessageInterface;
+    RMS\PushNotificationsBundle\Message\MessageInterface,
+    Symfony\Component\Filesystem\Filesystem,
+    RMS\PushNotificationsBundle\Service\EventListenerInterface;
+use RMS\PushNotificationsBundle\Service\EventListener;
 
-class AppleNotification implements OSNotificationServiceInterface
+class AppleNotification implements OSNotificationServiceInterface, EventListenerInterface
 {
+
     /**
      * Whether or not to use the sandbox APNS
      *
@@ -20,7 +24,7 @@ class AppleNotification implements OSNotificationServiceInterface
      *
      * @var string
      */
-    protected $pem;
+    protected $pemPath;
 
     /**
      * Passphrase for PEM file
@@ -28,6 +32,20 @@ class AppleNotification implements OSNotificationServiceInterface
      * @var string
      */
     protected $passphrase;
+
+    /**
+     * Content of PEM
+     *
+     * @var string
+     */
+    protected $pemContent;
+
+    /**
+     * Passphrase for PEM content
+     *
+     * @var string
+     */
+    protected $pemContentPassphrase;
 
     /**
      * Array for streams to APN
@@ -72,22 +90,42 @@ class AppleNotification implements OSNotificationServiceInterface
     protected $responses = array();
 
     /**
+     * Cache dir used for cache pem file
+     *
+     * @var string
+     */
+    protected $cachedir;
+
+    /**
+     * Cache pem filename
+     */
+    const APNS_CERTIFICATE_FILE = '/rms_push_notifications/apns.pem';
+
+    /**
      * Constructor
      *
      * @param $sandbox
      * @param $pem
-     * @param $passphrase
+     * @param string $passphrase
+     * @param bool $jsonUnescapedUnicode
+     * @param int $timeout
+     * @param string $cachedir
+     * @param EventListener $eventListener
      */
-    public function __construct($sandbox, $pem, $passphrase = "", $jsonUnescapedUnicode = FALSE, $timeout = 60)
+    public function __construct($sandbox, $pem, $passphrase = "", $jsonUnescapedUnicode = FALSE, $timeout = 60, $cachedir = "", EventListener $eventListener = null)
     {
         $this->useSandbox = $sandbox;
-        $this->pem = $pem;
+        $this->pemPath = $pem;
         $this->passphrase = $passphrase;
         $this->apnStreams = array();
         $this->messages = array();
         $this->lastMessageId = -1;
         $this->jsonUnescapedUnicode = $jsonUnescapedUnicode;
         $this->timeout = $timeout;
+        $this->cachedir = $cachedir;
+
+        if ($eventListener != null)
+            $eventListener->addListener($this);
     }
 
     /**
@@ -253,11 +291,26 @@ class AppleNotification implements OSNotificationServiceInterface
      */
     protected function getStreamContext()
     {
-        $ctx = stream_context_create();
+        $pem = $this->pemPath;
+        $passphrase = $this->passphrase;
 
-        stream_context_set_option($ctx, "ssl", "local_cert", $this->pem);
-        if (strlen($this->passphrase)) {
-            stream_context_set_option($ctx, "ssl", "passphrase", $this->passphrase);
+        // Create cache pem file if needed
+        if (!empty($this->pemContent)) {
+            $filename = $this->cachedir . self::APNS_CERTIFICATE_FILE;
+
+            $fs = new Filesystem();
+            $fs->mkdir(dirname($filename));
+            file_put_contents($filename, $this->pemContent);
+
+            // Now we use this file as pem
+            $pem = $filename;
+            $passphrase = $this->pemContentPassphrase;
+        }
+
+        $ctx = stream_context_create();
+        stream_context_set_option($ctx, "ssl", "local_cert", $pem);
+        if (strlen($passphrase)) {
+            stream_context_set_option($ctx, "ssl", "passphrase", $passphrase);
         }
 
         return $ctx;
@@ -336,5 +389,33 @@ class AppleNotification implements OSNotificationServiceInterface
     public function getResponses()
     {
         return $this->responses;
+    }
+
+    /**
+     * @param $pemContent
+     * @param $passphrase
+     */
+    public function setPemAsString($pemContent, $passphrase) {
+        $this->pemContent = $pemContent;
+        $this->pemContentPassphrase = $passphrase;
+    }
+
+    /**
+     * Called on kernel terminate
+     */
+    public function onKernelTerminate() {
+
+        // Remove cache pem file
+        $fs = new Filesystem();
+        $filename = $this->cachedir . self::APNS_CERTIFICATE_FILE;
+        if ($fs->exists(dirname($filename))) {
+            $fs->remove(dirname($filename));
+        }
+
+        // Close streams
+        foreach ($this->apnStreams as $stream) {
+            fclose($stream);
+        }
+
     }
 }

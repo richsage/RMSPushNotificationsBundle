@@ -2,7 +2,9 @@
 
 namespace RMS\PushNotificationsBundle\Service;
 
+use RMS\PushNotificationsBundle\Device\Types;
 use RMS\PushNotificationsBundle\Message\MessageInterface;
+use RMS\PushNotificationsBundle\Service\OS\AppleNotification;
 
 class Notifications
 {
@@ -80,5 +82,21 @@ class Notifications
     public function supports($targetOS)
     {
         return isset($this->handlers[$targetOS]);
+    }
+
+
+    /**
+     * Set Apple Push Notification Service pem as string.
+     * Service won't use pem file passed by config anymore.
+     *
+     * @param $pemContent string
+     * @param $passphrase
+     */
+    public function setAPNSPemAsString($pemContent, $passphrase) {
+        if (isset($this->handlers[Types::OS_IOS]) && $this->handlers[Types::OS_IOS] instanceof AppleNotification) {
+            /** @var AppleNotification $appleNotification */
+            $appleNotification = $this->handlers[Types::OS_IOS];
+            $appleNotification->setPemAsString($pemContent, $passphrase);
+        }
     }
 }

@@ -9,6 +9,7 @@
         <parameter key="rms_push_notifications.ios.class">RMS\PushNotificationsBundle\Service\OS\AppleNotification</parameter>
         <parameter key="rms_push_notifications.ios.feedback.class">RMS\PushNotificationsBundle\Service\iOSFeedback</parameter>
         <parameter key="rms_push_notifications.mac.class">RMS\PushNotificationsBundle\Service\OS\AppleNotification</parameter>
+        <parameter key="rms_push_notifications.event_listener.class">RMS\PushNotificationsBundle\Service\EventListener</parameter>
     </parameters>
 
     <services>
@@ -17,6 +18,9 @@
         <service id="rms_push_notifications" class="%rms_push_notifications.class%">
         </service>
 
+        <service id="rms_push_notifications.event_listener" class="%rms_push_notifications.event_listener.class%">
+            <tag name="kernel.event_listener" event="kernel.terminate" method="onKernelTerminate" />
+        </service>
     </services>
 
 </container>
