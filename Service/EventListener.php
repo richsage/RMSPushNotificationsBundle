@@ -8,7 +8,7 @@ class EventListener {
     /**
      * @var EventListenerInterface[]
      */
-    protected $listeners = [];
+    protected $listeners = array();
 
     /**
      * @param EventListenerInterface $listener
