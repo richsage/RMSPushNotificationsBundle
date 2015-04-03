@@ -137,7 +137,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     {
         $arr = array(
             array(
-                "ios" => array("pem" => "")
+                "ios" => array(array("pem" => ""))
             ),
         );
         $config = $this->process($arr);
@@ -147,7 +147,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     {
         $arr = array(
             array(
-                "ios" => array("sandbox" => false, "pem" => "foo/bar.pem", "passphrase" => "foo")
+                "ios" => array(array("sandbox" => false, "pem" => "foo/bar.pem", "passphrase" => "foo"))
             ),
         );
         $config = $this->process($arr);
@@ -176,7 +176,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     {
         $arr = array(
             array(
-                "mac" => array("pem" => "")
+                "mac" => array(array("pem" => ""))
             ),
         );
         $config = $this->process($arr);
@@ -186,7 +186,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     {
         $arr = array(
             array(
-                "mac" => array("sandbox" => false, "pem" => "foo/bar.pem", "passphrase" => "foo")
+                "mac" => array(array("sandbox" => false, "pem" => "foo/bar.pem", "passphrase" => "foo"))
             ),
         );
         $config = $this->process($arr);
