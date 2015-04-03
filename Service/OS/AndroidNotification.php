@@ -32,6 +32,13 @@ class AndroidNotification implements OSNotificationServiceInterface
     protected $source;
 
     /**
+     * Timeout in seconds for the connecting client
+     *
+     * @var int
+     */
+    protected $timeout;
+
+    /**
      * Authentication token
      *
      * @var string
@@ -44,12 +51,14 @@ class AndroidNotification implements OSNotificationServiceInterface
      * @param $username
      * @param $password
      * @param $source
+     * @param $timeout
      */
-    public function __construct($username, $password, $source)
+    public function __construct($username, $password, $source, $timeout)
     {
         $this->username = $username;
         $this->password = $password;
         $this->source = $source;
+        $this->timeout = $timeout;
         $this->authToken = "";
     }
 
@@ -73,6 +82,7 @@ class AndroidNotification implements OSNotificationServiceInterface
 
             $buzz = new Browser();
             $buzz->getClient()->setVerifyPeer(false);
+            $buzz->getClient()->setTimeout($this->timeout);
             $response = $buzz->post("https://android.apis.google.com/c2dm/send", $headers, http_build_query($data));
 
             return preg_match("/^id=/", $response->getContent()) > 0;
@@ -98,6 +108,7 @@ class AndroidNotification implements OSNotificationServiceInterface
 
         $buzz = new Browser();
         $buzz->getClient()->setVerifyPeer(false);
+        $buzz->getClient()->setTimeout($this->timeout);
         $response = $buzz->post("https://www.google.com/accounts/ClientLogin", array(), http_build_query($data));
         if ($response->getStatusCode() !== 200) {
             return false;

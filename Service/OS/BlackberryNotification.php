@@ -33,17 +33,26 @@ class BlackberryNotification implements OSNotificationServiceInterface
     protected $password;
 
     /**
+     * Timeout in seconds for the connecting client
+     *
+     * @var int
+     */
+    protected $timeout;
+
+    /**
      * Constructor
      *
      * @param $evaluation
      * @param $appID
      * @param $password
+     * @param $timeout
      */
-    public function __construct($evaluation, $appID, $password)
+    public function __construct($evaluation, $appID, $password, $timeout)
     {
         $this->evaluation = $evaluation;
         $this->appID = $appID;
         $this->password = $password;
+        $this->timeout = $timeout;
     }
 
     /**
@@ -73,6 +82,7 @@ class BlackberryNotification implements OSNotificationServiceInterface
         $separator = "mPsbVQo0a68eIL3OAxnm";
         $body = $this->constructMessageBody($message, $separator);
         $browser = new Browser(new Curl());
+        $browser->getClient()->setTimeout($this->timeout);
         $listener = new BasicAuthListener($this->appID, $this->password);
         $browser->addListener($listener);
 

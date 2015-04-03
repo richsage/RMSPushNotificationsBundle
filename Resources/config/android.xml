@@ -15,6 +15,7 @@
             <argument>%rms_push_notifications.android.c2dm.username%</argument>
             <argument>%rms_push_notifications.android.c2dm.password%</argument>
             <argument>%rms_push_notifications.android.c2dm.source%</argument>
+            <argument>%rms_push_notifications.android.timeout%</argument>
             <tag name="rms_push_notifications.handler" osType="rms_push_notifications.os.android.c2dm" />
         </service>
 
@@ -22,6 +23,7 @@
         <service id="rms_push_notifications.android.gcm" class="%rms_push_notifications.android.gcm.class%" public="false">
             <argument>%rms_push_notifications.android.gcm.api_key%</argument>
             <argument>%rms_push_notifications.android.gcm.use_multi_curl%</argument>
+            <argument>%rms_push_notifications.android.timeout%</argument>
             <tag name="rms_push_notifications.handler" osType="rms_push_notifications.os.android.gcm" />
         </service>
 

@@ -10,7 +10,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     public function testDefaults()
     {
         $config = $this->process(array());
-        $this->assertArrayHasKey("windowsphone", $config);
     }
 
     /**
@@ -60,6 +59,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         );
         $config = $this->process($arr);
         $this->assertArrayHasKey("android", $config);
+        $this->assertEquals(5, $config["android"]["timeout"]);
         $this->assertEquals("foo", $config["android"]["username"]);
         $this->assertEquals("bar", $config["android"]["password"]);
         $this->assertEquals("123", $config["android"]["source"]);
@@ -80,6 +80,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         );
         $config = $this->process($arr);
         $this->assertArrayHasKey("android", $config);
+        $this->assertEquals(5, $config["android"]["timeout"]);
         $this->assertArrayHasKey("c2dm", $config["android"]);
         $this->assertEquals("foo", $config["android"]["c2dm"]["username"]);
         $this->assertEquals("bar", $config["android"]["c2dm"]["password"]);
@@ -151,6 +152,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         );
         $config = $this->process($arr);
         $this->assertArrayHasKey("ios", $config);
+        $this->assertEquals(60, $config["ios"]["timeout"]);
         $this->assertEquals(false, $config["ios"]["sandbox"]);
         $this->assertEquals("foo/bar.pem", $config["ios"]["pem"]);
         $this->assertEquals("foo", $config["ios"]["passphrase"]);
@@ -189,6 +191,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         );
         $config = $this->process($arr);
         $this->assertArrayHasKey("mac", $config);
+        $this->assertEquals(60, $config["mac"]["timeout"]);
         $this->assertEquals(false, $config["mac"]["sandbox"]);
         $this->assertEquals("foo/bar.pem", $config["mac"]["pem"]);
         $this->assertEquals("foo", $config["mac"]["passphrase"]);
@@ -230,8 +233,34 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $config = $this->process($arr);
         $this->assertArrayHasKey("blackberry", $config);
         $this->assertFalse($config["blackberry"]["evaluation"]);
+        $this->assertEquals(5, $config["blackberry"]["timeout"]);
         $this->assertEquals("foo", $config["blackberry"]["app_id"]);
         $this->assertEquals("bar", $config["blackberry"]["password"]);
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testAddingWindowsKeyRequiresValues()
+    {
+        $arr = array(
+            array(
+                "windowsphone" => "~"
+            ),
+        );
+        $config = $this->process($arr);
+    }
+
+    public function testFullWindows()
+    {
+        $arr = array(
+            array(
+                "windowsphone" => array("timeout" => 5)
+            ),
+        );
+        $config = $this->process($arr);
+        $this->assertArrayHasKey("windowsphone", $config);
+        $this->assertEquals(5, $config["windowsphone"]["timeout"]);
     }
 
     /**

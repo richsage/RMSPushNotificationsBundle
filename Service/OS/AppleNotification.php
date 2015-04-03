@@ -4,10 +4,14 @@ namespace RMS\PushNotificationsBundle\Service\OS;
 
 use RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException,
     RMS\PushNotificationsBundle\Message\AppleMessage,
-    RMS\PushNotificationsBundle\Message\MessageInterface;
+    RMS\PushNotificationsBundle\Message\MessageInterface,
+    Symfony\Component\Filesystem\Filesystem,
+    RMS\PushNotificationsBundle\Service\EventListenerInterface;
+use RMS\PushNotificationsBundle\Service\EventListener;
 
-class AppleNotification implements OSNotificationServiceInterface
+class AppleNotification implements OSNotificationServiceInterface, EventListenerInterface
 {
+
     /**
      * Whether or not to use the sandbox APNS
      *
@@ -20,7 +24,7 @@ class AppleNotification implements OSNotificationServiceInterface
      *
      * @var string
      */
-    protected $pem;
+    protected $pemPath;
 
     /**
      * Passphrase for PEM file
@@ -28,6 +32,20 @@ class AppleNotification implements OSNotificationServiceInterface
      * @var string
      */
     protected $passphrase;
+
+    /**
+     * Content of PEM
+     *
+     * @var string
+     */
+    protected $pemContent;
+
+    /**
+     * Passphrase for PEM content
+     *
+     * @var string
+     */
+    protected $pemContentPassphrase;
 
     /**
      * Array for streams to APN
@@ -58,6 +76,13 @@ class AppleNotification implements OSNotificationServiceInterface
     protected $jsonUnescapedUnicode = FALSE;
 
     /**
+     * Connection timeout
+     *
+     * @var int
+     */
+    protected $timeout;
+
+    /**
      * Collection of the responses from the APN
      *
      * @var array
@@ -73,16 +98,36 @@ class AppleNotification implements OSNotificationServiceInterface
 
 
     /**
+     * Cache dir used for cache pem file
+     *
+     * @var string
+     */
+    protected $cachedir;
+
+    /**
+     * Cache pem filename
+     */
+    const APNS_CERTIFICATE_FILE = '/rms_push_notifications/apns.pem';
+
+    /**
      * Constructor
      *
      * @param array $conf
+     * @param int $timeout
+     * @param string $cachedir
+     * @param EventListener $eventListener
      */
-    public function __construct($conf)
+    public function __construct($conf, $timeout = 60, $cachedir = "", EventListener $eventListener = null)
     {
         $this->apnStreams = array();
         $this->messages = array();
         $this->lastMessageId = -1;
         $this->conf = $conf;
+        $this->timeout = $timeout;
+        $this->cachedir = $cachedir;
+
+        if ($eventListener != null)
+            $eventListener->addListener($this);
     }
 
     /**
@@ -98,7 +143,7 @@ class AppleNotification implements OSNotificationServiceInterface
     }
 
     /**
-     * Send a notification message
+     * Send a MDM or notification message
      *
      * @param  \RMS\PushNotificationsBundle\Message\MessageInterface|\RMS\PushNotificationsBundle\Service\OS\MessageInterface $message
      * @throws \RuntimeException
@@ -118,7 +163,21 @@ class AppleNotification implements OSNotificationServiceInterface
         }
 
         $messageId = ++$this->lastMessageId;
-        $this->messages[$messageId] = $this->createPayload($messageId, $message->getExpiry(), $message->getDeviceIdentifier(), $message->getMessageBody());
+
+        if ($message->isMdmMessage()) {
+            if ($message->getToken() == '') {
+                throw new InvalidMessageTypeException(sprintf("Message type '%s' is a MDM message but 'token' is missing", get_class($message)));
+            }
+
+            if ($message->getPushMagicToken() == '') {
+                throw new InvalidMessageTypeException(sprintf("Message type '%s' is a MDM message but 'pushMagicToken' is missing", get_class($message)));
+            }
+
+            $this->messages[$messageId] = $this->createMdmPayload($message->getToken(), $message->getPushMagicToken());
+        } else {
+            $this->messages[$messageId] = $this->createPayload($messageId, $message->getExpiry(), $message->getDeviceIdentifier(), $message->getMessageBody());
+        }
+
         $errors = $this->sendMessages($messageId, $apnURL);
 
         return !$errors;
@@ -128,7 +187,7 @@ class AppleNotification implements OSNotificationServiceInterface
     {
         $currentConf = $this->conf[$message->getConfName()];
         $this->useSandbox = $currentConf['sandbox'];
-        $this->pem =  $currentConf['pem'];
+        $this->pemPath =  $currentConf['pem'];
         $this->passphrase =  $currentConf['passphrase'];
         $this->jsonUnescapedUnicode = isset($currentConf['json_unescaped_unicode']) ? $currentConf['json_unescaped_unicode'] : null;
     }
@@ -206,7 +265,7 @@ class AppleNotification implements OSNotificationServiceInterface
         if (!isset($this->apnStreams[$apnURL])) {
             // No stream found, setup a new stream
             $ctx = $this->getStreamContext();
-            $this->apnStreams[$apnURL] = stream_socket_client($apnURL, $err, $errstr, 60, STREAM_CLIENT_CONNECT, $ctx);
+            $this->apnStreams[$apnURL] = stream_socket_client($apnURL, $err, $errstr, $this->timeout, STREAM_CLIENT_CONNECT, $ctx);
             if (!$this->apnStreams[$apnURL]) {
                 throw new \RuntimeException("Couldn't connect to APN server. Error no $err: $errstr");
             }
@@ -244,11 +303,26 @@ class AppleNotification implements OSNotificationServiceInterface
      */
     protected function getStreamContext()
     {
-        $ctx = stream_context_create();
+        $pem = $this->pemPath;
+        $passphrase = $this->passphrase;
 
-        stream_context_set_option($ctx, "ssl", "local_cert", $this->pem);
-        if (strlen($this->passphrase)) {
-            stream_context_set_option($ctx, "ssl", "passphrase", $this->passphrase);
+        // Create cache pem file if needed
+        if (!empty($this->pemContent)) {
+            $filename = $this->cachedir . self::APNS_CERTIFICATE_FILE;
+
+            $fs = new Filesystem();
+            $fs->mkdir(dirname($filename));
+            file_put_contents($filename, $this->pemContent);
+
+            // Now we use this file as pem
+            $pem = $filename;
+            $passphrase = $this->pemContentPassphrase;
+        }
+
+        $ctx = stream_context_create();
+        stream_context_set_option($ctx, "ssl", "local_cert", $pem);
+        if (strlen($passphrase)) {
+            stream_context_set_option($ctx, "ssl", "passphrase", $passphrase);
         }
 
         return $ctx;
@@ -303,6 +377,23 @@ class AppleNotification implements OSNotificationServiceInterface
     }
 
     /**
+     * Creates a MDM payload
+     *
+     * @param string $token
+     * @param string $magicPushToken
+     *
+     * @return string
+     */
+    public function createMdmPayload($token, $magicPushToken)
+    {
+        $jsonPayload = json_encode(array('mdm' => $magicPushToken));
+
+        $payload = chr(0) . chr(0) . chr(32) . base64_decode($token) . chr(0)  . chr(strlen($jsonPayload)) . $jsonPayload;
+
+        return $payload;
+    }
+
+    /**
      * Returns responses
      *
      * @return array
@@ -310,5 +401,33 @@ class AppleNotification implements OSNotificationServiceInterface
     public function getResponses()
     {
         return $this->responses;
+    }
+
+    /**
+     * @param $pemContent
+     * @param $passphrase
+     */
+    public function setPemAsString($pemContent, $passphrase) {
+        $this->pemContent = $pemContent;
+        $this->pemContentPassphrase = $passphrase;
+    }
+
+    /**
+     * Called on kernel terminate
+     */
+    public function onKernelTerminate() {
+
+        // Remove cache pem file
+        $fs = new Filesystem();
+        $filename = $this->cachedir . self::APNS_CERTIFICATE_FILE;
+        if ($fs->exists(dirname($filename))) {
+            $fs->remove(dirname($filename));
+        }
+
+        // Close streams
+        foreach ($this->apnStreams as $stream) {
+            fclose($stream);
+        }
+
     }
 }

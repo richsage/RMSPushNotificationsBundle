@@ -20,5 +20,10 @@
     "autoload": {
         "psr-0": { "RMS\\PushNotificationsBundle": "" }
     },
-    "target-dir": "RMS/PushNotificationsBundle"
+    "target-dir": "RMS/PushNotificationsBundle",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1.x-dev"
+        }
+    }
 }

@@ -52,14 +52,17 @@ class AndroidGCMNotification implements OSNotificationServiceInterface
      *
      * @param $apiKey
      * @param bool         $useMultiCurl
+     * @param int          $timeout
      * @param AbstractCurl $client       (optional)
      */
-    public function __construct($apiKey, $useMultiCurl, AbstractCurl $client = null)
+    public function __construct($apiKey, $useMultiCurl, $timeout, AbstractCurl $client = null)
     {
         $this->apiKey = $apiKey;
         if (!$client) {
             $client = ($useMultiCurl ? new MultiCurl() : new Curl());
         }
+        $client->setTimeout($timeout);
+
         $this->browser = new Browser($client);
         $this->browser->getClient()->setVerifyPeer(false);
     }

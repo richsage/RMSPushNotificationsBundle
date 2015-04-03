@@ -26,6 +26,7 @@ and enable it in your kernel:
         );
     }
 
+NOTE: If you are still using Symfony 2.0, please use the `symfony2.0` branch.
 
 ## Configuration
 
@@ -34,28 +35,35 @@ only be available if you provide configuration respectively for them.
 
     rms_push_notifications:
       android:
+          timeout: 5 # Seconds to wait for connection timeout, default is 5
           c2dm:
               username: <string_android_c2dm_username>
               password: <string_android_c2dm_password>
               source: <string_android_c2dm_source>
           gcm:
-              api_key: <string_android_gcm_api_key>
+              api_key: <string_android_gcm_api_key> # This is titled "Server Key" when creating it
               use_multi_curl: <boolean_android_gcm_use_multi_curl> # default is true
       ios:
+          timeout: 60 # Seconds to wait for connection timeout, default is 60
           sandbox: <bool_use_apns_sandbox>
           pem: <path_apns_certificate> # can be absolute or relative path (from app directory)
           passphrase: <string_apns_certificate_passphrase>
       mac:
+          timeout: 60 # Seconds to wait for connection timeout, default is 60
           sandbox: <bool_use_apns_sandbox>
           pem: <path_apns_certificate>
           passphrase: <string_apns_certificate_passphrase>
       blackberry:
+          timeout: 5 # Seconds to wait for connection timeout, default is 5
           evaluation: <bool_bb_evaluation_mode>
           app_id: <string_bb_app_id>
           password: <string_bb_password>
-      windowsphone: true
+      windowsphone:
+          timeout: 5 # Seconds to wait for connection timeout, default is 5
 
 NOTE: If you are using Windows, you may need to set the Android GCM `use_multi_curl` flag to false for GCM messages to be sent correctly.
+
+Timeout defaults are the defaults from prior to the introduction of this configuration value.
 
 ## Usage
 
@@ -102,3 +110,11 @@ This service is available within the bundle.  The following code demonstrates ho
 Here, `$uuids` contains an array of [Feedback](https://github.com/richsage/RMSPushNotificationsBundle/blob/master/Device/iOS/Feedback.php) objects, with timestamp, token length and the device UUID all populated.
 
 Apple recommend you poll this service daily.
+
+# Thanks
+
+Firstly, thanks to all contributors to this bundle!
+
+![](https://www.jetbrains.com/phpstorm/documentation/docs/logo_phpstorm.png)
+
+Secondly, thanks to [JetBrains](http://www.jetbrains.com) for their sponsorship of an open-source [PhpStorm](https://www.jetbrains.com/phpstorm/) licence for this project.

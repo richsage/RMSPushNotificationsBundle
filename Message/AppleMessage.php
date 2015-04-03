@@ -42,6 +42,27 @@ class AppleMessage implements MessageInterface
     protected $app;
 
     /**
+     * Device push magic token
+     *
+     * @var string
+     */
+    protected $pushMagicToken = '';
+
+    /**
+     * Device token
+     *
+     * @var string
+     */
+    protected $token = '';
+
+    /**
+     * Whether this is a MDM message or not
+     *
+     * @var bool
+     */
+    protected $isMdmMessage = false;
+
+    /**
      * Class constructor
      */
     public function __construct($identifier = NULL)
@@ -222,5 +243,51 @@ class AppleMessage implements MessageInterface
     public function getConfName()
     {
         return $this->conf;
+    }
+
+    /**
+     * @param string $pushMagicToken
+     */
+    public function setPushMagicToken($pushMagicToken)
+    {
+        $this->pushMagicToken = $pushMagicToken;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPushMagicToken()
+    {
+        return $this->pushMagicToken;
+    }
+
+    /**
+     * @return string
+     */
+    public function getToken()
+    {
+        return $this->token;
+    }
+
+    /**
+     * @param string $token
+     */
+    public function setToken($token)
+    {
+        $this->token = $token;
+    }
+
+    /**
+     * @param null|bool $isMdmMessage
+     *
+     * @return bool|null
+     */
+    public function isMdmMessage($isMdmMessage = null)
+    {
+        if ($isMdmMessage === null) {
+            return $this->isMdmMessage;
+        }
+
+        $this->isMdmMessage = (bool) $isMdmMessage;
     }
 }

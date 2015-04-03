@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <container xmlns="http://symfony.com/schema/dic/services"
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
@@ -11,6 +11,9 @@
         <service id="rms_push_notifications.ios" class="%rms_push_notifications.ios.class%" public="false">
             <argument>%rms_push_notifications.ios%</argument>
             <tag name="rms_push_notifications.handler" osType="rms_push_notifications.os.ios"/>
+            <argument>%kernel.cache_dir%</argument>
+            <argument type="service" id="rms_push_notifications.event_listener" />
+            <tag name="rms_push_notifications.handler" osType="rms_push_notifications.os.ios" />
         </service>
 
         <!-- iOS Feedback requests -->
