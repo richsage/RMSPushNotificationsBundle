@@ -97,6 +97,7 @@ class Configuration implements ConfigurationInterface
         $config = $this->root->
             children()->
                 arrayNode($os)->
+                    prototype('array')->
                     children()->
                         scalarNode("timeout")->defaultValue(60)->end()->
                         booleanNode("sandbox")->defaultFalse()->end()->

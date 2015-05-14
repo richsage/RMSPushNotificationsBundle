@@ -90,6 +90,14 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
     protected $responses = array();
 
     /**
+     * Configuration
+     *
+     * @var array
+     */
+    protected $conf = array();
+
+
+    /**
      * Cache dir used for cache pem file
      *
      * @var string
@@ -104,23 +112,17 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
     /**
      * Constructor
      *
-     * @param $sandbox
-     * @param $pem
-     * @param string $passphrase
-     * @param bool $jsonUnescapedUnicode
+     * @param array $conf
      * @param int $timeout
      * @param string $cachedir
      * @param EventListener $eventListener
      */
-    public function __construct($sandbox, $pem, $passphrase = "", $jsonUnescapedUnicode = FALSE, $timeout = 60, $cachedir = "", EventListener $eventListener = null)
+    public function __construct($conf, $timeout = 60, $cachedir = "", EventListener $eventListener = null)
     {
-        $this->useSandbox = $sandbox;
-        $this->pemPath = $pem;
-        $this->passphrase = $passphrase;
         $this->apnStreams = array();
         $this->messages = array();
         $this->lastMessageId = -1;
-        $this->jsonUnescapedUnicode = $jsonUnescapedUnicode;
+        $this->conf = $conf;
         $this->timeout = $timeout;
         $this->cachedir = $cachedir;
 
@@ -148,12 +150,13 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
      * @throws \RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException
      * @return bool
      */
-    public function send(MessageInterface $message)
+    public function send(MessageInterface $message, $app = 'default')
     {
         if (!$message instanceof AppleMessage) {
             throw new InvalidMessageTypeException(sprintf("Message type '%s' not supported by APN", get_class($message)));
         }
 
+        $this->setConf($message);
         $apnURL = "ssl://gateway.push.apple.com:2195";
         if ($this->useSandbox) {
             $apnURL = "ssl://gateway.sandbox.push.apple.com:2195";
@@ -178,6 +181,15 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
         $errors = $this->sendMessages($messageId, $apnURL);
 
         return !$errors;
+    }
+
+    protected function setConf($message)
+    {
+        $currentConf = $this->conf[$message->getConfName()];
+        $this->useSandbox = $currentConf['sandbox'];
+        $this->pemPath =  $currentConf['pem'];
+        $this->passphrase =  $currentConf['passphrase'];
+        $this->jsonUnescapedUnicode = isset($currentConf['json_unescaped_unicode']) ? $currentConf['json_unescaped_unicode'] : null;
     }
 
     /**

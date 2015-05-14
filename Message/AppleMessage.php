@@ -37,6 +37,11 @@ class AppleMessage implements MessageInterface
     protected $expiry = 0;
 
     /**
+     * @var string
+     */
+    protected $app;
+
+    /**
      * Device push magic token
      *
      * @var string
@@ -228,6 +233,16 @@ class AppleMessage implements MessageInterface
     public function getExpiry()
     {
         return $this->expiry;
+    }
+
+    public function setConfName($conf = 'default')
+    {
+        $this->conf = $conf;
+    }
+
+    public function getConfName()
+    {
+        return $this->conf;
     }
 
     /**

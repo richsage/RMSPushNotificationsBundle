@@ -137,7 +137,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     {
         $arr = array(
             array(
-                "ios" => array("pem" => "")
+                "ios" => array(array("pem" => ""))
             ),
         );
         $config = $this->process($arr);
@@ -147,15 +147,15 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     {
         $arr = array(
             array(
-                "ios" => array("sandbox" => false, "pem" => "foo/bar.pem", "passphrase" => "foo")
+                "ios" => array(array("sandbox" => false, "pem" => "foo/bar.pem", "passphrase" => "foo"))
             ),
         );
         $config = $this->process($arr);
         $this->assertArrayHasKey("ios", $config);
-        $this->assertEquals(60, $config["ios"]["timeout"]);
-        $this->assertEquals(false, $config["ios"]["sandbox"]);
-        $this->assertEquals("foo/bar.pem", $config["ios"]["pem"]);
-        $this->assertEquals("foo", $config["ios"]["passphrase"]);
+        $this->assertEquals(60, $config["ios"][0]["timeout"]);
+        $this->assertEquals(false, $config["ios"][0]["sandbox"]);
+        $this->assertEquals("foo/bar.pem", $config["ios"][0]["pem"]);
+        $this->assertEquals("foo", $config["ios"][0]["passphrase"]);
     }
 
     /**
@@ -176,7 +176,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     {
         $arr = array(
             array(
-                "mac" => array("pem" => "")
+                "mac" => array(array("pem" => ""))
             ),
         );
         $config = $this->process($arr);
@@ -186,15 +186,15 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     {
         $arr = array(
             array(
-                "mac" => array("sandbox" => false, "pem" => "foo/bar.pem", "passphrase" => "foo")
+                "mac" => array(array("sandbox" => false, "pem" => "foo/bar.pem", "passphrase" => "foo"))
             ),
         );
         $config = $this->process($arr);
         $this->assertArrayHasKey("mac", $config);
-        $this->assertEquals(60, $config["mac"]["timeout"]);
-        $this->assertEquals(false, $config["mac"]["sandbox"]);
-        $this->assertEquals("foo/bar.pem", $config["mac"]["pem"]);
-        $this->assertEquals("foo", $config["mac"]["passphrase"]);
+        $this->assertEquals(60, $config["mac"][0]["timeout"]);
+        $this->assertEquals(false, $config["mac"][0]["sandbox"]);
+        $this->assertEquals("foo/bar.pem", $config["mac"][0]["pem"]);
+        $this->assertEquals("foo", $config["mac"][0]["passphrase"]);
     }
 
     /**

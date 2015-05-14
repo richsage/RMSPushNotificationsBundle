@@ -15,6 +15,7 @@ class Notifications
      */
     protected $handlers = array();
 
+
     /**
      * Constructor
      */
@@ -30,13 +31,13 @@ class Notifications
      * @throws \RuntimeException
      * @return bool
      */
-    public function send(MessageInterface $message)
+    public function send(MessageInterface $message, $app = 'default')
     {
         if (!$this->supports($message->getTargetOS())) {
             throw new \RuntimeException("OS type {$message->getTargetOS()} not supported");
         }
 
-        return $this->handlers[$message->getTargetOS()]->send($message);
+        return $this->handlers[$message->getTargetOS()]->send($message, $app);
     }
 
     /**
