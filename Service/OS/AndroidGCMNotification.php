@@ -48,14 +48,22 @@ class AndroidGCMNotification implements OSNotificationServiceInterface
     protected $responses;
 
     /**
+     * Monolog logger
+     *
+     * @var Symfony\Bridge\Monolog\Logger
+     */
+    protected $logger;
+
+    /**
      * Constructor
      *
      * @param $apiKey
      * @param bool         $useMultiCurl
      * @param int          $timeout
+     * @param Logger       $logger
      * @param AbstractCurl $client       (optional)
      */
-    public function __construct($apiKey, $useMultiCurl, $timeout, AbstractCurl $client = null)
+    public function __construct($apiKey, $useMultiCurl, $timeout, $logger, AbstractCurl $client = null)
     {
         $this->apiKey = $apiKey;
         if (!$client) {
@@ -65,6 +73,7 @@ class AndroidGCMNotification implements OSNotificationServiceInterface
 
         $this->browser = new Browser($client);
         $this->browser->getClient()->setVerifyPeer(false);
+        $this->logger = $logger;
     }
 
     /**
@@ -112,6 +121,11 @@ class AndroidGCMNotification implements OSNotificationServiceInterface
         foreach ($this->responses as $response) {
             $message = json_decode($response->getContent());
             if ($message === null || $message->success == 0 || $message->failure > 0) {
+                if ($message == null) {
+                    $this->logger->err($response->getContent());
+                } else {
+                    $this->logger->err($message->failure);
+                }
                 return false;
             }
         }
