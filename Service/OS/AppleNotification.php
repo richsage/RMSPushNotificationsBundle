@@ -97,6 +97,13 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
     protected $cachedir;
 
     /**
+     * Monolog logger
+     *
+     * @var Symfony\Bridge\Monolog\Logger
+     */
+    protected $logger;
+
+    /**
      * Cache pem filename
      */
     const APNS_CERTIFICATE_FILE = '/rms_push_notifications/apns.pem';
@@ -104,15 +111,16 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
     /**
      * Constructor
      *
-     * @param $sandbox
-     * @param $pem
-     * @param string $passphrase
-     * @param bool $jsonUnescapedUnicode
-     * @param int $timeout
-     * @param string $cachedir
+     * @param bool          $sandbox
+     * @param string        $pem
+     * @param string        $passphrase
+     * @param bool          $jsonUnescapedUnicode
+     * @param int           $timeout
+     * @param string        $cachedir
      * @param EventListener $eventListener
+     * @param Logger        $logger
      */
-    public function __construct($sandbox, $pem, $passphrase = "", $jsonUnescapedUnicode = FALSE, $timeout = 60, $cachedir = "", EventListener $eventListener = null)
+    public function __construct($sandbox, $pem, $passphrase = "", $jsonUnescapedUnicode = FALSE, $timeout = 60, $cachedir = "", EventListener $eventListener = null, $logger)
     {
         $this->useSandbox = $sandbox;
         $this->pemPath = $pem;
@@ -123,6 +131,7 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
         $this->jsonUnescapedUnicode = $jsonUnescapedUnicode;
         $this->timeout = $timeout;
         $this->cachedir = $cachedir;
+        $this->logger = $logger;
 
         if ($eventListener != null)
             $eventListener->addListener($this);
@@ -205,6 +214,7 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
                 // Resend all messages that were sent after the failed message
                 $this->sendMessages($result['identifier']+1, $apnURL);
                 $errors[] = $result;
+                $this->logger->err(json_encode($result));
             } else {
                 $this->responses[] = true;
             }

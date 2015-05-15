@@ -18,6 +18,7 @@
             <argument>%rms_push_notifications.ios.timeout%</argument>
             <argument>%kernel.cache_dir%</argument>
             <argument type="service" id="rms_push_notifications.event_listener" />
+            <argument type="service" id="logger" />
             <tag name="rms_push_notifications.handler" osType="rms_push_notifications.os.ios" />
         </service>
 

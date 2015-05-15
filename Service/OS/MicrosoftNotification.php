@@ -18,13 +18,21 @@ class MicrosoftNotification implements OSNotificationServiceInterface
     protected $browser;
 
     /**
+     * Monolog logger
+     *
+     * @var Symfony\Bridge\Monolog\Logger
+     */
+    protected $logger;
+
+    /**
      * @param $timeout
      */
-    public function __construct($timeout)
+    public function __construct($timeout, $logger)
     {
         $this->browser = new Browser(new Curl());
         $this->browser->getClient()->setVerifyPeer(false);
         $this->browser->getClient()->setTimeout($timeout);
+        $this->logger = $logger;
     }
 
     public function send(MessageInterface $message)
@@ -50,6 +58,10 @@ class MicrosoftNotification implements OSNotificationServiceInterface
         }
 
         $response = $this->browser->post($message->getDeviceIdentifier(), $headers, $xml->asXML());
+
+        if (!$response->isSuccessful()) {
+            $this->logger->err($response->getStatusCode(). ' : '. $response->getReasonPhrase());
+        }
 
         return $response->isSuccessful();
     }
