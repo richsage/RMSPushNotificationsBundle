@@ -201,6 +201,12 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
 
             // Check if there is an error result
             if (is_array($result)) {
+
+                // Close the apn stream in case of Shutdown status code.
+                if ($result['status'] === 10) {
+                    $this->closeApnStream($apnURL);
+                }
+
                 $this->responses[] = $result;
                 // Resend all messages that were sent after the failed message
                 $this->sendMessages($result['identifier']+1, $apnURL);
