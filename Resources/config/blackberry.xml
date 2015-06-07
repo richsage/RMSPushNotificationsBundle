@@ -15,6 +15,7 @@
             <argument>%rms_push_notifications.blackberry.app_id%</argument>
             <argument>%rms_push_notifications.blackberry.password%</argument>
             <argument>%rms_push_notifications.blackberry.timeout%</argument>
+            <argument type="service" id="logger" />
             <tag name="rms_push_notifications.handler" osType="rms_push_notifications.os.blackberry" />
         </service>
 

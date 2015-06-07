@@ -12,6 +12,7 @@
         <!-- Windows Phone -->
         <service id="rms_push_notifications.windowsphone" class="%rms_push_notifications.windowsphone.class%" public="false">
             <argument>%rms_push_notifications.windowsphone.timeout%</argument>
+            <argument type="service" id="logger" />
             <tag name="rms_push_notifications.handler" osType="rms_push_notifications.os.windowsphone" />
         </service>
 
