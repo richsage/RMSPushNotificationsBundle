@@ -109,6 +109,11 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
     const APNS_CERTIFICATE_FILE = '/rms_push_notifications/apns.pem';
 
     /**
+     * Status code retrieve when APNS server closed the connection
+     */
+    const APNS_SHUTDOWN_CODE = 10;
+
+    /**
      * Constructor
      *
      * @param bool          $sandbox
@@ -210,6 +215,12 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
 
             // Check if there is an error result
             if (is_array($result)) {
+
+                // Close the apn stream in case of Shutdown status code.
+                if ($result['status'] === self::APNS_SHUTDOWN_CODE) {
+                    $this->closeApnStream($apnURL);
+                }
+
                 $this->responses[] = $result;
                 // Resend all messages that were sent after the failed message
                 $this->sendMessages($result['identifier']+1, $apnURL);
