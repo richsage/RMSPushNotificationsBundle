@@ -111,6 +111,10 @@ Here, `$uuids` contains an array of [Feedback](https://github.com/richsage/RMSPu
 
 Apple recommend you poll this service daily.
 
+## Windows Phone - Toast support
+
+The bundle has beta support for Windows Phone, and supports the Toast notification. Use the `WindowsphoneMessage` message class to send accordingly.
+
 # Thanks
 
 Firstly, thanks to all contributors to this bundle!
