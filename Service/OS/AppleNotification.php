@@ -125,7 +125,7 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
      * @param EventListener $eventListener
      * @param Logger        $logger
      */
-    public function __construct($sandbox, $pem, $passphrase = "", $jsonUnescapedUnicode = FALSE, $timeout = 60, $cachedir = "", EventListener $eventListener = null, $logger)
+    public function __construct($sandbox, $pem, $passphrase = "", $jsonUnescapedUnicode = FALSE, $timeout = 60, $cachedir = "", EventListener $eventListener = null, $logger = null)
     {
         $this->useSandbox = $sandbox;
         $this->pemPath = $pem;
@@ -138,8 +138,9 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
         $this->cachedir = $cachedir;
         $this->logger = $logger;
 
-        if ($eventListener != null)
+        if ($eventListener != null) {
             $eventListener->addListener($this);
+        }
     }
 
     /**
@@ -225,7 +226,9 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
                 // Resend all messages that were sent after the failed message
                 $this->sendMessages($result['identifier']+1, $apnURL);
                 $errors[] = $result;
-                $this->logger->err(json_encode($result));
+                if ($this->logger) {
+                    $this->logger->err(json_encode($result));
+                }
             } else {
                 $this->responses[] = true;
             }
