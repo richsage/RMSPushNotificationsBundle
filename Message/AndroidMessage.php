@@ -126,7 +126,7 @@ class AndroidMessage implements MessageInterface
     public function setDeviceIdentifier($identifier)
     {
         $this->identifier = $identifier;
-        $this->allIdentifiers = array($identifier);
+        $this->allIdentifiers = array($identifier => $identifier);
     }
 
     /**
@@ -200,24 +200,24 @@ class AndroidMessage implements MessageInterface
      */
     public function getGCMIdentifiers()
     {
-        return $this->allIdentifiers;
+        return array_values($this->allIdentifiers);
     }
 
     /**
      * Adds a device identifier to the GCM list
+     * @param string $identifier
      */
     public function addGCMIdentifier($identifier)
     {
-        if (!in_array($identifier, $this->allIdentifiers)) {
-            $this->allIdentifiers[] = $identifier;
-        }
+        $this->allIdentifiers[$identifier] = $identifier;
     }
 
     /**
      * Sets the GCM list
+     * @param array $allIdentifiers
      */
     public function setAllIdentifiers($allIdentifiers) {
-        $this->allIdentifiers = $allIdentifiers;
+        $this->allIdentifiers = array_combine($allIdentifiers, $allIdentifiers);
     }
 
     /**
