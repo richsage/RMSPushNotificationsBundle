@@ -189,6 +189,7 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
         $this->useSandbox = $currentConf['sandbox'];
         $this->pemPath =  $currentConf['pem'];
         $this->passphrase =  $currentConf['passphrase'];
+        $this->timeout = $currentConf['timeout'];
         $this->jsonUnescapedUnicode = isset($currentConf['json_unescaped_unicode']) ? $currentConf['json_unescaped_unicode'] : null;
     }
 
