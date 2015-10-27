@@ -211,6 +211,17 @@ class AppleMessage implements MessageInterface
     }
 
     /**
+     * iOS-specific
+     * Sets the APS category
+     *
+     * @param string $category The notification category
+     */
+    public function setCategory($category)
+    {
+        $this->apsBody["aps"]["category"] = $category;
+    }
+
+    /**
      * Set expiry of message
      *
      * @param int $expiry
