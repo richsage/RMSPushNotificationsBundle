@@ -212,8 +212,6 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
             // Send the message
             $result = $this->writeApnStream($apnURL, $this->messages[$currentMessageId]);
 
-            $errors = array();
-
             // Check if there is an error result
             if (is_array($result)) {
 
