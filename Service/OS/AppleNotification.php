@@ -2,6 +2,7 @@
 
 namespace RMS\PushNotificationsBundle\Service\OS;
 
+use Psr\Log\LoggerInterface;
 use RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException,
     RMS\PushNotificationsBundle\Message\AppleMessage,
     RMS\PushNotificationsBundle\Message\MessageInterface,
@@ -99,7 +100,7 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
     /**
      * Monolog logger
      *
-     * @var Symfony\Bridge\Monolog\Logger
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -123,7 +124,7 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
      * @param int           $timeout
      * @param string        $cachedir
      * @param EventListener $eventListener
-     * @param Logger        $logger
+     * @param LoggerInterface $logger
      */
     public function __construct($sandbox, $pem, $passphrase = "", $jsonUnescapedUnicode = FALSE, $timeout = 60, $cachedir = "", EventListener $eventListener = null, $logger = null)
     {
@@ -226,7 +227,7 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
                 $this->sendMessages($result['identifier']+1, $apnURL);
                 $errors[] = $result;
                 if ($this->logger) {
-                    $this->logger->err(json_encode($result));
+                    $this->logger->error(json_encode($result));
                 }
             } else {
                 $this->responses[] = true;
