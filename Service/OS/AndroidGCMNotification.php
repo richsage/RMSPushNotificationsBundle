@@ -138,7 +138,11 @@ class AndroidGCMNotification implements OSNotificationServiceInterface
                 if ($message == null) {
                     $this->logger->err($response->getContent());
                 } else {
-                    $this->logger->err($message->failure);
+                    foreach ($message->results as $result) {
+                        if (isset($result->error)) {
+                            $this->logger->error($result->error);
+                        }
+                    }
                 }
                 return false;
             }
