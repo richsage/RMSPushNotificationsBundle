@@ -43,6 +43,7 @@ only be available if you provide configuration respectively for them.
           gcm:
               api_key: <string_android_gcm_api_key> # This is titled "Server Key" when creating it
               use_multi_curl: <boolean_android_gcm_use_multi_curl> # default is true
+              dry_run: <bool_use_gcm_dry_run>
       ios:
           timeout: 60 # Seconds to wait for connection timeout, default is 60
           sandbox: <bool_use_apns_sandbox>
