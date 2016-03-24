@@ -2,6 +2,7 @@
 
 namespace RMS\PushNotificationsBundle\Service\OS;
 
+use Psr\Log\LoggerInterface;
 use RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException,
     RMS\PushNotificationsBundle\Message\AndroidMessage,
     RMS\PushNotificationsBundle\Message\MessageInterface;
@@ -58,7 +59,7 @@ class AndroidGCMNotification implements OSNotificationServiceInterface
     /**
      * Monolog logger
      *
-     * @var Symfony\Bridge\Monolog\Logger
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -68,7 +69,7 @@ class AndroidGCMNotification implements OSNotificationServiceInterface
      * @param string       $apiKey
      * @param bool         $useMultiCurl
      * @param int          $timeout
-     * @param Logger       $logger
+     * @param LoggerInterface $logger
      * @param AbstractCurl $client (optional)
      * @param bool         $dryRun
      */
@@ -136,7 +137,7 @@ class AndroidGCMNotification implements OSNotificationServiceInterface
             $message = json_decode($response->getContent());
             if ($message === null || $message->success == 0 || $message->failure > 0) {
                 if ($message == null) {
-                    $this->logger->err($response->getContent());
+                    $this->logger->error($response->getContent());
                 } else {
                     foreach ($message->results as $result) {
                         if (isset($result->error)) {
