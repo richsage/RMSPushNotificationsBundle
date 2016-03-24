@@ -38,7 +38,7 @@ class AddHandlerPass implements CompilerPassInterface
                 }
 
                 $refClass = new \ReflectionClass($class);
-            } catch (\ReflectionClass $ref) {
+            } catch (\ReflectionException $ref) {
                 // Class not found or other reflection error
                 throw new \RuntimeException(sprintf(
                     'Can\'t compile notification handler by service id "%s".',
