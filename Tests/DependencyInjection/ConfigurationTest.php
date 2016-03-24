@@ -111,12 +111,18 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     "gcm" => array(
                         "api_key" => "foo",
                         "use_multi_curl" => true,
+                        "dry_run" => false,
                     )
                 )
             ),
         );
         $config = $this->process($arr);
         $this->assertEquals("foo", $config["android"]["gcm"]["api_key"]);
+        $this->assertFalse($config["android"]["gcm"]["dry_run"]);
+
+        $arr[0]["android"]["gcm"]["dry_run"] = true;
+        $config = $this->process($arr);
+        $this->assertTrue($config["android"]["gcm"]["dry_run"]);
     }
 
     /**

@@ -100,6 +100,7 @@ class RMSPushNotificationsExtension extends Extension
         if (isset($config["android"]["gcm"])) {
             $this->container->setParameter("rms_push_notifications.android.gcm.api_key", $config["android"]["gcm"]["api_key"]);
             $this->container->setParameter("rms_push_notifications.android.gcm.use_multi_curl", $config["android"]["gcm"]["use_multi_curl"]);
+            $this->container->setParameter('rms_push_notifications.android.gcm.dry_run', $config["android"]["dry_run"]);
         }
     }
 

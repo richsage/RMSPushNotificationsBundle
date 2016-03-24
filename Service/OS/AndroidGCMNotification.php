@@ -12,6 +12,14 @@ use Buzz\Browser,
 
 class AndroidGCMNotification implements OSNotificationServiceInterface
 {
+
+    /**
+     * Whether or not to use the dry run GCM
+     *
+     * @var bool
+     */
+    protected $useDryRun = false;
+
     /**
      * GCM endpoint
      *
@@ -57,14 +65,16 @@ class AndroidGCMNotification implements OSNotificationServiceInterface
     /**
      * Constructor
      *
-     * @param $apiKey
+     * @param string       $apiKey
      * @param bool         $useMultiCurl
      * @param int          $timeout
      * @param Logger       $logger
-     * @param AbstractCurl $client       (optional)
+     * @param AbstractCurl $client (optional)
+     * @param bool         $dryRun
      */
-    public function __construct($apiKey, $useMultiCurl, $timeout, $logger, AbstractCurl $client = null)
+    public function __construct($apiKey, $useMultiCurl, $timeout, $logger, AbstractCurl $client = null, $dryRun = false)
     {
+        $this->useDryRun = $dryRun;
         $this->apiKey = $apiKey;
         if (!$client) {
             $client = ($useMultiCurl ? new MultiCurl() : new Curl());
@@ -100,6 +110,10 @@ class AndroidGCMNotification implements OSNotificationServiceInterface
             $message->getGCMOptions(),
             array("data" => $message->getData())
         );
+
+        if ($this->useDryRun) {
+            $data['dry_run'] = true;
+        }
 
         // Chunk number of registration IDs according to the maximum allowed by GCM
         $chunks = array_chunk($message->getGCMIdentifiers(), $this->registrationIdMaxCount);
