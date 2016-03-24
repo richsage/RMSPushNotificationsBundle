@@ -2,6 +2,7 @@
 
 namespace RMS\PushNotificationsBundle\Service\OS;
 
+use Psr\Log\LoggerInterface;
 use RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException,
     RMS\PushNotificationsBundle\Message\BlackberryMessage,
     RMS\PushNotificationsBundle\Message\MessageInterface;
@@ -42,7 +43,7 @@ class BlackberryNotification implements OSNotificationServiceInterface
     /**
      * Monolog logger
      *
-     * @var Symfony\Bridge\Monolog\Logger
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -154,12 +155,12 @@ class BlackberryNotification implements OSNotificationServiceInterface
         $doc->loadXML($response->getContent());
         $elems = $doc->getElementsByTagName("response-result");
         if (!$elems->length) {
-            $this->logger->err('Response is empty');
+            $this->logger->error('Response is empty');
             return false;
         }
         $responseElement = $elems->item(0);
         if ($responseElement->getAttribute("code") != "1001") {
-            $this->logger->err($responseElement->getAttribute("code"). ' : '. $responseElement->getAttribute("desc"));
+            $this->logger->error($responseElement->getAttribute("code"). ' : '. $responseElement->getAttribute("desc"));
         }
 
         return ($responseElement->getAttribute("code") == "1001");
