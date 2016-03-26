@@ -30,7 +30,7 @@ class TestPushCommand extends ContainerAwareCommand
             ->setDescription("Sends a push command to a supplied push token'd device")
             ->addOption("badge", "b", InputOption::VALUE_OPTIONAL, "Badge number (for iOS devices)", 0)
             ->addOption("text", "t", InputOption::VALUE_OPTIONAL, "Text message")
-            ->addArgument("service", InputArgument::REQUIRED, "One of 'ios', 'c2dm', 'gcm', 'mac', 'blackberry' or 'windowsphone'")
+            ->addArgument("service", InputArgument::REQUIRED, "One of 'ios', 'gcm', 'mac', 'blackberry' or 'windowsphone'")
             ->addArgument("token", InputArgument::REQUIRED, "Authentication token for the service")
             ->addArgument("payload", InputArgument::OPTIONAL, "The payload data to send (JSON)", '{"data": "test"}')
         ;
@@ -52,7 +52,6 @@ class TestPushCommand extends ContainerAwareCommand
 
         $tokenLengths = array(
             "ios" => 64,
-            "c2dm" => 162,
         );
 
         if (isset($tokenLengths[$service]) && strlen($token) != $tokenLengths[$service]) {
@@ -105,13 +104,8 @@ class TestPushCommand extends ContainerAwareCommand
         switch ($service) {
             case "ios":
                 return new PushMessage\iOSMessage();
-            case "c2dm":
-                return new PushMessage\AndroidMessage();
             case "gcm":
-                $message = new PushMessage\AndroidMessage();
-                $message->setGCM(true);
-
-                return $message;
+                return new PushMessage\AndroidMessage();
             case "blackberry":
                 return new PushMessage\BlackberryMessage();
             case "mac":

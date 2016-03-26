@@ -2,69 +2,93 @@
 
 namespace RMS\PushNotificationsBundle\Service\OS;
 
+use Psr\Log\LoggerInterface;
 use RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException,
     RMS\PushNotificationsBundle\Message\AndroidMessage,
     RMS\PushNotificationsBundle\Message\MessageInterface;
-use Buzz\Browser;
+use Buzz\Browser,
+    Buzz\Client\AbstractCurl,
+    Buzz\Client\Curl,
+    Buzz\Client\MultiCurl;
 
 class AndroidNotification implements OSNotificationServiceInterface
 {
+
     /**
-     * Username for auth
+     * Whether or not to use the dry run GCM
+     *
+     * @var bool
+     */
+    protected $useDryRun = false;
+
+    /**
+     * GCM endpoint
      *
      * @var string
      */
-    protected $username;
+    protected $apiURL = "https://android.googleapis.com/gcm/send";
 
     /**
-     * Password for auth
+     * Google GCM API key
      *
      * @var string
      */
-    protected $password;
+    protected $apiKey;
 
     /**
-     * The source of the notification
-     * eg com.example.myapp
+     * Max registration count
      *
-     * @var string
+     * @var integer
      */
-    protected $source;
+    protected $registrationIdMaxCount = 1000;
 
     /**
-     * Timeout in seconds for the connecting client
+     * Browser object
      *
-     * @var int
+     * @var \Buzz\Browser
      */
-    protected $timeout;
+    protected $browser;
 
     /**
-     * Authentication token
+     * Collection of the responses from the GCM communication
      *
-     * @var string
+     * @var array
      */
-    protected $authToken;
+    protected $responses;
+
+    /**
+     * Monolog logger
+     *
+     * @var LoggerInterface
+     */
+    protected $logger;
 
     /**
      * Constructor
      *
-     * @param $username
-     * @param $password
-     * @param $source
-     * @param $timeout
+     * @param string       $apiKey
+     * @param bool         $useMultiCurl
+     * @param int          $timeout
+     * @param LoggerInterface $logger
+     * @param AbstractCurl $client (optional)
+     * @param bool         $dryRun
      */
-    public function __construct($username, $password, $source, $timeout)
+    public function __construct($apiKey, $useMultiCurl, $timeout, $logger, AbstractCurl $client = null, $dryRun = false)
     {
-        $this->username = $username;
-        $this->password = $password;
-        $this->source = $source;
-        $this->timeout = $timeout;
-        $this->authToken = "";
+        $this->useDryRun = $dryRun;
+        $this->apiKey = $apiKey;
+        if (!$client) {
+            $client = ($useMultiCurl ? new MultiCurl() : new Curl());
+        }
+        $client->setTimeout($timeout);
+
+        $this->browser = new Browser($client);
+        $this->browser->getClient()->setVerifyPeer(false);
+        $this->logger = $logger;
     }
 
     /**
-     * Sends a C2DM message
-     * This assumes that a valid auth token can be obtained
+     * Sends the data to the given registration IDs via the GCM server
      *
      * @param  \RMS\PushNotificationsBundle\Message\MessageInterface              $message
      * @throws \RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException
@@ -73,50 +97,65 @@ class AndroidNotification implements OSNotificationServiceInterface
     public function send(MessageInterface $message)
     {
         if (!$message instanceof AndroidMessage) {
-            throw new InvalidMessageTypeException(sprintf("Message type '%s' not supported by C2DM", get_class($message)));
+            throw new InvalidMessageTypeException(sprintf("Message type '%s' not supported by Android", get_class($message)));
         }
 
-        if ($this->getAuthToken()) {
-            $headers[] = "Authorization: GoogleLogin auth=" . $this->authToken;
-            $data = $message->getMessageBody();
+        $headers = array(
+            "Authorization: key=" . $this->apiKey,
+            "Content-Type: application/json",
+        );
+        $data = array_merge(
+            $message->getOptions(),
+            array("data" => $message->getData())
+        );
 
-            $buzz = new Browser();
-            $buzz->getClient()->setVerifyPeer(false);
-            $buzz->getClient()->setTimeout($this->timeout);
-            $response = $buzz->post("https://android.apis.google.com/c2dm/send", $headers, http_build_query($data));
-
-            return preg_match("/^id=/", $response->getContent()) > 0;
+        if ($this->useDryRun) {
+            $data['dry_run'] = true;
         }
 
-        return false;
+        // Chunk number of registration IDs according to the maximum allowed by GCM
+        $chunks = array_chunk($message->getIdentifiers(), $this->registrationIdMaxCount);
+
+        // Perform the calls (in parallel)
+        $this->responses = array();
+        foreach ($chunks as $registrationIDs) {
+            $data["registration_ids"] = $registrationIDs;
+            $this->responses[] = $this->browser->post($this->apiURL, $headers, json_encode($data));
+        }
+
+        // If we're using multiple concurrent connections via MultiCurl
+        // then we should flush all requests
+        if ($this->browser->getClient() instanceof MultiCurl) {
+            $this->browser->getClient()->flush();
+        }
+
+        // Determine success
+        foreach ($this->responses as $response) {
+            $message = json_decode($response->getContent());
+            if ($message === null || $message->success == 0 || $message->failure > 0) {
+                if ($message == null) {
+                    $this->logger->error($response->getContent());
+                } else {
+                    foreach ($message->results as $result) {
+                        if (isset($result->error)) {
+                            $this->logger->error($result->error);
+                        }
+                    }
+                }
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
-     * Gets a valid authentication token
+     * Returns responses
      *
-     * @return bool
+     * @return array
      */
-    protected function getAuthToken()
+    public function getResponses()
     {
-        $data = array(
-            "Email"         => $this->username,
-            "Passwd"        => $this->password,
-            "accountType"   => "HOSTED_OR_GOOGLE",
-            "source"        => $this->source,
-            "service"       => "ac2dm"
-        );
-
-        $buzz = new Browser();
-        $buzz->getClient()->setVerifyPeer(false);
-        $buzz->getClient()->setTimeout($this->timeout);
-        $response = $buzz->post("https://www.google.com/accounts/ClientLogin", array(), http_build_query($data));
-        if ($response->getStatusCode() !== 200) {
-            return false;
-        }
-
-        preg_match("/Auth=([a-z0-9_\-]+)/i", $response->getContent(), $matches);
-        $this->authToken = $matches[1];
-
-        return true;
+        return $this->responses;
     }
 }

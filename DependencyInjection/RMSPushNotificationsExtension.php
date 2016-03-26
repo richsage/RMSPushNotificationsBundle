@@ -78,30 +78,9 @@ class RMSPushNotificationsExtension extends Extension
     protected function setAndroidConfig(array $config)
     {
         $this->container->setParameter("rms_push_notifications.android.enabled", true);
-        $this->container->setParameter("rms_push_notifications.android.c2dm.enabled", true);
-
-        // C2DM
-        $username = $config["android"]["username"];
-        $password = $config["android"]["password"];
-        $source = $config["android"]["source"];
-        $timeout = $config["android"]["timeout"];
-        if (isset($config["android"]["c2dm"])) {
-            $username = $config["android"]["c2dm"]["username"];
-            $password = $config["android"]["c2dm"]["password"];
-            $source = $config["android"]["c2dm"]["source"];
-        }
-        $this->container->setParameter("rms_push_notifications.android.timeout", $timeout);
-        $this->container->setParameter("rms_push_notifications.android.c2dm.username", $username);
-        $this->container->setParameter("rms_push_notifications.android.c2dm.password", $password);
-        $this->container->setParameter("rms_push_notifications.android.c2dm.source", $source);
-
-        // GCM
-        $this->container->setParameter("rms_push_notifications.android.gcm.enabled", isset($config["android"]["gcm"]));
-        if (isset($config["android"]["gcm"])) {
-            $this->container->setParameter("rms_push_notifications.android.gcm.api_key", $config["android"]["gcm"]["api_key"]);
-            $this->container->setParameter("rms_push_notifications.android.gcm.use_multi_curl", $config["android"]["gcm"]["use_multi_curl"]);
-            $this->container->setParameter('rms_push_notifications.android.gcm.dry_run', $config["android"]["gcm"]["dry_run"]);
-        }
+        $this->container->setParameter("rms_push_notifications.android.api_key", $config["android"]["api_key"]);
+        $this->container->setParameter("rms_push_notifications.android.use_multi_curl", $config["android"]["use_multi_curl"]);
+        $this->container->setParameter('rms_push_notifications.android.dry_run', $config["android"]["dry_run"]);
     }
 
     /**

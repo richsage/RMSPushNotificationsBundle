@@ -4,29 +4,19 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="rms_push_notifications.android.c2dm.class">RMS\PushNotificationsBundle\Service\OS\AndroidNotification</parameter>
-        <parameter key="rms_push_notifications.android.gcm.class">RMS\PushNotificationsBundle\Service\OS\AndroidGCMNotification</parameter>
+        <parameter key="rms_push_notifications.android.class">RMS\PushNotificationsBundle\Service\OS\AndroidNotification</parameter>
     </parameters>
 
     <services>
 
-        <!-- Android (C2DM) -->
-        <service id="rms_push_notifications.android.c2dm" class="%rms_push_notifications.android.c2dm.class%" public="false">
-            <argument>%rms_push_notifications.android.c2dm.username%</argument>
-            <argument>%rms_push_notifications.android.c2dm.password%</argument>
-            <argument>%rms_push_notifications.android.c2dm.source%</argument>
-            <argument>%rms_push_notifications.android.timeout%</argument>
-            <tag name="rms_push_notifications.handler" osType="rms_push_notifications.os.android.c2dm" />
-        </service>
-
-        <!-- Android (GCM) -->
-        <service id="rms_push_notifications.android.gcm" class="%rms_push_notifications.android.gcm.class%" public="false">
-            <argument>%rms_push_notifications.android.gcm.api_key%</argument>
-            <argument>%rms_push_notifications.android.gcm.use_multi_curl%</argument>
+        <!-- Android GCM -->
+        <service id="rms_push_notifications.android" class="%rms_push_notifications.android.class%" public="false">
+            <argument>%rms_push_notifications.android.api_key%</argument>
+            <argument>%rms_push_notifications.android.use_multi_curl%</argument>
             <argument>%rms_push_notifications.android.timeout%</argument>
             <argument type="service" id="logger" />
-            <argument>%rms_push_notifications.android.gcm.dry_run%</argument>
-            <tag name="rms_push_notifications.handler" osType="rms_push_notifications.os.android.gcm" />
+            <argument>%rms_push_notifications.android.dry_run%</argument>
+            <tag name="rms_push_notifications.handler" osType="rms_push_notifications.os.android" />
         </service>
 
     </services>
