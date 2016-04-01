@@ -116,14 +116,21 @@ class AndroidGCMNotification implements OSNotificationServiceInterface
             $data['dry_run'] = true;
         }
 
-        // Chunk number of registration IDs according to the maximum allowed by GCM
-        $chunks = array_chunk($message->getGCMIdentifiers(), $this->registrationIdMaxCount);
-
         // Perform the calls (in parallel)
         $this->responses = array();
-        foreach ($chunks as $registrationIDs) {
-            $data["registration_ids"] = $registrationIDs;
+        $gcmIdentifiers = $message->getGCMIdentifiers();
+
+        if (count($message->getGCMIdentifiers()) == 1) {
+            $data['to'] = $gcmIdentifiers[0];
             $this->responses[] = $this->browser->post($this->apiURL, $headers, json_encode($data));
+        } else {
+            // Chunk number of registration IDs according to the maximum allowed by GCM
+            $chunks = array_chunk($message->getGCMIdentifiers(), $this->registrationIdMaxCount);
+
+            foreach ($chunks as $registrationIDs) {
+                $data['registration_ids'] = $registrationIDs;
+                $this->responses[] = $this->browser->post($this->apiURL, $headers, json_encode($data));
+            }
         }
 
         // If we're using multiple concurrent connections via MultiCurl
