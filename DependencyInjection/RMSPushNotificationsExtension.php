@@ -80,6 +80,7 @@ class RMSPushNotificationsExtension extends Extension
         $this->container->setParameter("rms_push_notifications.android.enabled", true);
         $this->container->setParameter("rms_push_notifications.android.api_key", $config["android"]["api_key"]);
         $this->container->setParameter("rms_push_notifications.android.use_multi_curl", $config["android"]["use_multi_curl"]);
+        $this->container->setParameter('rms_push_notifications.android.timeout', $config["android"]["timeout"]);
         $this->container->setParameter('rms_push_notifications.android.dry_run', $config["android"]["dry_run"]);
     }
 
