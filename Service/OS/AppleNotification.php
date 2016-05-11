@@ -422,24 +422,41 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
     public function setPemAsString($pemContent, $passphrase) {
         $this->pemContent = $pemContent;
         $this->pemContentPassphrase = $passphrase;
+
+        // for new pem will take affect we need to close existing streams which use cached pem
+        $this->closeStreams();
     }
 
     /**
      * Called on kernel terminate
      */
-    public function onKernelTerminate() {
+    public function onKernelTerminate()
+    {
+        $this->removeCachedPemFile();
+        $this->closeStreams();
+    }
 
-        // Remove cache pem file
+    /**
+     * Remove cache pem file
+     */
+    private function removeCachedPemFile()
+    {
         $fs = new Filesystem();
         $filename = $this->cachedir . self::APNS_CERTIFICATE_FILE;
         if ($fs->exists(dirname($filename))) {
             $fs->remove(dirname($filename));
         }
+    }
 
-        // Close streams
+    /**
+     * Close existing streams
+     */
+    private function closeStreams()
+    {
         foreach ($this->apnStreams as $stream) {
             fclose($stream);
         }
 
+        $this->apnStreams = [];
     }
 }
