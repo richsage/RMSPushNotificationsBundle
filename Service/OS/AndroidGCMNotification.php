@@ -168,4 +168,14 @@ class AndroidGCMNotification implements OSNotificationServiceInterface
     {
         return $this->responses;
     }
+
+    /**
+     * Change Google GCM API key
+     *
+     * @param string $apiKey
+     */
+    public function setApiKey($apiKey)
+    {
+        $this->apiKey = $apiKey;
+    }
 }
