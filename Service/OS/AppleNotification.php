@@ -420,6 +420,10 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
      * @param $passphrase
      */
     public function setPemAsString($pemContent, $passphrase) {
+        if ($this->pemContent === $pemContent && $this->pemContentPassphrase === $passphrase) {
+            return;
+        }
+
         $this->pemContent = $pemContent;
         $this->pemContentPassphrase = $passphrase;
 
