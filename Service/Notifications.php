@@ -102,6 +102,22 @@ class Notifications
     }
 
     /**
+     * Set Apple Push Notification Service pem as filepath.
+     * Service won't use pem file passed by config anymore.
+     *
+     * @param string $pemPath
+     * @param string $passphrase
+     */
+    public function setAPNSPemPath($pemPath, $passphrase)
+    {
+        if (isset($this->handlers[Types::OS_IOS]) && $this->handlers[Types::OS_IOS] instanceof AppleNotification) {
+            /** @var AppleNotification $appleNotification */
+            $appleNotification = $this->handlers[Types::OS_IOS];
+            $appleNotification->setPemPath($pemPath, $passphrase);
+        }
+    }
+
+    /**
      * Set Android GCM API key.
      * Service won't use api key passed by config anymore.
      *
