@@ -46,7 +46,7 @@ only be available if you provide configuration respectively for them.
               dry_run: <bool_use_gcm_dry_run>
           fcm:
               api_key: <string_android_fcm_api_key> # This is titled "Server Key" when creating it
-              use_multi_curl: <boolean_android_gcm_use_multi_curl> # default is true
+              use_multi_curl: <boolean_android_fcm_use_multi_curl> # default is true
       ios:
           timeout: 60 # Seconds to wait for connection timeout, default is 60
           sandbox: <bool_use_apns_sandbox>
