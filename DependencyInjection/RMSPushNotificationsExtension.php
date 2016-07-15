@@ -58,6 +58,10 @@ class RMSPushNotificationsExtension extends Extension
             $this->setWindowsphoneConfig($config);
             $loader->load('windowsphone.xml');
         }
+        if (isset($config['windows'])) {
+            $this->setWindowsConfig($config);
+            $loader->load('windows.xml');
+        }
     }
 
     /**
@@ -191,5 +195,13 @@ class RMSPushNotificationsExtension extends Extension
     {
         $this->container->setParameter("rms_push_notifications.windowsphone.enabled", true);
         $this->container->setParameter("rms_push_notifications.windowsphone.timeout", $config["windowsphone"]["timeout"]);
+    }
+
+    protected function setWindowsConfig(array $config)
+    {
+        $this->container->setParameter("rms_push_notifications.windows.enabled", true);
+        $this->container->setParameter("rms_push_notifications.windows.timeout", $config["windows"]["timeout"]);
+        $this->container->setParameter("rms_push_notifications.windows.sid", $config["windows"]["sid"]);
+        $this->container->setParameter("rms_push_notifications.windows.secret", $config["windows"]["secret"]);
     }
 }

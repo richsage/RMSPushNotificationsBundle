@@ -111,7 +111,7 @@ class WindowsNotification implements OSNotificationServiceInterface
 
         $xml = $this->buildTileXml("test", "");
 
-        $headers = array('Content-Type: text/xml', "Content-Length: " . strlen($xml), "X-WNS-Type: $message->getType()", "Authorization: Bearer $this->accessToken");
+        $headers = array('Content-Type: text/xml', "Content-Length: " . strlen($xml), "X-WNS-Type: " . $message->getType(), "Authorization: Bearer $this->accessToken");
 //        if ($tileTag != '') {
 //            array_push($headers, "X-WNS-Tag: $tileTag");
 //        }
