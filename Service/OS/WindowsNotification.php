@@ -9,6 +9,7 @@ use RMS\PushNotificationsBundle\Message\WindowsphoneMessage;
 use RMS\PushNotificationsBundle\Message\MessageInterface;
 use Buzz\Browser,
     Buzz\Client\Curl;
+use RMS\PushNotificationsBundle\Service\EventListener;
 
 class WindowsNotification implements OSNotificationServiceInterface
 {
@@ -49,10 +50,12 @@ class WindowsNotification implements OSNotificationServiceInterface
     protected $accessToken;
 
     /**
+     * @param $sid
+     * @param string
      * @param $timeout
-     * @param $logger
+     * @param LoggerInterface $logger
      */
-    public function __construct($sid, $secret, $timeout, $logger)
+    public function __construct($sid, $secret, $timeout, $cachedir = "", EventListener $eventListener = null, $logger = null)
     {
         $this->browser = new Browser(new Curl());
         $this->browser->getClient()->setVerifyPeer(false);
@@ -86,7 +89,7 @@ class WindowsNotification implements OSNotificationServiceInterface
         $this->accessToken = $output->access_token;
     }
 
-    protected function buildTileXml($title, $img = null)
+    protected function buildTileXml(WindowsMessage $message)
     {
         $tile = new \SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><tile />');
 
@@ -95,13 +98,13 @@ class WindowsNotification implements OSNotificationServiceInterface
         $binding = $visual->addChild('binding');
         $binding->addAttribute('template', 'TileWideImageAndText01');
 
-        if ($img) {
+        if ($message->getImage()) {
             $image = $binding->addChild('image');
             $image->addAttribute('id', '1');
-            $image->addAttribute('src', $img);
+            $image->addAttribute('src', $message->getImage());
         }
 
-        $text = $binding->addChild('text', htmlspecialchars($title));
+        $text = $binding->addChild('text', htmlspecialchars($message->getMessageBody()));
         $text->addAttribute('id', '1');
 
         return $tile;
@@ -117,7 +120,7 @@ class WindowsNotification implements OSNotificationServiceInterface
             $this->getAccessToken();
         }
 
-        $xml = $this->buildTileXml("test", "");
+        $xml = $this->buildTileXml($message);
 
         $headers = array(
             'Content-Type: text/xml',
@@ -126,9 +129,10 @@ class WindowsNotification implements OSNotificationServiceInterface
             "Authorization: Bearer $this->accessToken"
         );
 
-//        if ($tileTag != '') {
-//            array_push($headers, "X-WNS-Tag: $tileTag");
-//        }
+        if ($message->getTitle()) {
+            array_push($headers, "X-WNS-Tag: $message->getTitle()");
+        }
+
         $ch = curl_init($message->getDeviceIdentifier());
         # Tiles: http://msdn.microsoft.com/en-us/library/windows/apps/xaml/hh868263.aspx
         # http://msdn.microsoft.com/en-us/library/windows/apps/hh465435.aspx
@@ -149,10 +153,10 @@ class WindowsNotification implements OSNotificationServiceInterface
             return true;
         } else if ($code == 401) {
             $this->accessToken = '';
-            $this->logger->error($response->getStatusCode(). ' : '. $response->getReasonPhrase());
+            $this->logger->error($code);
             return false;
         } else {
-            $this->logger->error($response->getStatusCode(). ' : '. $response->getReasonPhrase());
+            $this->logger->error($code);
             return false;
         }
 

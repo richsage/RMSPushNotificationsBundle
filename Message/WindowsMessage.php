@@ -17,11 +17,14 @@ class WindowsMessage implements MessageInterface
 
     protected $identifier;
 
-    protected $text1 = '';
-
-    protected $text2 = '';
-
     protected $type;
+
+    protected $title;
+
+    protected $text;
+
+    protected $image;
+
 
     public function __construct()
     {
@@ -45,10 +48,7 @@ class WindowsMessage implements MessageInterface
 
     public function getMessageBody()
     {
-        return array(
-            'text1' => $this->text1,
-            'text2' => $this->text2
-        );
+        return $this->text;
     }
 
     public function setMessage($message)
@@ -64,6 +64,54 @@ class WindowsMessage implements MessageInterface
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param mixed $title
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getText()
+    {
+        return $this->text;
+    }
+
+    /**
+     * @param mixed $text
+     */
+    public function setText($text)
+    {
+        $this->text = $text;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    /**
+     * @param mixed $image
+     */
+    public function setImage($image)
+    {
+        $this->image = $image;
     }
 
     public function getNotificationClass()
