@@ -86,17 +86,25 @@ class WindowsNotification implements OSNotificationServiceInterface
         $this->accessToken = $output->access_token;
     }
 
-    protected function buildTileXml($title, $img)
+    protected function buildTileXml($title, $img = null)
     {
-        return '<?xml version="1.0" encoding="utf-16"?>' .
-        '<tile>' .
-        '<visual lang="en-US">' .
-        '<binding template="TileWideImageAndText01">' .
-        '<image id="1" src="' . $img . '"/>' .
-        '<text id="1">' . $title . '</text>' .
-        '</binding>' .
-        '</visual>' .
-        '</tile>';
+        $tile = new \SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><tile />');
+
+        $visual = $tile->addChild('visual');
+        $visual->addAttribute('lang', 'en-US');
+        $binding = $visual->addChild('binding');
+        $binding->addAttribute('template', 'TileWideImageAndText01');
+
+        if ($img) {
+            $image = $binding->addChild('image');
+            $image->addAttribute('id', '1');
+            $image->addAttribute('src', $img);
+        }
+
+        $text = $binding->addChild('text', htmlspecialchars($title));
+        $text->addAttribute('id', '1');
+
+        return $tile;
     }
 
     public function send(MessageInterface $message)
@@ -111,7 +119,13 @@ class WindowsNotification implements OSNotificationServiceInterface
 
         $xml = $this->buildTileXml("test", "");
 
-        $headers = array('Content-Type: text/xml', "Content-Length: " . strlen($xml), "X-WNS-Type: " . $message->getType(), "Authorization: Bearer $this->accessToken");
+        $headers = array(
+            'Content-Type: text/xml',
+            "Content-Length: " . strlen($xml->asXML()),
+            "X-WNS-Type: " . $message->getType(),
+            "Authorization: Bearer $this->accessToken"
+        );
+
 //        if ($tileTag != '') {
 //            array_push($headers, "X-WNS-Tag: $tileTag");
 //        }
@@ -122,7 +136,7 @@ class WindowsNotification implements OSNotificationServiceInterface
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, "$xml");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $xml->asXML());
         curl_setopt($ch, CURLOPT_VERBOSE, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $output = curl_exec($ch);
