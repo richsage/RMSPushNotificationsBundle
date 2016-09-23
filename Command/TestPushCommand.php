@@ -8,8 +8,8 @@ use Symfony\Component\Console\Input\InputArgument,
     Symfony\Component\Console\Input\InputInterface,
     Symfony\Component\Console\Input\InputOption,
     Symfony\Component\Console\Output\OutputInterface;
-use RMS\PushNotificationsBundle\Message as PushMessage,
-    RMS\PushNotificationsBundle\Message\MessageInterface;
+use RMS\PushNotifications\Message as PushMessage,
+    RMS\PushNotifications\Message\MessageInterface;
 
 class TestPushCommand extends ContainerAwareCommand
 {
