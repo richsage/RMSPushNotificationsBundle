@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="rms_push_notifications.windows.class">RMS\PushNotificationsBundle\Service\OS\WindowsNotification</parameter>
+    </parameters>
+
+    <services>
+
+        <!-- Windows Universal WNS -->
+        <service id="rms_push_notifications.windows" class="%rms_push_notifications.windows.class%" public="false">
+            <argument>%rms_push_notifications.windows.sid%</argument>
+            <argument>%rms_push_notifications.windows.secret%</argument>
+            <argument>%rms_push_notifications.windows.timeout%</argument>
+            <argument>%kernel.cache_dir%</argument>
+            <argument type="service" id="rms_push_notifications.event_listener" />
+            <argument type="service" id="logger" />
+            <tag name="rms_push_notifications.handler" osType="rms_push_notifications.os.windows" />
+        </service>
+
+    </services>
+
+</container>

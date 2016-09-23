@@ -64,6 +64,10 @@ only be available if you provide configuration respectively for them.
           password: <string_bb_password>
       windowsphone:
           timeout: 5 # Seconds to wait for connection timeout, default is 5
+      windows:
+          timeout: 5 # Seconds to wait for connection timeout, default is 5
+          sid: # SID (Secure Identifier) as according to your app's entry in the windows dev center
+          secret: # Client secret according to your app's entry in the windows dev center
 
 NOTE: If you are using Windows, you may need to set the Android GCM/FCM `use_multi_curl` flag to false for GCM/FCM messages to be sent correctly.
 
@@ -119,6 +123,11 @@ Apple recommend you poll this service daily.
 ## Windows Phone - Toast support
 
 The bundle has beta support for Windows Phone, and supports the Toast notification. Use the `WindowsphoneMessage` message class to send accordingly.
+
+## Windows (Universal, WNS) - Toast support
+
+The bundle has beta support for Windows Notification Service (WNS), and supports the Toast notification. Use the `WindowsMessage` message class to send accordingly.
+
 
 # Thanks
 

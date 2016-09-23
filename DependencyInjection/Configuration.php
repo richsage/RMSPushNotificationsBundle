@@ -27,6 +27,7 @@ class Configuration implements ConfigurationInterface
         $this->addMac();
         $this->addBlackberry();
         $this->addWindowsphone();
+        $this->addWindows();
 
         return $treeBuilder;
     }
@@ -150,6 +151,24 @@ class Configuration implements ConfigurationInterface
                 arrayNode('windowsphone')->
                     children()->
                         scalarNode("timeout")->defaultValue(5)->end()->
+                    end()->
+                end()->
+            end()
+        ;
+    }
+
+    /**
+     * Windows configuration
+     */
+    protected function addWindows()
+    {
+        $this->root->
+            children()->
+                arrayNode('windows')->
+                    children()->
+                        scalarNode("timeout")->defaultValue(5)->end()->
+                        scalarNode("sid")->isRequired()->cannotBeEmpty()->end()->
+                        scalarNode("secret")->isRequired()->cannotBeEmpty()->end()->
                     end()->
                 end()->
             end()
