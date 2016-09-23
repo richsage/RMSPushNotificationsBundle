@@ -77,7 +77,7 @@ Timeout defaults are the defaults from prior to the introduction of this configu
 
 A little example of how to push your first message to an iOS device, we'll assume that you've set up the configuration correctly:
 
-    use RMS\PushNotificationsBundle\Message\iOSMessage;
+    use RMS\PushNotifications\Message\iOSMessage;
 
     class PushDemoController extends Controller
     {
@@ -99,7 +99,7 @@ The send method will detect the type of message so if you'll pass it an `Android
 
 Since both C2DM and GCM are still available, the `AndroidMessage` class has a small flag on it to toggle which service to send it to.  Use as follows:
 
-    use RMS\PushNotificationsBundle\Message\AndroidMessage;
+    use RMS\PushNotifications\Message\AndroidMessage;
 
     $message = new AndroidMessage();
     $message->setGCM(true);
