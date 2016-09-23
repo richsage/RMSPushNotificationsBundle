@@ -4,7 +4,7 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="rms_push_notifications.blackberry.class">RMS\PushNotificationsBundle\Service\OS\BlackberryNotification</parameter>
+        <parameter key="rms_push_notifications.blackberry.class">RMS\PushNotifications\Handlers\BlackberryNotificationHandler</parameter>
     </parameters>
 
     <services>
@@ -15,7 +15,6 @@
             <argument>%rms_push_notifications.blackberry.app_id%</argument>
             <argument>%rms_push_notifications.blackberry.password%</argument>
             <argument>%rms_push_notifications.blackberry.timeout%</argument>
-            <argument type="service" id="logger" />
             <tag name="rms_push_notifications.handler" osType="rms_push_notifications.os.blackberry" />
         </service>
 

@@ -4,22 +4,11 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="rms_push_notifications.class">RMS\PushNotificationsBundle\Service\Notifications</parameter>
-        <parameter key="rms_push_notifications.android.class">RMS\PushNotificationsBundle\Service\OS\AndroidNotification</parameter>
-        <parameter key="rms_push_notifications.ios.class">RMS\PushNotificationsBundle\Service\OS\AppleNotification</parameter>
-        <parameter key="rms_push_notifications.ios.feedback.class">RMS\PushNotificationsBundle\Service\iOSFeedback</parameter>
-        <parameter key="rms_push_notifications.mac.class">RMS\PushNotificationsBundle\Service\OS\AppleNotification</parameter>
-        <parameter key="rms_push_notifications.event_listener.class">RMS\PushNotificationsBundle\Service\EventListener</parameter>
+        <parameter key="rms_push_notifications.class">RMS\PushNotifications\Notifications</parameter>
     </parameters>
 
     <services>
-
-        <!-- main notification service -->
         <service id="rms_push_notifications" class="%rms_push_notifications.class%">
-        </service>
-
-        <service id="rms_push_notifications.event_listener" class="%rms_push_notifications.event_listener.class%">
-            <tag name="kernel.event_listener" event="kernel.terminate" method="onKernelTerminate" />
         </service>
     </services>
 

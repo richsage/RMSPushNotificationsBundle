@@ -8,8 +8,8 @@ use Symfony\Component\Console\Input\InputArgument,
     Symfony\Component\Console\Input\InputInterface,
     Symfony\Component\Console\Input\InputOption,
     Symfony\Component\Console\Output\OutputInterface;
-use RMS\PushNotificationsBundle\Message as PushMessage,
-    RMS\PushNotificationsBundle\Message\MessageInterface;
+use RMS\PushNotifications\Message as PushMessage,
+    RMS\PushNotifications\Message\MessageInterface;
 
 class TestPushCommand extends ContainerAwareCommand
 {
@@ -30,7 +30,7 @@ class TestPushCommand extends ContainerAwareCommand
             ->setDescription("Sends a push command to a supplied push token'd device")
             ->addOption("badge", "b", InputOption::VALUE_OPTIONAL, "Badge number (for iOS devices)", 0)
             ->addOption("text", "t", InputOption::VALUE_OPTIONAL, "Text message")
-            ->addArgument("service", InputArgument::REQUIRED, "One of 'ios', 'c2dm', 'gcm', 'mac', 'blackberry' or 'windowsphone'")
+            ->addArgument("service", InputArgument::REQUIRED, "One of 'ios', 'c2dm', 'gcm', 'fcm', 'mac', 'blackberry' or 'windowsphone'")
             ->addArgument("token", InputArgument::REQUIRED, "Authentication token for the service")
             ->addArgument("payload", InputArgument::OPTIONAL, "The payload data to send (JSON)", '{"data": "test"}')
         ;
@@ -110,6 +110,11 @@ class TestPushCommand extends ContainerAwareCommand
             case "gcm":
                 $message = new PushMessage\AndroidMessage();
                 $message->setGCM(true);
+
+                return $message;
+            case "fcm":
+                $message = new PushMessage\AndroidMessage();
+                $message->setFCM(true);
 
                 return $message;
             case "blackberry":

@@ -1,6 +1,6 @@
 # RMSPushNotificationsBundle ![](https://secure.travis-ci.org/richsage/RMSPushNotificationsBundle.png)
 
-A bundle to allow sending of push notifications to mobile devices.  Currently supports Android (C2DM, GCM), Blackberry and iOS devices.
+A bundle to allow sending of push notifications to mobile devices.  Currently supports Android (C2DM, GCM, FCM), Blackberry and iOS devices.
 
 ## Installation
 
@@ -44,6 +44,9 @@ only be available if you provide configuration respectively for them.
               api_key: <string_android_gcm_api_key> # This is titled "Server Key" when creating it
               use_multi_curl: <boolean_android_gcm_use_multi_curl> # default is true
               dry_run: <bool_use_gcm_dry_run>
+          fcm:
+              api_key: <string_android_fcm_api_key> # This is titled "Server Key" when creating it
+              use_multi_curl: <boolean_android_fcm_use_multi_curl> # default is true
       ios:
           timeout: 60 # Seconds to wait for connection timeout, default is 60
           sandbox: <bool_use_apns_sandbox>
@@ -61,8 +64,12 @@ only be available if you provide configuration respectively for them.
           password: <string_bb_password>
       windowsphone:
           timeout: 5 # Seconds to wait for connection timeout, default is 5
+      windows:
+          timeout: 5 # Seconds to wait for connection timeout, default is 5
+          sid: # SID (Secure Identifier) as according to your app's entry in the windows dev center
+          secret: # Client secret according to your app's entry in the windows dev center
 
-NOTE: If you are using Windows, you may need to set the Android GCM `use_multi_curl` flag to false for GCM messages to be sent correctly.
+NOTE: If you are using Windows, you may need to set the Android GCM/FCM `use_multi_curl` flag to false for GCM/FCM messages to be sent correctly.
 
 Timeout defaults are the defaults from prior to the introduction of this configuration value.
 
@@ -70,7 +77,7 @@ Timeout defaults are the defaults from prior to the introduction of this configu
 
 A little example of how to push your first message to an iOS device, we'll assume that you've set up the configuration correctly:
 
-    use RMS\PushNotificationsBundle\Message\iOSMessage;
+    use RMS\PushNotifications\Message\iOSMessage;
 
     class PushDemoController extends Controller
     {
@@ -92,12 +99,13 @@ The send method will detect the type of message so if you'll pass it an `Android
 
 Since both C2DM and GCM are still available, the `AndroidMessage` class has a small flag on it to toggle which service to send it to.  Use as follows:
 
-    use RMS\PushNotificationsBundle\Message\AndroidMessage;
+    use RMS\PushNotifications\Message\AndroidMessage;
 
     $message = new AndroidMessage();
     $message->setGCM(true);
+    $message->setFCM(true); // Use to Firebase Cloud Messaging
 
-to send as a GCM message rather than C2DM.
+to send as a FCM message rather than GCM or C2DM.
 
 ## iOS Feedback service
 
@@ -115,6 +123,11 @@ Apple recommend you poll this service daily.
 ## Windows Phone - Toast support
 
 The bundle has beta support for Windows Phone, and supports the Toast notification. Use the `WindowsphoneMessage` message class to send accordingly.
+
+## Windows (Universal, WNS) - Toast support
+
+The bundle has beta support for Windows Notification Service (WNS), and supports the Toast notification. Use the `WindowsMessage` message class to send accordingly.
+
 
 # Thanks
 
