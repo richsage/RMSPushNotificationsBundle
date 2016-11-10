@@ -21,6 +21,14 @@ class BlackberryMessage implements MessageInterface
     protected $identifier = "";
 
     /**
+     * Sets the title and message.
+     *
+     * @param $title
+     * @param $message
+     */
+    public function setMessageWithTitle($title, $message) {}
+    
+    /**
      * Sets the message
      * For Blackberry, this is the same as the data
      *
