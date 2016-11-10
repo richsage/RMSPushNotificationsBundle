@@ -75,6 +75,7 @@ class AppleMessage implements MessageInterface
     /**
      * Sets the message. For iOS, this is the APS alert message
      *
+     * @param $title
      * @param $message
      */
     public function setMessage($title, $message)
