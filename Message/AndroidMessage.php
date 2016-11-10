@@ -63,7 +63,7 @@ class AndroidMessage implements MessageInterface
      *
      * @param $message
      */
-    public function setMessage($message)
+    public function setMessage($title = null, $message)
     {
         $this->message = $message;
     }

@@ -26,7 +26,7 @@ class BlackberryMessage implements MessageInterface
      *
      * @param $message
      */
-    public function setMessage($message)
+    public function setMessage($title = null, $message)
     {
         $this->setData($message);
     }
