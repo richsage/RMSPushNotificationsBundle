@@ -87,10 +87,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("123", $config["android"]["c2dm"]["source"]);
     }
 
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     */
-    public function testGCMRequiresAPIKey()
+    public function testGCMEmptyAPIKey()
     {
         $arr = array(
             array(
@@ -101,6 +98,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             ),
         );
         $config = $this->process($arr);
+        $this->assertEmpty($config["android"]["gcm"]["api_key"]);
+        $this->assertFalse($config["android"]["gcm"]["dry_run"]);
     }
 
     public function testGCMIsOK()
