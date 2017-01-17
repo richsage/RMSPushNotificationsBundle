@@ -92,16 +92,15 @@ A little example of how to push your first message to an iOS device, we'll assum
 The send method will detect the type of message so if you'll pass it an `AndroidMessage` it will automatically send it through the C2DM/GCM servers, and likewise for Mac and Blackberry.
 
 ## Android messages
-
-Since both C2DM and GCM are still available, the `AndroidMessage` class has a small flag on it to toggle which service to send it to.  Use as follows:
+You have a choice of three services, C2DM, GCM and FCM. C2DM is defined as main option, but the `AndroidMessage` class has flags to toggle which service to send it to.
 
     use RMS\PushNotificationsBundle\Message\AndroidMessage;
 
     $message = new AndroidMessage();
-    $message->setGCM(true);
-    $message->setFCM(true); // Use to Firebase Cloud Messaging
 
-to send as a FCM message rather than GCM or C2DM.
+You may choose `setGCM` or `setFCM` - this is optional.
+
+    $message->setFCM(true);
 
 ## iOS Feedback service
 

@@ -35,6 +35,7 @@ class Notifications
         if (!$this->supports($message->getTargetOS())) {
             throw new \RuntimeException("OS type {$message->getTargetOS()} not supported");
         }
+
         return $this->handlers[$message->getTargetOS()]->send($message);
     }
 

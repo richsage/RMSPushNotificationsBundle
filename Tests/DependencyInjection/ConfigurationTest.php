@@ -125,6 +125,22 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($config["android"]["gcm"]["dry_run"]);
     }
 
+    public function testFCMIsOK()
+    {
+        $arr = array(
+            array(
+                "android" => array(
+                    "fcm" => array(
+                        "api_key" => "foo",
+                        "use_multi_curl" => true,
+                    )
+                )
+            ),
+        );
+        $config = $this->process($arr);
+        $this->assertEquals("foo", $config["android"]["fcm"]["api_key"]);
+    }
+
     /**
      * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
      */

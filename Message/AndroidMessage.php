@@ -150,8 +150,14 @@ class AndroidMessage implements MessageInterface
      */
     public function getTargetOS()
     {
-        if($this->isGCM) return Types::OS_ANDROID_GCM;
-        if($this->isFCM) return Types::OS_ANDROID_FCM;
+        if($this->isGCM) {
+            return Types::OS_ANDROID_GCM;
+        }
+
+        if($this->isFCM) {
+            return Types::OS_ANDROID_FCM;
+        }
+
         return Types::OS_ANDROID_C2DM;
     }
 
