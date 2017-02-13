@@ -222,6 +222,17 @@ class AppleMessage implements MessageInterface
     }
 
     /**
+     * iOS-specific
+     * Sets the APS mutable-content attribute
+     *
+     * @param bool $mutableContent 
+     */
+    public function setMutableContent($mutableContent)
+    {
+        $this->apsBody["aps"]["mutable-content"] = $mutableContent ? 1 : 0;
+    }
+
+    /**
      * Set expiry of message
      *
      * @param int $expiry

@@ -70,4 +70,17 @@ class iOSMessageTest extends \PHPUnit_Framework_TestCase
         $msg->setData(array("custom" => array("foo" => "bar")));
         $this->assertEquals($expected, $msg->getMessageBody());
     }
+
+    public function testMutableContentAddOk()
+    {
+        $expected = array(
+            "aps" => array(
+                "mutable-content" => 1,
+            ),
+        );
+        $msg = new iOSMessage();
+        $msg->setMutableContent(true);
+        $this->assertEquals($expected, $msg->getMessageBody());
+    }
+
 }
