@@ -75,11 +75,12 @@ class AppleMessage implements MessageInterface
     /**
      * Sets the message. For iOS, this is the APS alert message
      *
+     * @param $title
      * @param $message
      */
-    public function setMessage($message)
+    public function setMessage($title, $message)
     {
-        $this->apsBody["aps"]["alert"] = $message;
+        $this->apsBody["aps"]["alert"] = array("title" => $title, "body" => $message);
     }
 
     /**
