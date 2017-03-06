@@ -48,6 +48,8 @@ class WindowsphoneMessage implements MessageInterface
         );
     }
 
+    public function setMessageWithTitle($title, $message) {}
+
     public function setMessage($message)
     {
         $this->text2 = $message;

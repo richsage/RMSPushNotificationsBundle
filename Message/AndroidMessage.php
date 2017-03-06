@@ -59,6 +59,14 @@ class AndroidMessage implements MessageInterface
     protected $gcmOptions = array();
 
     /**
+     * Sets the title and message.
+     *
+     * @param $title
+     * @param $message
+     */
+    public function setMessageWithTitle($title, $message) {}
+
+    /**
      * Sets the string message
      *
      * @param $message

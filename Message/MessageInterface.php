@@ -4,6 +4,8 @@ namespace RMS\PushNotificationsBundle\Message;
 
 interface MessageInterface
 {
+	public function setMessageWithTitle($title, $message);
+	
     public function setMessage($message);
 
     public function setData($data);
