@@ -44,6 +44,13 @@ class AndroidMessage implements MessageInterface
     protected $isGCM = false;
 
     /**
+     * Whether this is a FCM message
+     *
+     * @var bool
+     */
+    protected $isFCM = false;
+
+    /**
      * A collection of device identifiers that the message
      * is intended for. GCM use only
      *
@@ -57,6 +64,13 @@ class AndroidMessage implements MessageInterface
      * @var array
      */
     protected $gcmOptions = array();
+
+    /**
+     * Options for FCM messages
+     *
+     * @var array
+     */
+    protected $fcmOptions = array();
 
     /**
      * Sets the string message
@@ -136,7 +150,15 @@ class AndroidMessage implements MessageInterface
      */
     public function getTargetOS()
     {
-        return ($this->isGCM ? Types::OS_ANDROID_GCM : Types::OS_ANDROID_C2DM);
+        if($this->isGCM) {
+            return Types::OS_ANDROID_GCM;
+        }
+
+        if($this->isFCM) {
+            return Types::OS_ANDROID_FCM;
+        }
+
+        return Types::OS_ANDROID_C2DM;
     }
 
     /**
@@ -193,6 +215,27 @@ class AndroidMessage implements MessageInterface
     }
 
     /**
+     * Set whether this is a FCM message
+     * (default false)
+     *
+     * @param $fcm
+     */
+    public function setFCM($fcm)
+    {
+        $this->isFCM = !!$fcm;
+    }
+
+    /**
+     * Returns whether this is a FCM message
+     *
+     * @return mixed
+     */
+    public function isFCM()
+    {
+        return $this->isFCM;
+    }
+
+    /**
      * Returns an array of device identifiers
      * Not used in C2DM
      *
@@ -208,6 +251,26 @@ class AndroidMessage implements MessageInterface
      * @param string $identifier
      */
     public function addGCMIdentifier($identifier)
+    {
+        $this->allIdentifiers[$identifier] = $identifier;
+    }
+
+    /**
+     * Returns an array of device identifiers
+     * Not used in C2DM
+     *
+     * @return mixed
+     */
+    public function getFCMIdentifiers()
+    {
+        return array_values($this->allIdentifiers);
+    }
+
+    /**
+     * Adds a device identifier to the FCM list
+     * @param string $identifier
+     */
+    public function addFCMIdentifier($identifier)
     {
         $this->allIdentifiers[$identifier] = $identifier;
     }
@@ -237,5 +300,24 @@ class AndroidMessage implements MessageInterface
     public function getGCMOptions()
     {
         return $this->gcmOptions;
+    }
+
+    /**
+     * Sets FCM options
+     * @param array $options
+     */
+    public function setFCMOptions($options)
+    {
+        $this->fcmOptions = $options;
+    }
+
+    /**
+     * Returns FCM options
+     *
+     * @return array
+     */
+    public function getFCMOptions()
+    {
+        return $this->fcmOptions;
     }
 }
