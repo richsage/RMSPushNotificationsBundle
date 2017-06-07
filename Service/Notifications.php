@@ -4,6 +4,7 @@ namespace RMS\PushNotificationsBundle\Service;
 
 use RMS\PushNotificationsBundle\Device\Types;
 use RMS\PushNotificationsBundle\Message\MessageInterface;
+use RMS\PushNotificationsBundle\Service\OS\AndroidGCMNotification;
 use RMS\PushNotificationsBundle\Service\OS\AppleNotification;
 
 class Notifications
@@ -97,6 +98,37 @@ class Notifications
             /** @var AppleNotification $appleNotification */
             $appleNotification = $this->handlers[Types::OS_IOS];
             $appleNotification->setPemAsString($pemContent, $passphrase);
+        }
+    }
+
+    /**
+     * Set Apple Push Notification Service pem as filepath.
+     * Service won't use pem file passed by config anymore.
+     *
+     * @param string $pemPath
+     * @param string $passphrase
+     */
+    public function setAPNSPemPath($pemPath, $passphrase)
+    {
+        if (isset($this->handlers[Types::OS_IOS]) && $this->handlers[Types::OS_IOS] instanceof AppleNotification) {
+            /** @var AppleNotification $appleNotification */
+            $appleNotification = $this->handlers[Types::OS_IOS];
+            $appleNotification->setPemPath($pemPath, $passphrase);
+        }
+    }
+
+    /**
+     * Set Android GCM API key.
+     * Service won't use api key passed by config anymore.
+     *
+     * @param string $apiKey
+     */
+    public function setGCMApiKey($apiKey)
+    {
+        if (isset($this->handlers[Types::OS_ANDROID_GCM]) && $this->handlers[Types::OS_ANDROID_GCM] instanceof AndroidGCMNotification) {
+            /** @var AndroidGCMNotification $androidGCMNotification */
+            $androidGCMNotification = $this->handlers[Types::OS_ANDROID_GCM];
+            $androidGCMNotification->setApiKey($apiKey);
         }
     }
 }

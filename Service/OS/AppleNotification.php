@@ -432,6 +432,23 @@ class AppleNotification implements OSNotificationServiceInterface, EventListener
     }
 
     /**
+     * @param string $pemPath
+     * @param string $passphrase
+     */
+    public function setPemPath($pemPath, $passphrase)
+    {
+        if ($this->pemPath === $pemPath && $this->passphrase === $passphrase) {
+            return;
+        }
+
+        $this->pemPath = $pemPath;
+        $this->passphrase = $passphrase;
+
+        // for new pem will take affect we need to close existing streams which use cached pem
+        $this->closeStreams();
+    }
+
+    /**
      * Called on kernel terminate
      */
     public function onKernelTerminate()
