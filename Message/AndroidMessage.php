@@ -30,6 +30,22 @@ class AndroidMessage implements MessageInterface
     protected $identifier = "";
 
     /**
+     * If true, the message will be delivered right away
+     *
+     * @var string
+     */
+    protected $delayWhileIdle = true;
+
+    /**
+     * Time to live until the push message is deleted when it could not delivered.
+     * GCM default currently is 4 weeks (86400 * 7 * 4). If set to -1 it will not passed
+     * to GCM so it fallbacks to the default set in the GCM service.
+     *
+     * @var string
+     */
+    protected $timeToLive = -1;
+
+    /**
      * Collapse key for data
      *
      * @var int
@@ -107,10 +123,17 @@ class AndroidMessage implements MessageInterface
     public function getMessageBody()
     {
         $data = array(
-            "registration_id" => $this->identifier,
-            "collapse_key"    => $this->collapseKey,
-            "data.message"    => $this->message,
+            "registration_id"  => $this->identifier,
+            "collapse_key"     => $this->collapseKey,
+            "delay_while_idle" => $this->delayWhileIdle,
+            "data.message"     => $this->message,
         );
+
+        if ($this->timeToLive > -1)
+        {
+            $data['time_to_live'] = $this->timeToLive;
+        }
+
         if (!empty($this->data)) {
             $data = array_merge($data, $this->data);
         }
@@ -237,5 +260,47 @@ class AndroidMessage implements MessageInterface
     public function getGCMOptions()
     {
         return $this->gcmOptions;
+    }
+
+    /**
+     * Sets delay while idle. If set to false, gcm will try to deliver the message
+     * immediately. If set to true, it may happen that the push message is delivered
+     * when the users device is no longer idle.
+     *
+     * @param bool $delayWhileIdle
+     */
+    public function setDelayWhileIdle($delayWhileIdle)
+    {
+        $this->delayWhileIdle = $delayWhileIdle;
+    }
+
+    /**
+     * Returns delay while idle setting
+     *
+     * @return bool
+     */
+    public function getDelayWhileIdle()
+    {
+        return $this->delayWhileIdle;
+    }
+
+    /**
+     * Sets the ttl (in seconds)
+     *
+     * @param bool $timeToLive
+     */
+    public function setTimeToLive($timeToLive)
+    {
+        $this->timeToLive = $timeToLive;
+    }
+
+    /**
+     * Returns the ttl (in seconds)
+     *
+     * @return bool
+     */
+    public function getTimeToLive()
+    {
+        return $this->timeToLive;
     }
 }
