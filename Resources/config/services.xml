@@ -10,6 +10,7 @@
         <parameter key="rms_push_notifications.ios.feedback.class">RMS\PushNotificationsBundle\Service\iOSFeedback</parameter>
         <parameter key="rms_push_notifications.mac.class">RMS\PushNotificationsBundle\Service\OS\AppleNotification</parameter>
         <parameter key="rms_push_notifications.event_listener.class">RMS\PushNotificationsBundle\Service\EventListener</parameter>
+        <parameter key="rms_push_notifications.windows.class">RMS\PushNotificationsBundle\Service\OS\WindowsNotification</parameter>
     </parameters>
 
     <services>
