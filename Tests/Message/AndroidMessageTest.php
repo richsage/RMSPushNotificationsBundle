@@ -81,6 +81,8 @@ class AndroidMessageTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(Types::OS_ANDROID_C2DM, $msg->getTargetOS());
         $msg->setGCM(true);
         $this->assertEquals(Types::OS_ANDROID_GCM, $msg->getTargetOS());
+        $msg->setFCM(true);
+        $this->assertEquals(Types::OS_ANDROID_FCM, $msg->getTargetOS());
     }
 
     public function testSetIdentifierIsSingleEntryInGCMArray()

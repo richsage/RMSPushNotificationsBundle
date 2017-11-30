@@ -128,6 +128,44 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
      */
+    public function testFCMRequiresAPIKey()
+    {
+        $arr = array(
+            array(
+                "android" => array(
+                    "fcm" => array(
+                    )
+                )
+            ),
+        );
+        $config = $this->process($arr);
+    }
+
+    public function testFCMIsOK()
+    {
+        $arr = array(
+            array(
+                "android" => array(
+                    "fcm" => array(
+                        "api_key" => "foo",
+                        "use_multi_curl" => true,
+                        "dry_run" => false,
+                    )
+                )
+            ),
+        );
+        $config = $this->process($arr);
+        $this->assertEquals("foo", $config["android"]["fcm"]["api_key"]);
+        $this->assertFalse($config["android"]["fcm"]["dry_run"]);
+
+        $arr[0]["android"]["fcm"]["dry_run"] = true;
+        $config = $this->process($arr);
+        $this->assertTrue($config["android"]["fcm"]["dry_run"]);
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
     public function testAddingiOsKeyRequiresValues()
     {
         $arr = array(

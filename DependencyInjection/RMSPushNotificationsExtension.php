@@ -22,8 +22,9 @@ class RMSPushNotificationsExtension extends Extension
     /**
      * Loads any resources/services we need
      *
-     * @param  array                                                   $configs
+     * @param  array $configs
      * @param  \Symfony\Component\DependencyInjection\ContainerBuilder $container
+     *
      * @return void
      */
     public function load(array $configs, ContainerBuilder $container)
@@ -35,7 +36,7 @@ class RMSPushNotificationsExtension extends Extension
         $loader->load('services.xml');
 
         $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
+        $config        = $this->processConfiguration($configuration, $configs);
 
         $this->setInitialParams();
         if (isset($config["android"])) {
@@ -83,12 +84,12 @@ class RMSPushNotificationsExtension extends Extension
         // C2DM
         $username = $config["android"]["username"];
         $password = $config["android"]["password"];
-        $source = $config["android"]["source"];
-        $timeout = $config["android"]["timeout"];
+        $source   = $config["android"]["source"];
+        $timeout  = $config["android"]["timeout"];
         if (isset($config["android"]["c2dm"])) {
             $username = $config["android"]["c2dm"]["username"];
             $password = $config["android"]["c2dm"]["password"];
-            $source = $config["android"]["c2dm"]["source"];
+            $source   = $config["android"]["c2dm"]["source"];
         }
         $this->container->setParameter("rms_push_notifications.android.timeout", $timeout);
         $this->container->setParameter("rms_push_notifications.android.c2dm.username", $username);
@@ -98,9 +99,35 @@ class RMSPushNotificationsExtension extends Extension
         // GCM
         $this->container->setParameter("rms_push_notifications.android.gcm.enabled", isset($config["android"]["gcm"]));
         if (isset($config["android"]["gcm"])) {
-            $this->container->setParameter("rms_push_notifications.android.gcm.api_key", $config["android"]["gcm"]["api_key"]);
-            $this->container->setParameter("rms_push_notifications.android.gcm.use_multi_curl", $config["android"]["gcm"]["use_multi_curl"]);
-            $this->container->setParameter('rms_push_notifications.android.gcm.dry_run', $config["android"]["gcm"]["dry_run"]);
+            $this->container->setParameter(
+                "rms_push_notifications.android.gcm.api_key",
+                $config["android"]["gcm"]["api_key"]
+            );
+            $this->container->setParameter(
+                "rms_push_notifications.android.gcm.use_multi_curl",
+                $config["android"]["gcm"]["use_multi_curl"]
+            );
+            $this->container->setParameter(
+                'rms_push_notifications.android.gcm.dry_run',
+                $config["android"]["gcm"]["dry_run"]
+            );
+        }
+
+        // FCM
+        $this->container->setParameter("rms_push_notifications.android.fcm.enabled", isset($config["android"]["fcm"]));
+        if (isset($config["android"]["fcm"])) {
+            $this->container->setParameter(
+                "rms_push_notifications.android.fcm.api_key",
+                $config["android"]["fcm"]["api_key"]
+            );
+            $this->container->setParameter(
+                "rms_push_notifications.android.fcm.use_multi_curl",
+                $config["android"]["fcm"]["use_multi_curl"]
+            );
+            $this->container->setParameter(
+                'rms_push_notifications.android.fcm.dry_run',
+                $config["android"]["fcm"]["dry_run"]
+            );
         }
     }
 
@@ -127,8 +154,9 @@ class RMSPushNotificationsExtension extends Extension
     /**
      * Sets Apple config into container
      *
-     * @param  array             $config
+     * @param  array $config
      * @param $os
+     *
      * @throws \RuntimeException
      * @throws \LogicException
      */
@@ -146,7 +174,7 @@ class RMSPushNotificationsExtension extends Extension
             if (realpath($config[$os]["pem"])) {
                 // Absolute path
                 $pemFile = $config[$os]["pem"];
-            } elseif (realpath($this->kernelRootDir.DIRECTORY_SEPARATOR.$config[$os]["pem"]) ) {
+            } elseif (realpath($this->kernelRootDir.DIRECTORY_SEPARATOR.$config[$os]["pem"])) {
                 // Relative path
                 $pemFile = $this->kernelRootDir.DIRECTORY_SEPARATOR.$config[$os]["pem"];
             } else {
@@ -158,10 +186,13 @@ class RMSPushNotificationsExtension extends Extension
         if ($config[$os]['json_unescaped_unicode']) {
             // Not support JSON_UNESCAPED_UNICODE option
             if (!version_compare(PHP_VERSION, '5.4.0', '>=')) {
-                throw new \LogicException(sprintf(
-                    'Can\'t use JSON_UNESCAPED_UNICODE option. This option can use only PHP Version >= 5.4.0. Your version: %s',
-                    PHP_VERSION
-                ));
+                throw new \LogicException(
+                    sprintf(
+                        'Can\'t use JSON_UNESCAPED_UNICODE option. ' .
+                        'This option can use only PHP Version >= 5.4.0. Your version: %s',
+                        PHP_VERSION
+                    )
+                );
             }
         }
 
@@ -169,8 +200,14 @@ class RMSPushNotificationsExtension extends Extension
         $this->container->setParameter(sprintf('rms_push_notifications.%s.timeout', $os), $config[$os]["timeout"]);
         $this->container->setParameter(sprintf('rms_push_notifications.%s.sandbox', $os), $config[$os]["sandbox"]);
         $this->container->setParameter(sprintf('rms_push_notifications.%s.pem', $os), $pemFile);
-        $this->container->setParameter(sprintf('rms_push_notifications.%s.passphrase', $os), $config[$os]["passphrase"]);
-        $this->container->setParameter(sprintf('rms_push_notifications.%s.json_unescaped_unicode', $os), (bool) $config[$os]['json_unescaped_unicode']);
+        $this->container->setParameter(
+            sprintf('rms_push_notifications.%s.passphrase', $os),
+            $config[$os]["passphrase"]
+        );
+        $this->container->setParameter(
+            sprintf('rms_push_notifications.%s.json_unescaped_unicode', $os),
+            (bool)$config[$os]['json_unescaped_unicode']
+        );
     }
 
     /**
@@ -182,7 +219,10 @@ class RMSPushNotificationsExtension extends Extension
     {
         $this->container->setParameter("rms_push_notifications.blackberry.enabled", true);
         $this->container->setParameter("rms_push_notifications.blackberry.timeout", $config["blackberry"]["timeout"]);
-        $this->container->setParameter("rms_push_notifications.blackberry.evaluation", $config["blackberry"]["evaluation"]);
+        $this->container->setParameter(
+            "rms_push_notifications.blackberry.evaluation",
+            $config["blackberry"]["evaluation"]
+        );
         $this->container->setParameter("rms_push_notifications.blackberry.app_id", $config["blackberry"]["app_id"]);
         $this->container->setParameter("rms_push_notifications.blackberry.password", $config["blackberry"]["password"]);
     }
@@ -190,6 +230,9 @@ class RMSPushNotificationsExtension extends Extension
     protected function setWindowsphoneConfig(array $config)
     {
         $this->container->setParameter("rms_push_notifications.windowsphone.enabled", true);
-        $this->container->setParameter("rms_push_notifications.windowsphone.timeout", $config["windowsphone"]["timeout"]);
+        $this->container->setParameter(
+            "rms_push_notifications.windowsphone.timeout",
+            $config["windowsphone"]["timeout"]
+        );
     }
 }
