@@ -68,6 +68,14 @@ class Configuration implements ConfigurationInterface
                                 booleanNode("dry_run")->defaultFalse()->end()->
                             end()->
                         end()->
+                        arrayNode("fcm")->
+                            canBeUnset()->
+                            children()->
+                                scalarNode("api_key")->isRequired()->cannotBeEmpty()->end()->
+                                booleanNode("use_multi_curl")->defaultValue(true)->end()->
+                                booleanNode("dry_run")->defaultFalse()->end()->
+                            end()->
+                        end()->
                     end()->
                 end()->
             end()

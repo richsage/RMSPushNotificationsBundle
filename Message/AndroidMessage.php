@@ -44,6 +44,13 @@ class AndroidMessage implements MessageInterface
     protected $isGCM = false;
 
     /**
+     * Whether this is a FCM message
+     *
+     * @var bool
+     */
+    protected $isFCM = false;
+
+    /**
      * A collection of device identifiers that the message
      * is intended for. GCM use only
      *
@@ -52,11 +59,11 @@ class AndroidMessage implements MessageInterface
     protected $allIdentifiers = array();
 
     /**
-     * Options for GCM messages
+     * Options for FCM messages
      *
      * @var array
      */
-    protected $gcmOptions = array();
+    protected $fcmOptions = array();
 
     /**
      * Sets the string message
@@ -136,7 +143,7 @@ class AndroidMessage implements MessageInterface
      */
     public function getTargetOS()
     {
-        return ($this->isGCM ? Types::OS_ANDROID_GCM : Types::OS_ANDROID_C2DM);
+        return ($this->isFCM ? Types::OS_ANDROID_FCM : ($this->isGCM ? Types::OS_ANDROID_GCM : Types::OS_ANDROID_C2DM));
     }
 
     /**
@@ -216,26 +223,89 @@ class AndroidMessage implements MessageInterface
      * Sets the GCM list
      * @param array $allIdentifiers
      */
-    public function setAllIdentifiers($allIdentifiers) {
+    public function setAllIdentifiers($allIdentifiers)
+    {
         $this->allIdentifiers = array_combine($allIdentifiers, $allIdentifiers);
     }
 
     /**
      * Sets GCM options
      * @param array $options
+     * @deprecated GCM is being deprecated for FCM, both services share the same options
      */
     public function setGCMOptions($options)
     {
-        $this->gcmOptions = $options;
+        $this->setFCMOptions($options);
     }
 
     /**
      * Returns GCM options
+     * @deprecated GCM is being deprecated for FCM, both services share the same options
      *
      * @return array
      */
     public function getGCMOptions()
     {
-        return $this->gcmOptions;
+        return $this->getFCMOptions();
+    }
+
+    /**
+     * Set whether this is a FCM message
+     * (default false)
+     *
+     * @param $fcm
+     */
+    public function setFCM($fcm)
+    {
+        $this->isFCM = !!$fcm;
+    }
+
+    /**
+     * Returns whether this is a GCM message
+     *
+     * @return mixed
+     */
+    public function isFCM()
+    {
+        return $this->isFCM;
+    }
+
+    /**
+     * Returns an array of device identifiers
+     * Not used in C2DM
+     *
+     * @return mixed
+     */
+    public function getFCMIdentifiers()
+    {
+        return array_values($this->allIdentifiers);
+    }
+
+    /**
+     * Adds a device identifier to the GCM list
+     * @param string $identifier
+     */
+    public function addFCMIdentifier($identifier)
+    {
+        $this->allIdentifiers[$identifier] = $identifier;
+    }
+
+    /**
+     * Sets FCM options
+     * @param array $options
+     */
+    public function setFCMOptions($options)
+    {
+        $this->fcmOptions = $options;
+    }
+
+    /**
+     * Returns FCM options
+     *
+     * @return array
+     */
+    public function getFCMOptions()
+    {
+        return $this->fcmOptions;
     }
 }

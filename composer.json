@@ -2,7 +2,7 @@
     "name": "richsage/rms-push-notifications-bundle",
     "type": "symfony-bundle",
     "description": "Push notifications/messages for mobile devices",
-    "keywords": ["push", "notification", "bundle", "gcm", "c2dm", "ios", "apns", "blackberry", "mpns", "windowsphone"],
+    "keywords": ["push", "notification", "bundle", "fcm", "gcm", "c2dm", "ios", "apns", "blackberry", "mpns", "windowsphone"],
     "homepage": "https://github.com/richsage/RMSPushNotificationsBundle",
     "license": "MIT",
     "authors": [
