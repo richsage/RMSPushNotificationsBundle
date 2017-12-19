@@ -29,6 +29,8 @@ class BlackberryMessage implements MessageInterface
     public function setMessage($message)
     {
         $this->setData($message);
+        
+        return $this;
     }
 
     /**
@@ -39,6 +41,8 @@ class BlackberryMessage implements MessageInterface
     public function setData($data)
     {
         $this->data = $data;
+        
+        return $this;
     }
 
     /**
@@ -60,6 +64,8 @@ class BlackberryMessage implements MessageInterface
     public function setDeviceIdentifier($identifier)
     {
         $this->identifier = $identifier;
+        
+        return $this;
     }
 
     /**
