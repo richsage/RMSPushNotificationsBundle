@@ -80,6 +80,8 @@ class AppleMessage implements MessageInterface
     public function setMessage($message)
     {
         $this->apsBody["aps"]["alert"] = $message;
+        
+        return $this;
     }
 
     /**
@@ -138,6 +140,8 @@ class AppleMessage implements MessageInterface
     public function setDeviceIdentifier($identifier)
     {
         $this->identifier = $identifier;
+                
+        return $this;
     }
 
     /**
@@ -185,6 +189,8 @@ class AppleMessage implements MessageInterface
     public function setAPSSound($sound)
     {
         $this->apsBody["aps"]["sound"] = $sound;
+                
+        return $this;
     }
 
     /**
@@ -196,6 +202,8 @@ class AppleMessage implements MessageInterface
     public function setAPSBadge($badge)
     {
         $this->apsBody["aps"]["badge"] = (int) $badge;
+                
+        return $this;
     }
 
     /**
@@ -208,6 +216,8 @@ class AppleMessage implements MessageInterface
     public function setAPSContentAvailable($contentAvailable)
     {
         $this->apsBody["aps"]["content-available"] = $contentAvailable;
+                
+        return $this;
     }
 
     /**
@@ -219,6 +229,8 @@ class AppleMessage implements MessageInterface
     public function setCategory($category)
     {
         $this->apsBody["aps"]["category"] = $category;
+                
+        return $this;
     }
 
     /**
@@ -230,6 +242,8 @@ class AppleMessage implements MessageInterface
     public function setMutableContent($mutableContent)
     {
         $this->apsBody["aps"]["mutable-content"] = $mutableContent ? 1 : 0;
+                
+        return $this;
     }
 
     /**
@@ -240,6 +254,8 @@ class AppleMessage implements MessageInterface
     public function setExpiry($expiry)
     {
         $this->expiry = $expiry;
+                
+        return $this;
     }
 
     /**
@@ -258,6 +274,8 @@ class AppleMessage implements MessageInterface
     public function setPushMagicToken($pushMagicToken)
     {
         $this->pushMagicToken = $pushMagicToken;
+                
+        return $this;
     }
 
     /**
@@ -282,6 +300,8 @@ class AppleMessage implements MessageInterface
     public function setToken($token)
     {
         $this->token = $token;
+                
+        return $this;
     }
 
     /**
