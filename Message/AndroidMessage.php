@@ -66,6 +66,8 @@ class AndroidMessage implements MessageInterface
     public function setMessage($message)
     {
         $this->message = $message;
+        
+        return $this;
     }
 
     /**
@@ -86,6 +88,8 @@ class AndroidMessage implements MessageInterface
     public function setData($data)
     {
         $this->data = (is_array($data) ? $data : array($data));
+        
+        return $this;
     }
 
     /**
@@ -127,6 +131,8 @@ class AndroidMessage implements MessageInterface
     {
         $this->identifier = $identifier;
         $this->allIdentifiers = array($identifier => $identifier);
+        
+        return $this;
     }
 
     /**
@@ -169,6 +175,8 @@ class AndroidMessage implements MessageInterface
     public function setCollapseKey($collapseKey)
     {
         $this->collapseKey = $collapseKey;
+        
+        return $this;
     }
 
     /**
@@ -180,6 +188,8 @@ class AndroidMessage implements MessageInterface
     public function setGCM($gcm)
     {
         $this->isGCM = !!$gcm;
+        
+        return $this;
     }
 
     /**
@@ -218,6 +228,8 @@ class AndroidMessage implements MessageInterface
      */
     public function setAllIdentifiers($allIdentifiers) {
         $this->allIdentifiers = array_combine($allIdentifiers, $allIdentifiers);
+        
+        return $this;
     }
 
     /**
@@ -227,6 +239,8 @@ class AndroidMessage implements MessageInterface
     public function setGCMOptions($options)
     {
         $this->gcmOptions = $options;
+        
+        return $this;
     }
 
     /**
