@@ -38,6 +38,8 @@ class WindowsphoneMessage implements MessageInterface
     public function setDeviceIdentifier($identifier)
     {
         $this->identifier = $identifier;
+        
+        return $this;
     }
 
     public function getMessageBody()
@@ -51,6 +53,8 @@ class WindowsphoneMessage implements MessageInterface
     public function setMessage($message)
     {
         $this->text2 = $message;
+        
+        return $this;
     }
 
     public function setData($data)
