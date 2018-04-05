@@ -7,7 +7,6 @@ env:
   - SYMFONY_VERSION=origin/master
 
 before_script:
-  - wget http://getcomposer.org/composer.phar
-  - php composer.phar install
+  - composer install
 
 script: ./vendor/bin/phpunit --configuration phpunit.travis.xml
