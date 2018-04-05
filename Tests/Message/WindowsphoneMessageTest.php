@@ -3,8 +3,7 @@
 namespace RMS\PushNotificationsBundle\Tests\Message;
 
 use RMS\PushNotificationsBundle\Device\Types,
-    RMS\PushNotificationsBundle\Message\WindowsphoneMessage,
-    RMS\PushNotificationsBundle\Message\MessageInterface;
+    RMS\PushNotificationsBundle\Message\WindowsphoneMessage;
 
 class WindowsphoneMessageTest extends \PHPUnit_Framework_TestCase
 {

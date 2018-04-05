@@ -2,7 +2,6 @@
 
 namespace RMS\PushNotificationsBundle\Service;
 
-
 class EventListener {
 
     /**

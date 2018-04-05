@@ -1,8 +1,8 @@
 <?php
+
 namespace RMS\PushNotificationsBundle\Service;
 
-
-interface EventListenerInterface {
-
+interface EventListenerInterface
+{
     public function onKernelTerminate ();
 }

@@ -3,8 +3,7 @@
 namespace RMS\PushNotificationsBundle\Tests\Message;
 
 use RMS\PushNotificationsBundle\Device\Types,
-    RMS\PushNotificationsBundle\Message\MacMessage,
-    RMS\PushNotificationsBundle\Message\MessageInterface;
+    RMS\PushNotificationsBundle\Message\MacMessage;
 
 class MacMessageTest extends \PHPUnit_Framework_TestCase
 {

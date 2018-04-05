@@ -4,9 +4,7 @@ namespace RMS\PushNotificationsBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface,
     Symfony\Component\DependencyInjection\ContainerBuilder,
-    Symfony\Component\DependencyInjection\Definition,
     Symfony\Component\DependencyInjection\Reference,
-    RMS\PushNotificationsBundle\Device\Types,
     Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 
 class AddHandlerPass implements CompilerPassInterface

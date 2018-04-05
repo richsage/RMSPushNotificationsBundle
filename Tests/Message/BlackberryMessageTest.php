@@ -3,8 +3,7 @@
 namespace RMS\PushNotificationsBundle\Tests\Message;
 
 use RMS\PushNotificationsBundle\Device\Types,
-    RMS\PushNotificationsBundle\Message\BlackberryMessage,
-    RMS\PushNotificationsBundle\Message\MessageInterface;
+    RMS\PushNotificationsBundle\Message\BlackberryMessage;
 
 class BlackberryMessageTest extends \PHPUnit_Framework_TestCase
 {
