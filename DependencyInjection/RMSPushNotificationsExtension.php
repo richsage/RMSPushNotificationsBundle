@@ -95,12 +95,26 @@ class RMSPushNotificationsExtension extends Extension
         $this->container->setParameter("rms_push_notifications.android.c2dm.password", $password);
         $this->container->setParameter("rms_push_notifications.android.c2dm.source", $source);
 
+        // DEFINE PARAMETERS
+        $this->container->setParameter("rms_push_notifications.android.gcm.api_key", null);
+        $this->container->setParameter("rms_push_notifications.android.gcm.use_multi_curl", null);
+        $this->container->setParameter("rms_push_notifications.android.gcm.dry_run", null);
+        $this->container->setParameter("rms_push_notifications.android.fcm.api_key", null);
+        $this->container->setParameter("rms_push_notifications.android.fcm.use_multi_curl", null);
+
         // GCM
         $this->container->setParameter("rms_push_notifications.android.gcm.enabled", isset($config["android"]["gcm"]));
         if (isset($config["android"]["gcm"])) {
-            $this->container->setParameter("rms_push_notifications.android.gcm.api_key", $config["android"]["gcm"]["api_key"]);
+            $this->container->setParameter("rms_push_notifications.android.gcm.api_key", isset($config["android"]["gcm"]["api_key"]) ? $config["android"]["gcm"]["api_key"] : null);
             $this->container->setParameter("rms_push_notifications.android.gcm.use_multi_curl", $config["android"]["gcm"]["use_multi_curl"]);
             $this->container->setParameter('rms_push_notifications.android.gcm.dry_run', $config["android"]["gcm"]["dry_run"]);
+        }
+
+        // FCM
+        $this->container->setParameter("rms_push_notifications.android.fcm.enabled", isset($config["android"]["fcm"]));
+        if (isset($config["android"]["fcm"])) {
+            $this->container->setParameter("rms_push_notifications.android.fcm.api_key", $config["android"]["fcm"]["api_key"]);
+            $this->container->setParameter("rms_push_notifications.android.fcm.use_multi_curl", $config["android"]["fcm"]["use_multi_curl"]);
         }
     }
 
