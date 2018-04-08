@@ -1,6 +1,6 @@
 # RMSPushNotificationsBundle ![](https://secure.travis-ci.org/richsage/RMSPushNotificationsBundle.png)
 
-A bundle to allow sending of push notifications to mobile devices.  Currently supports Android (C2DM, GCM), Blackberry and iOS devices.
+A bundle to allow sending of push notifications to mobile devices.  Currently supports Android (C2DM, GCM, FCM), Blackberry and iOS devices.
 
 ## Installation
 
@@ -44,6 +44,9 @@ only be available if you provide configuration respectively for them.
               api_key: <string_android_gcm_api_key> # This is titled "Server Key" when creating it
               use_multi_curl: <boolean_android_gcm_use_multi_curl> # default is true
               dry_run: <bool_use_gcm_dry_run>
+          fcm:
+              api_key: <string_android_fcm_api_key> # This is titled "Server Key" when creating it
+              use_multi_curl: <boolean_android_fcm_use_multi_curl> # default is true
       ios:
           timeout: 60 # Seconds to wait for connection timeout, default is 60
           sandbox: <bool_use_apns_sandbox>
@@ -62,7 +65,7 @@ only be available if you provide configuration respectively for them.
       windowsphone:
           timeout: 5 # Seconds to wait for connection timeout, default is 5
 
-NOTE: If you are using Windows, you may need to set the Android GCM `use_multi_curl` flag to false for GCM messages to be sent correctly.
+NOTE: If you are using Windows, you may need to set the Android GCM/FCM `use_multi_curl` flag to false for GCM/FCM messages to be sent correctly.
 
 Timeout defaults are the defaults from prior to the introduction of this configuration value.
 
@@ -96,8 +99,9 @@ Since both C2DM and GCM are still available, the `AndroidMessage` class has a sm
 
     $message = new AndroidMessage();
     $message->setGCM(true);
+    $message->setFCM(true); // Use to Firebase Cloud Messaging
 
-to send as a GCM message rather than C2DM.
+to send as a FCM message rather than GCM or C2DM.
 
 ## iOS Feedback service
 
