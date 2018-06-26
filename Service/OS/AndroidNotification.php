@@ -2,6 +2,7 @@
 
 namespace RMS\PushNotificationsBundle\Service\OS;
 
+use Buzz\Client\Curl;
 use RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException,
     RMS\PushNotificationsBundle\Message\AndroidMessage,
     RMS\PushNotificationsBundle\Message\MessageInterface;
@@ -32,11 +33,11 @@ class AndroidNotification implements OSNotificationServiceInterface
     protected $source;
 
     /**
-     * Timeout in seconds for the connecting client
+     * Buzz request client options as associative array.
      *
-     * @var int
+     * @var array
      */
-    protected $timeout;
+    protected $clientOptions;
 
     /**
      * Authentication token
@@ -51,14 +52,17 @@ class AndroidNotification implements OSNotificationServiceInterface
      * @param $username
      * @param $password
      * @param $source
-     * @param $timeout
+     * @param int $timeout Timeout in seconds
      */
     public function __construct($username, $password, $source, $timeout)
     {
         $this->username = $username;
         $this->password = $password;
         $this->source = $source;
-        $this->timeout = $timeout;
+        $this->clientOptions = array(
+            'timeout' => $timeout,
+            'verify' => false,
+        );
         $this->authToken = "";
     }
 
@@ -80,9 +84,7 @@ class AndroidNotification implements OSNotificationServiceInterface
             $headers[] = "Authorization: GoogleLogin auth=" . $this->authToken;
             $data = $message->getMessageBody();
 
-            $buzz = new Browser();
-            $buzz->getClient()->setVerifyPeer(false);
-            $buzz->getClient()->setTimeout($this->timeout);
+            $buzz = new Browser(new Curl($this->clientOptions));
             $response = $buzz->post("https://android.apis.google.com/c2dm/send", $headers, http_build_query($data));
 
             return preg_match("/^id=/", $response->getContent()) > 0;
@@ -106,9 +108,7 @@ class AndroidNotification implements OSNotificationServiceInterface
             "service"       => "ac2dm"
         );
 
-        $buzz = new Browser();
-        $buzz->getClient()->setVerifyPeer(false);
-        $buzz->getClient()->setTimeout($this->timeout);
+        $buzz = new Browser(new Curl($this->clientOptions));
         $response = $buzz->post("https://www.google.com/accounts/ClientLogin", array(), http_build_query($data));
         if ($response->getStatusCode() !== 200) {
             return false;

@@ -3,8 +3,7 @@
 namespace RMS\PushNotificationsBundle\Tests\Message;
 
 use RMS\PushNotificationsBundle\Device\Types,
-    RMS\PushNotificationsBundle\Message\AndroidMessage,
-    RMS\PushNotificationsBundle\Message\MessageInterface;
+    RMS\PushNotificationsBundle\Message\AndroidMessage;
 
 class AndroidMessageTest extends \PHPUnit_Framework_TestCase
 {

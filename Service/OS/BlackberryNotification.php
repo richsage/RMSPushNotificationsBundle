@@ -2,13 +2,14 @@
 
 namespace RMS\PushNotificationsBundle\Service\OS;
 
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerInterface,
+    Psr\Http\Message\ResponseInterface;
 use RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException,
     RMS\PushNotificationsBundle\Message\BlackberryMessage,
     RMS\PushNotificationsBundle\Message\MessageInterface;
 use Buzz\Browser,
-    Buzz\Listener\BasicAuthListener,
-    Buzz\Client\Curl;
+    Buzz\Client\Curl,
+    Buzz\Middleware\BasicAuthMiddleware;
 
 class BlackberryNotification implements OSNotificationServiceInterface
 {
@@ -91,10 +92,8 @@ class BlackberryNotification implements OSNotificationServiceInterface
     {
         $separator = "mPsbVQo0a68eIL3OAxnm";
         $body = $this->constructMessageBody($message, $separator);
-        $browser = new Browser(new Curl());
-        $browser->getClient()->setTimeout($this->timeout);
-        $listener = new BasicAuthListener($this->appID, $this->password);
-        $browser->addListener($listener);
+        $browser = new Browser(new Curl(array('timeout' => $this->timeout)));
+        $browser->addMiddleware(new BasicAuthMiddleware($this->appID, $this->password));
 
         $url = "https://pushapi.na.blackberry.com/mss/PD_pushRequest";
         if ($this->evaluation) {
@@ -113,7 +112,7 @@ class BlackberryNotification implements OSNotificationServiceInterface
     /**
      * Builds the actual body of the message
      *
-     * @param  \RMS\PushNotificationsBundle\Message\BlackberryMessage $message
+     * @param \RMS\PushNotificationsBundle\Message\BlackberryMessage $message
      * @param $separator
      * @return string
      */
@@ -143,16 +142,17 @@ class BlackberryNotification implements OSNotificationServiceInterface
      * Handles and parses the response
      * Returns a value indicating success/fail
      *
-     * @param  \Buzz\Message\Response $response
+     * @param ResponseInterface $response
      * @return bool
      */
-    protected function parseResponse(\Buzz\Message\Response $response)
+    protected function parseResponse(ResponseInterface $response)
     {
-        if (null !== $response->getStatusCode() && $response->getStatusCode() != 200) {
+        if (null !== $response->getStatusCode() && $response->getStatusCode() !== 200) {
             return false;
         }
+        $response->getBody()->rewind();
         $doc = new \DOMDocument();
-        $doc->loadXML($response->getContent());
+        $doc->loadXML($response->getBody()->getContents());
         $elems = $doc->getElementsByTagName("response-result");
         if (!$elems->length) {
             $this->logger->error('Response is empty');

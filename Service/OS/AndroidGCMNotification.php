@@ -2,14 +2,15 @@
 
 namespace RMS\PushNotificationsBundle\Service\OS;
 
-use Psr\Log\LoggerInterface;
-use RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException,
-    RMS\PushNotificationsBundle\Message\AndroidMessage,
-    RMS\PushNotificationsBundle\Message\MessageInterface;
 use Buzz\Browser,
     Buzz\Client\AbstractCurl,
     Buzz\Client\Curl,
     Buzz\Client\MultiCurl;
+use Nyholm\Psr7\Request;
+use Psr\Log\LoggerInterface;
+use RMS\PushNotificationsBundle\Exception\InvalidMessageTypeException,
+    RMS\PushNotificationsBundle\Message\AndroidMessage,
+    RMS\PushNotificationsBundle\Message\MessageInterface;
 
 class AndroidGCMNotification implements OSNotificationServiceInterface
 {
@@ -64,6 +65,13 @@ class AndroidGCMNotification implements OSNotificationServiceInterface
     protected $logger;
 
     /**
+     * Buzz request client options as associative array.
+     *
+     * @var array
+     */
+    protected $clientOptions;
+
+    /**
      * Constructor
      *
      * @param string       $apiKey
@@ -77,13 +85,15 @@ class AndroidGCMNotification implements OSNotificationServiceInterface
     {
         $this->useDryRun = $dryRun;
         $this->apiKey = $apiKey;
+        // We'll need to set this per-request if `$client` was provided in constructor.
+        $this->clientOptions = array(
+            'timeout' => $timeout,
+            'verify' => false,
+        );
         if (!$client) {
-            $client = ($useMultiCurl ? new MultiCurl() : new Curl());
+            $client = ($useMultiCurl ? new MultiCurl($this->clientOptions) : new Curl($this->clientOptions));
         }
-        $client->setTimeout($timeout);
-
         $this->browser = new Browser($client);
-        $this->browser->getClient()->setVerifyPeer(false);
         $this->logger = $logger;
     }
 
@@ -122,14 +132,16 @@ class AndroidGCMNotification implements OSNotificationServiceInterface
 
         if (count($message->getGCMIdentifiers()) == 1) {
             $data['to'] = $gcmIdentifiers[0];
-            $this->responses[] = $this->browser->post($this->apiURL, $headers, json_encode($data));
+            $request = new Request('POST', $this->apiURL, $headers, json_encode($data));
+            $this->responses[] = $this->browser->getClient()->sendRequest($request, $this->clientOptions);
         } else {
             // Chunk number of registration IDs according to the maximum allowed by GCM
             $chunks = array_chunk($message->getGCMIdentifiers(), $this->registrationIdMaxCount);
 
             foreach ($chunks as $registrationIDs) {
                 $data['registration_ids'] = $registrationIDs;
-                $this->responses[] = $this->browser->post($this->apiURL, $headers, json_encode($data));
+                $request = new Request('POST', $this->apiURL, $headers, json_encode($data));
+                $this->responses[] = $this->browser->getClient()->sendRequest($request, $this->clientOptions);
             }
         }
 

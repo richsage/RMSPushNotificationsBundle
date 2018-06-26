@@ -31,9 +31,11 @@ class MicrosoftNotification implements OSNotificationServiceInterface
      */
     public function __construct($timeout, $logger)
     {
-        $this->browser = new Browser(new Curl());
-        $this->browser->getClient()->setVerifyPeer(false);
-        $this->browser->getClient()->setTimeout($timeout);
+        $options = array(
+            'timeout' => $timeout,
+            'verify' => false,
+        );
+        $this->browser = new Browser(new Curl($options));
         $this->logger = $logger;
     }
 
@@ -61,10 +63,12 @@ class MicrosoftNotification implements OSNotificationServiceInterface
 
         $response = $this->browser->post($message->getDeviceIdentifier(), $headers, $xml->asXML());
 
-        if (!$response->isSuccessful()) {
+        if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300) {
             $this->logger->error($response->getStatusCode(). ' : '. $response->getReasonPhrase());
+
+            return false;
         }
 
-        return $response->isSuccessful();
+        return true;
     }
 }

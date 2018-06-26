@@ -3,8 +3,7 @@
 namespace RMS\PushNotificationsBundle\Tests\Message;
 
 use RMS\PushNotificationsBundle\Device\Types,
-    RMS\PushNotificationsBundle\Message\iOSMessage,
-    RMS\PushNotificationsBundle\Message\MessageInterface;
+    RMS\PushNotificationsBundle\Message\iOSMessage;
 
 class iOSMessageTest extends \PHPUnit_Framework_TestCase
 {
@@ -82,5 +81,4 @@ class iOSMessageTest extends \PHPUnit_Framework_TestCase
         $msg->setMutableContent(true);
         $this->assertEquals($expected, $msg->getMessageBody());
     }
-
 }
