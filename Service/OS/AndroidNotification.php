@@ -61,7 +61,7 @@ class AndroidNotification implements OSNotificationServiceInterface
         $this->source = $source;
         $this->clientOptions = array(
             'timeout' => $timeout,
-            'verify_peer' => false,
+            'verify' => false,
         );
         $this->authToken = "";
     }

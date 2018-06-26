@@ -88,7 +88,7 @@ class AndroidGCMNotification implements OSNotificationServiceInterface
         // We'll need to set this per-request if `$client` was provided in constructor.
         $this->clientOptions = array(
             'timeout' => $timeout,
-            'verify_peer' => false,
+            'verify' => false,
         );
         if (!$client) {
             $client = ($useMultiCurl ? new MultiCurl($this->clientOptions) : new Curl($this->clientOptions));

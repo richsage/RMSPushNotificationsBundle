@@ -33,7 +33,7 @@ class MicrosoftNotification implements OSNotificationServiceInterface
     {
         $options = array(
             'timeout' => $timeout,
-            'verify_peer' => false,
+            'verify' => false,
         );
         $this->browser = new Browser(new Curl($options));
         $this->logger = $logger;
